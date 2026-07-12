@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEX Account | Onboarding & Billing</title>
+    <meta name="description" content="NexDesign account portal. Create an account, select your plan, and activate your desktop license.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,400;1,600&family=Outfit:wght@200;300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <script type="module" src="./main.js"></script>
+    <style>
+        /* Specific Styles for Account Portal */
+        body {
+            overflow-y: auto !important; /* Allow scrolling on account page if needed */
+        }
+        
+        .account-card {
+            width: 480px;
+            max-width: 90vw;
+            background: rgba(10, 10, 12, 0.45);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            z-index: 5;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: cardFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .account-card.wide {
+            width: 720px;
+        }
+
+        @keyframes cardFadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Step Indicator */
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .step-indicator::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.08);
+            z-index: 1;
+        }
+
+        .step-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #08080a;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .step-dot.active {
+            border-color: #ffffff;
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+            background: #ffffff;
+            color: #000000;
+        }
+
+        .step-dot.completed {
+            border-color: #00ffff;
+            background: #00ffff;
+            color: #000000;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.25);
+        }
+
+        /* Form elements */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #fff;
+            font-family: var(--font-sans);
+            font-size: 13px;
+            transition: all 0.25s ease;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #ffffff;
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            width: 100%;
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-family: var(--font-sans);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background: #f5f5f7;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .google-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .google-btn:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Plans Grid */
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 10px;
+        }
+
+        .plan-card {
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .plan-card:hover {
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .plan-card.selected {
+            border-color: #00ffff;
+            background: rgba(0, 255, 255, 0.02);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+        }
+
+        .plan-card h4 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .plan-card .price {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .plan-card .price span {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .plan-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .plan-card li {
+            position: relative;
+            padding-left: 14px;
+        }
+
+        .plan-card li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #00ffff;
+        }
+
+        /* Checkout Details */
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .checkout-summary {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Success Flow */
+        .success-panel {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 0;
+        }
+
+        .success-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #00ffff;
+            color: #00ffff;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            animation: pulseSuccess 2s infinite alternate;
+        }
+
+        @keyframes pulseSuccess {
+            0% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); }
+            100% { box-shadow: 0 0 25px rgba(0, 255, 255, 0.45); }
+        }
+
+        /* Cohort Progress */
+        .cohort-banner {
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 11px;
+            color: #d4af37;
+            text-align: left;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .cohort-progress {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .cohort-fill {
+            height: 100%;
+            background: #d4af37;
+            width: 82%;
+        }
+
+        /* Utility class to hide steps */
+        .wizard-step {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .wizard-step.active {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <!-- Dynamic Spotlight Background -->
+    <div class="spotlight"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Header Navigation -->
+    <header class="header">
+        <div class="logo">NEX<span>.</span></div>
+        <nav class="nav-links">
+            <a href="../#about" class="nav-link">About</a>
+            <a href="../#works" class="nav-link">Works</a>
+            <a href="../#contact" class="nav-link">Contact</a>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <div class="main-container">
+        <div class="account-card" id="cardContainer">
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step-dot active" id="dot1">1</div>
+                <div class="step-dot" id="dot2">2</div>
+                <div class="step-dot" id="dot3">3</div>
+                <div class="step-dot" id="dot4">✓</div>
+            </div>
+
+            <!-- STEP 1: REGISTRATION -->
+            <div class="wizard-step active" id="step1">
+                <div>
+                    <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">Hesabınızı Oluşturun</h2>
+                    <p style="font-size: 11px; color: var(--text-secondary);">NexDesign lisansınızı yönetmek için yeni bir hesap açın.</p>
+                </div>
+
+                <button class="btn-primary google-btn" onclick="nextStep()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.136 4.114-3.555 0-6.437-2.883-6.437-6.437 0-3.555 2.882-6.437 6.437-6.437 1.488 0 2.855.51 3.94 1.353l3.056-3.055C19.121 2.37 15.932 1.2 12.24 1.2c-5.965 0-10.8 4.835-10.8 10.8 0 5.965 4.835 10.8 10.8 10.8 6.22 0 10.9-4.382 10.9-10.8 0-.675-.06-1.32-.175-1.915H12.24z"/>
+                    </svg>
+                    Google ile Devam Et
+                </button>
+
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; opacity: 0.5; font-size: 10px;">
+                    <hr style="flex-grow: 1; border: none; border-top: 1px solid rgba(255,255,255,0.15);" />
+                    <span>veya e-posta ile</span>
+                    <hr style="flex-grow: 1; border: none; border-top: 1px solid rgba(255,255,255,0.15);" />
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-email">E-Posta Adresi</label>
+                    <input type="email" id="reg-email" class="form-input" placeholder="isim@mimar.com" />
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-password">Şifre</label>
+                    <input type="password" id="reg-password" class="form-input" placeholder="••••••••" />
+                </div>
+
+                <button class="btn-primary" onclick="handleRegistrationSubmit()">Devam Et</button>
+            </div>
+
+            <!-- STEP 2: PLAN SELECT -->
+            <div class="wizard-step" id="step2">
+                <div>
+                    <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">Planınızı Seçin</h2>
+                    <p style="font-size: 11px; color: var(--text-secondary);">İhtiyaçlarınıza uygun bir lisans türü belirleyin.</p>
+                </div>
+
+                <!-- Cohort discount banner -->
+                <div class="cohort-banner">
+                    <div style="display:flex; justify-content:space-between; font-weight:bold;">
+                        <span>🔥 ALFA SÜRÜMÜ %70 ÖMÜR BOYU İNDİRİMİ</span>
+                        <span>82 / 100</span>
+                    </div>
+                    <div class="cohort-progress">
+                        <div class="cohort-fill"></div>
+                    </div>
+                    <p style="font-size: 9px; margin-top: 6px; opacity: 0.85;">
+                        İlk 100 kullanıcımıza özel, Premium Pro ömür boyu **$41.70/ay** ($139 yerine). Son 18 koltuk!
+                    </p>
+                </div>
+
+                <div class="plans-grid">
+                    <!-- Free -->
+                    <div class="plan-card selected" id="cardFree" onclick="selectPlan('free')">
+                        <h4>Indie Free</h4>
+                        <div class="price">$0<span>/ay</span></div>
+                        <ul>
+                          <li>90dk günlük kullanım</li>
+                          <li>Ayda 2 tam gün</li>
+                          <li>Standart motor</li>
+                        </ul>
+                    </div>
+
+                    <!-- Student -->
+                    <div class="plan-card" id="cardStudent" onclick="selectPlan('student')">
+                        <h4>Öğrenci</h4>
+                        <div class="price">$0<span>/öğrenci</span></div>
+                        <ul>
+                          <li>200dk günlük kullanım</li>
+                          <li>Ayda 7 tam gün</li>
+                          <li>Okul e-postası</li>
+                        </ul>
+                    </div>
+
+                    <!-- Pro -->
+                    <div class="plan-card" id="cardPro" onclick="selectPlan('pro')" style="border-color: rgba(212,175,55,0.15)">
+                        <h4 style="color:#d4af37;">Premium Pro</h4>
+                        <div class="price" style="color:#d4af37;">$41.70<span>/ay</span></div>
+                        <ul>
+                          <li>Sınırsız Süre</li>
+                          <li>BIM İşbirliği</li>
+                          <li>Tüm Cihazlar</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:12px; margin-top: 8px;">
+                    <button class="btn-primary btn-secondary" onclick="prevStep()">Geri</button>
+                    <button class="btn-primary" onclick="handlePlanSelectionSubmit()">Planı Onayla</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: CHECKOUT (Simulated Paddle Credit Card Flow) -->
+            <div class="wizard-step" id="step3">
+                <div>
+                    <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">Aboneliği Tamamlayın</h2>
+                    <p style="font-size: 11px; color: var(--text-secondary);">Paddle güvenli ödeme arayüzü ile işlem yapın.</p>
+                </div>
+
+                <div class="checkout-grid" id="checkoutLayout">
+                    <!-- Left: Card input form -->
+                    <div style="display: flex; flex-direction: column; gap: 14px;">
+                        <div class="form-group">
+                            <label>Kart Numarası</label>
+                            <input type="text" class="form-input" placeholder="4242 4242 4242 4242" id="cc-num" />
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                            <div class="form-group">
+                                <label>SKT</label>
+                                <input type="text" class="form-input" placeholder="AA / YY" id="cc-exp" />
+                            </div>
+                            <div class="form-group">
+                                <label>CVC</label>
+                                <input type="password" class="form-input" placeholder="•••" id="cc-cvc" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Summary -->
+                    <div class="checkout-summary">
+                        <div>
+                            <span style="font-size: 10px; text-transform: uppercase; color: var(--text-secondary); font-weight:600;">Seçilen Plan</span>
+                            <h3 id="summaryPlanName" style="font-size: 16px; margin: 4px 0 8px 0; color:#d4af37;">Premium Pro</h3>
+                            <p style="font-size: 11px; color: var(--text-secondary); line-height: 1.4;">Ömür boyu indirimli fiyat uygulanmıştır.</p>
+                        </div>
+                        <div style="border-top:1px solid rgba(255,255,255,0.06); padding-top:12px; display:flex; justify-content:space-between; align-items:baseline;">
+                            <span style="font-size:12px; font-weight:600;">Toplam:</span>
+                            <span style="font-size:20px; font-weight:800; color:#fff;" id="summaryPrice">$41.70<span style="font-size:10px; font-weight:400; color:var(--text-secondary);">/ay</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:12px;">
+                    <button class="btn-primary btn-secondary" onclick="prevStep()">Geri</button>
+                    <button class="btn-primary" onclick="handlePaymentSubmit()" id="payBtn">Ödeme Yap ve Lisansı Aktifleştir</button>
+                </div>
+            </div>
+
+            <!-- STEP 4: SUCCESS ACTIVATION -->
+            <div class="wizard-step" id="step4">
+                <div class="success-panel">
+                    <div class="success-icon">✓</div>
+                    <h2 style="font-size: 20px; font-weight: 600;">Hesabınız Aktifleştirildi!</h2>
+                    <p style="font-size: 12px; color: var(--text-secondary); max-width: 320px; line-height: 1.5; margin: 0 auto;">
+                        Kaydınız başarıyla tamamlandı. Artık NexDesign masaüstü uygulamasını açarak oluşturduğunuz hesap bilgileriyle giriş yapabilirsiniz.
+                    </p>
+                    
+                    <div style="background: rgba(0, 255, 255, 0.03); border: 1px solid rgba(0, 255, 255, 0.08); border-radius: 8px; padding: 12px 20px; text-align: left; width: 100%; margin-top: 10px; font-size:11px;">
+                        <strong>Giriş Bilgileriniz:</strong><br/>
+                        • E-posta: <code id="successEmail"></code><br/>
+                        • Plan Türü: <code id="successPlan"></code><br/>
+                        • Durum: <span style="color:#00ffff; font-weight:bold;">AKTiF</span>
+                    </div>
+
+                    <button class="btn-primary" style="margin-top: 10px;" onclick="window.close()">Portal Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Information -->
+    <footer class="footer">
+        <div class="footer-left">
+            <span>© 2026 NEX Design Lab.</span>
+        </div>
+        <div class="footer-right">
+            <span>Milano / Istanbul</span>
+        </div>
+    </footer>
+
+</body>
+</html>
