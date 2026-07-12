@@ -1,4 +1,3 @@
-import '../style.css';
 
 // Interactive Mouse Spotlight
 document.addEventListener('mousemove', (e) => {
