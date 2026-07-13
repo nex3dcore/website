@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nex3dcore.com/sitemap.xml
