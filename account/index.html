@@ -1564,8 +1564,10 @@
         // CONFIGURATION
         // ==========================================
 
-        // Backend server URL
-        const SERVER_URL = 'http://localhost:3001';
+        // Backend server URL (Dynamic Localhost vs Live Render Backend)
+        const SERVER_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? 'http://localhost:3001'
+            : 'https://website-rla3.onrender.com';
 
         // PADDLE CLIENT-SIDE CONFIGURATION
         // Fill these after creating products in your Paddle Sandbox Dashboard.
