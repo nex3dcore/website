@@ -6,8 +6,11 @@ WORKDIR /app
 # Copy package manifests
 COPY package*.json ./
 
+# Install build tools for native modules (deasync, better-sqlite3)
+RUN apk add --no-cache python3 make g++
+
 # Install dependencies
-RUN npm ci
+RUN npm install
 
 # Copy source files
 COPY . .
