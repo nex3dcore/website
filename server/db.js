@@ -373,7 +373,7 @@ function verifyOTP(email, inputCode) {
             } else if (record.attempts >= 5) {
                 await pgPool.query("UPDATE verification_codes SET is_used = 1 WHERE id = $1", [record.id]);
                 resData = { success: false, error: "5 hatalı deneme hakkınız doldu. Lütfen yeni kod isteyin." };
-            } else if (new Date(record.expires_at) < new Date()) {
+            } else if (new Date(record.expires_at).getTime() + 10800000 < Date.now()) {
                 await pgPool.query("UPDATE verification_codes SET is_used = 1 WHERE id = $1", [record.id]);
                 resData = { success: false, error: "Doğrulama kodunun süresi doldu." };
             } else {
