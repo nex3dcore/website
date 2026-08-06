@@ -1,15 +1,12 @@
 # Production Dockerfile for NexDesign Node.js Server & Frontend
-FROM node:20-alpine AS builder
+FROM node:20-slim
 
 WORKDIR /app
 
 # Copy package manifests
 COPY package*.json ./
 
-# Install build tools for native modules (deasync, better-sqlite3)
-RUN apk add --no-cache python3 make g++
-
-# Install dependencies
+# Install production dependencies
 RUN npm install
 
 # Copy source files
