@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  nexdesign-app:
+    build: .
+    container_name: nexdesign-production-app
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - DATABASE_URL=sqlite://server/nexdesign.db
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+    restart: always
+    volumes:
+      - ./server/nexdesign.db:/app/server/nexdesign.db

@@ -8,8 +8,12 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,400;1,600&family=Outfit:wght@200;300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,400;1,600&family=Outfit:wght@200;300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style.css">
+    <!-- Paddle Billing SDK v3 -->
+    <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+    <!-- Google Identity Services SDK -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         /* Specific Styles for Account Portal */
         body {
@@ -17,6 +21,7 @@
         }
         
         .account-card {
+            position: relative; /* Ensures z-index positioning */
             width: 480px;
             max-width: 90vw;
             background: rgba(10, 10, 12, 0.45);
@@ -29,13 +34,13 @@
             display: flex;
             flex-direction: column;
             gap: 24px;
-            z-index: 5;
+            z-index: 10; /* Stack on top of background poster */
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             animation: cardFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         .account-card.wide {
-            width: 720px;
+            width: 860px;
         }
 
         @keyframes cardFadeIn {
@@ -88,10 +93,10 @@
         }
 
         .step-dot.completed {
-            border-color: #00ffff;
-            background: #00ffff;
+            border-color: #ffffff;
+            background: #ffffff;
             color: #000000;
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.25);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
         }
 
         /* Form elements */
@@ -178,12 +183,52 @@
             border-color: rgba(255, 255, 255, 0.2);
         }
 
-        /* Plans Grid */
         .plans-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 16px;
             margin-top: 10px;
+        }
+
+        .quota-counters-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 4px;
+        }
+
+        .quota-counter {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 1px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 300;
+            letter-spacing: 0.02em;
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .quota-counter.visible {
+            opacity: 0.3;
+            transform: translateY(0);
+        }
+
+        .quota-current {
+            font-size: 16px;
+            color: #ffffff;
+        }
+
+        .quota-separator {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.25);
+            margin: 0 1px;
+        }
+
+        .quota-limit {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.25);
         }
 
         .plan-card {
@@ -196,7 +241,642 @@
             display: flex;
             flex-direction: column;
             text-align: left;
+            position: relative;
         }
+
+        .serious-badge {
+            position: absolute;
+            top: -12px;
+            left: 20px; /* Default left */
+            background: #ffffff;
+            color: #000000;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 950;
+            line-height: 1;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+            border: 1.5px solid #ffffff;
+            z-index: 10;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .alpha-badge {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: #000000;
+            color: #ffffff;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1;
+            border: 1.5px solid #ffffff;
+            z-index: 10;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .alpha-badge.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .alpha-tooltip {
+            position: absolute;
+            bottom: calc(100% + 7px);
+            left: 50%;
+            transform: translateX(-50%) translateY(4px) scale(0.95);
+            background: #18181b;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            font-family: var(--font-sans);
+            line-height: 1.2;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        .alpha-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 4px 4px 0 4px;
+            border-style: solid;
+            border-color: #18181b transparent transparent transparent;
+        }
+
+        .alpha-badge:hover .alpha-tooltip {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0) scale(1);
+        }
+
+        #cardFree .alpha-badge.active {
+            opacity: 1; /* Opaque to hide card borders behind it */
+            background: #222226; /* Solid dark grey background */
+            color: #71717a; /* Muted grey alpha text */
+            border-color: #3f3f46; /* Muted grey border */
+            box-shadow: none;
+            animation: flyFreeAlpha 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        #cardPro .alpha-badge.active {
+            opacity: 1;
+            transform: scale(1);
+            animation: flyProAlpha 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes flyFreeAlpha {
+            0% {
+                opacity: 0;
+                transform: translate(1200px, -600px) scale(0.15) rotate(360deg);
+                box-shadow: 0 0 35px rgba(255, 255, 255, 1);
+                filter: brightness(2);
+            }
+            35% {
+                opacity: 1;
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1) rotate(0deg);
+                box-shadow: none;
+                filter: brightness(1);
+            }
+        }
+
+        @keyframes flyProAlpha {
+            0% {
+                opacity: 0;
+                transform: translate(762px, -600px) scale(0.15) rotate(-360deg);
+                box-shadow: 0 0 35px rgba(255, 255, 255, 1);
+                filter: brightness(2);
+            }
+            35% {
+                opacity: 1;
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1) rotate(0deg);
+                box-shadow: 0 0 12px rgba(255, 255, 255, 0.35);
+                filter: brightness(1);
+            }
+        }
+
+        /* Serious Badge shifts to left: 50px (next to alpha-badge) when active in Alpha mode */
+        .serious-badge.active {
+            opacity: 1;
+            transform: scale(1) !important;
+            animation: badgeGlow 2s infinite ease-in-out;
+        }
+
+        .serious-badge.active.shifted {
+            left: 50px !important;
+        }
+
+        @keyframes badgeGlow {
+            0% {
+                box-shadow: 0 0 6px rgba(255, 255, 255, 0.3), 0 0 12px rgba(255, 255, 255, 0.2);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 14px rgba(255, 255, 255, 0.7), 0 0 24px rgba(255, 255, 255, 0.4);
+                transform: scale(1.04);
+            }
+            100% {
+                box-shadow: 0 0 6px rgba(255, 255, 255, 0.3), 0 0 12px rgba(255, 255, 255, 0.2);
+                transform: scale(1);
+            }
+        }
+
+        #proOriginalPrice {
+            font-size: 13px;
+            text-decoration: line-through;
+            color: var(--text-secondary);
+            opacity: 0;
+            height: 0px;
+            margin-bottom: 0px;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            line-height: 1.2;
+        }
+
+        /* Screen Shake and Price Collapse Animations */
+        .shake-dramatic {
+            animation: shakeD 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        .shake-impact {
+            animation: shakeI 0.45s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        .price-shake {
+            animation: priceS 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+        }
+
+        @keyframes shakeD {
+            10%, 90% { transform: translate3d(-3px, -1px, 0); }
+            20%, 80% { transform: translate3d(5px, 3px, 0); }
+            30%, 50%, 70% { transform: translate3d(-7px, -5px, 0); }
+            40%, 60% { transform: translate3d(7px, 5px, 0); }
+        }
+
+        @keyframes shakeI {
+            10%, 90% { transform: translate3d(-5px, 3px, 0); }
+            20%, 80% { transform: translate3d(7px, -5px, 0); }
+            30%, 50%, 70% { transform: translate3d(-9px, 7px, 0); }
+            40%, 60% { transform: translate3d(9px, -7px, 0); }
+        }
+
+        @keyframes priceS {
+            0% { transform: scale(1.4) rotate(-8deg); color: #ef4444; filter: blur(3px); }
+            50% { transform: scale(0.7) rotate(6deg); color: #f87171; filter: blur(1.5px); }
+            100% { transform: scale(1) rotate(0deg); color: #ffffff; filter: blur(0); }
+        }
+
+        /* Phase Alpha Header Animations */
+        .phase-char {
+            font-size: 130px; /* Massive poster style size */
+            font-weight: 955;
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            letter-spacing: 0.08em;
+            color: #ffffff;
+            display: inline-block;
+            opacity: 0;
+            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+            transform: translateX(400px);
+        }
+
+        .phase-char.animate {
+            animation: kineticChar 3s var(--delay) forwards cubic-bezier(0.25, 1, 0.5, 1); /* 3s total with slow fade out */
+        }
+
+        .phase-alpha-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 140px; /* Massive cursive alpha background poster */
+            color: #ffffff;
+            display: inline-block;
+            margin-left: 30px;
+            opacity: 0;
+            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+            clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
+        }
+
+        .phase-alpha-text.animate {
+            /* writeCursive writes it in 3s and fades to 0.12, then alphaGlow glimmers periodically */
+            animation: writeCursive 3s var(--delay) forwards ease-in-out,
+                       alphaGlow 6s calc(var(--delay) + 3.2s) infinite ease-in-out;
+        }
+
+        @keyframes kineticChar {
+            /* 0% to 35%: Violent sarsıntı/shake on the right side (400px away) */
+            0% {
+                transform: translateX(400px) translate(0, 0);
+                opacity: 0;
+            }
+            5% {
+                transform: translateX(400px) translate(-4px, 2px);
+                opacity: 0.35;
+            }
+            10% {
+                transform: translateX(400px) translate(4px, -3px);
+                opacity: 0.7;
+            }
+            15% {
+                transform: translateX(400px) translate(-3px, 4px);
+                opacity: 1; /* Bright white during movement */
+            }
+            20% {
+                transform: translateX(400px) translate(3px, -2px);
+                opacity: 1;
+            }
+            25% {
+                transform: translateX(400px) translate(-4px, 3px);
+            }
+            30% {
+                transform: translateX(400px) translate(2px, -4px);
+            }
+            35% {
+                transform: translateX(400px) translate(0, 0);
+            }
+            /* 35% to 50%: Snap slide rapidly from right to left (no hesitation) */
+            50% {
+                transform: translateX(0) scale(1.4) rotate(-8deg);
+                opacity: 1;
+            }
+            /* 50% to 65%: Sudden stop with hard impact snap sarsıntı */
+            65% {
+                transform: translateX(0) scale(0.85) rotate(4deg);
+                opacity: 1;
+            }
+            80% {
+                transform: translateX(0) scale(1.08) rotate(-2deg);
+                opacity: 1;
+            }
+            85% {
+                transform: translateX(0) scale(1) rotate(0);
+                opacity: 1; /* Settled, fully bright white! */
+            }
+            /* 85% to 100%: Slow fade out to watermark (yavaşça solmalı) */
+            100% {
+                transform: translateX(0) scale(1) rotate(0);
+                opacity: 0.04; /* Faded watermark opacity */
+            }
+        }
+
+        @keyframes writeCursive {
+            0% {
+                opacity: 0;
+                clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+            }
+            15% {
+                opacity: 1; /* Writes in fully bright white! */
+                clip-path: polygon(0 0, 15% 0, 15% 100%, 0 100%);
+            }
+            35% {
+                clip-path: polygon(0 0, 45% 0, 45% 100%, 0 100%);
+            }
+            60% {
+                clip-path: polygon(0 0, 70% 0, 70% 100%, 0 100%);
+            }
+            80% {
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+                opacity: 1; /* Fully written, bright white! */
+            }
+            /* 80% to 100%: Slow fade out to cursive watermark */
+            100% {
+                opacity: 0.12; /* Faded watermark cursive */
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            }
+        }
+
+        @keyframes alphaGlow {
+            0% {
+                opacity: 0.12;
+                text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+                filter: brightness(1);
+            }
+            45% {
+                opacity: 0.12;
+                text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+                filter: brightness(1);
+            }
+            /* Periodically glimmers/glows to 0.45 brightness with bright aura */
+            50% {
+                opacity: 0.5;
+                text-shadow: 0 0 15px rgba(255, 255, 255, 0.35), 0 0 30px rgba(255, 255, 255, 0.2);
+                filter: brightness(1.5);
+            }
+            55% {
+                opacity: 0.12;
+                text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+                filter: brightness(1);
+            }
+            100% {
+                opacity: 0.12;
+                text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+                filter: brightness(1);
+            }
+        }
+
+        /* Dynamic Phase Themes */
+        body[data-phase="alpha"] {
+            background-color: #09090b !important;
+        }
+        
+        body[data-phase="beta"] {
+            background-color: #141417 !important;
+        }
+        body[data-phase="beta"] .account-card {
+            background: rgba(26, 26, 31, 0.85);
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+        }
+        body[data-phase="beta"] .spotlight {
+            background: radial-gradient(circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(16, 185, 129, 0.08) 0%, rgba(6, 182, 212, 0.03) 40%, transparent 70%);
+        }
+
+        body[data-phase="standard"] {
+            background-color: #030712 !important;
+        }
+        body[data-phase="standard"] .account-card {
+            background: rgba(10, 18, 30, 0.85);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            box-shadow: 0 0 50px rgba(34, 197, 94, 0.1);
+        }
+        body[data-phase="standard"] .spotlight {
+            background: radial-gradient(circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(34, 197, 94, 0.22) 0%, rgba(16, 185, 129, 0.08) 35%, transparent 70%);
+        }
+        body[data-phase="standard"] .grid-overlay {
+            background-image: radial-gradient(rgba(34, 197, 94, 0.18) 1px, transparent 1px);
+        }
+
+        /* Phase Beta Header Animations */
+        .phase-beta-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 140px;
+            color: #10b981;
+            display: inline-block;
+            margin-left: 30px;
+            opacity: 0;
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.4), 0 0 40px rgba(6, 182, 212, 0.3);
+            clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
+        }
+
+        .phase-beta-text.animate {
+            animation: writeCursive 3s var(--delay) forwards ease-in-out,
+                       betaGlow 5s calc(var(--delay) + 3.2s) infinite ease-in-out;
+        }
+
+        @keyframes betaGlow {
+            0%, 100% {
+                opacity: 0.18;
+                text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+                filter: brightness(1);
+            }
+            50% {
+                opacity: 0.65;
+                text-shadow: 0 0 25px rgba(16, 185, 129, 0.8), 0 0 50px rgba(6, 182, 212, 0.6);
+                filter: brightness(1.5);
+            }
+        }
+
+        /* Beta Badge & Flying Animations */
+        .beta-badge {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: #064e3b;
+            color: #34d399;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1;
+            border: 1.5px solid #10b981;
+            z-index: 10;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .beta-badge:hover .alpha-tooltip {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0) scale(1);
+        }
+
+        #cardFree .beta-badge.active {
+            opacity: 1;
+            background: #182721;
+            color: #71717a;
+            border-color: #059669;
+            box-shadow: none;
+            animation: flyFreeBeta 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        #cardPro .beta-badge.active {
+            opacity: 1;
+            background: #064e3b;
+            color: #34d399;
+            border-color: #10b981;
+            box-shadow: 0 0 14px rgba(16, 185, 129, 0.4);
+            animation: flyProBeta 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes flyFreeBeta {
+            0% {
+                opacity: 0;
+                transform: translate(1200px, -600px) scale(0.15) rotate(360deg);
+                box-shadow: 0 0 35px rgba(16, 185, 129, 1);
+                filter: brightness(2);
+            }
+            35% {
+                opacity: 1;
+                box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1) rotate(0deg);
+                box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+                filter: brightness(1);
+            }
+        }
+
+        @keyframes flyProBeta {
+            0% {
+                opacity: 0;
+                transform: translate(762px, -600px) scale(0.15) rotate(-360deg);
+                box-shadow: 0 0 35px rgba(16, 185, 129, 1);
+                filter: brightness(2);
+            }
+            35% {
+                opacity: 1;
+                box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1) rotate(0deg);
+                box-shadow: 0 0 16px rgba(16, 185, 129, 0.5);
+                filter: brightness(1);
+            }
+        }
+
+        /* Ultra-Simple Vertical Badge Line Timeline */
+        .wizard-main-wrapper {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            align-items: flex-start;
+        }
+
+        .vertical-timeline-sidebar {
+            width: auto;
+            flex-shrink: 0;
+            padding: 12px 0 0 0;
+        }
+
+        .v-timeline-steps {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .v-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0.3;
+            transition: all 0.3s ease;
+        }
+
+        .v-step.active {
+            opacity: 1;
+        }
+
+        .v-step-badge {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            z-index: 2;
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+
+        .alpha-vbadge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            color: #a1a1aa;
+        }
+
+        .beta-vbadge {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1.5px solid rgba(16, 185, 129, 0.35);
+            color: #34d399;
+        }
+
+        .standard-vbadge {
+            background: rgba(59, 130, 246, 0.08);
+            border: 1.5px solid rgba(59, 130, 246, 0.35);
+            color: #60a5fa;
+        }
+
+        .v-step.active .alpha-vbadge {
+            background: #ffffff;
+            color: #09090b;
+            border-color: #ffffff;
+            box-shadow: 0 0 14px rgba(255, 255, 255, 0.4);
+            transform: scale(1.15);
+        }
+
+        .v-step.active .beta-vbadge {
+            background: #10b981;
+            color: #ffffff;
+            border-color: #34d399;
+            box-shadow: 0 0 16px rgba(16, 185, 129, 0.5);
+            transform: scale(1.15);
+        }
+
+        .v-step.active .standard-vbadge {
+            background: #3b82f6;
+            color: #ffffff;
+            border-color: #60a5fa;
+            box-shadow: 0 0 16px rgba(59, 130, 246, 0.5);
+            transform: scale(1.15);
+        }
+
+        .v-step-line {
+            width: 2px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.12);
+            margin: 6px 0;
+        }
+
+        /* User Dashboard Card */
+        .user-dashboard-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .user-dash-header { display: flex; align-items: center; gap: 12px; }
+        .user-avatar-badge {
+            width: 36px; height: 36px; border-radius: 8px;
+            background: linear-gradient(135deg, #27272a, #09090b);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 10px; color: #fff; letter-spacing: 0.5px;
+        }
+        .user-email-display { font-size: 12px; font-weight: 600; color: #ffffff; }
+        .user-id-badge { font-size: 10px; color: var(--text-secondary); font-family: monospace; }
+        .user-dash-badges { display: flex; gap: 6px; align-items: center; }
+        .user-tag-badge {
+            padding: 3px 9px; border-radius: 12px; font-size: 9px; font-weight: 700; letter-spacing: 0.5px;
+        }
+        .alpha-tag { background: rgba(255, 255, 255, 0.12); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+        .beta-tag { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid #10b981; }
+        .sub-tag { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid #3b82f6; }
 
         .plan-card:hover {
             border-color: rgba(255, 255, 255, 0.25);
@@ -205,9 +885,9 @@
         }
 
         .plan-card.selected {
-            border-color: #00ffff;
-            background: rgba(0, 255, 255, 0.02);
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+            border-color: #ffffff;
+            background: rgba(255, 255, 255, 0.02);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
         }
 
         .plan-card h4 {
@@ -247,18 +927,22 @@
             padding-left: 14px;
         }
 
+        .plan-card.selected li::before {
+            color: #ffffff;
+        }
+
         .plan-card li::before {
             content: '•';
             position: absolute;
             left: 0;
-            color: #00ffff;
+            color: rgba(255, 255, 255, 0.3);
         }
 
         /* Checkout Details */
         .checkout-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            grid-template-columns: 1.3fr 0.7fr;
+            gap: 24px;
         }
 
         .checkout-summary {
@@ -285,9 +969,9 @@
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: rgba(0, 255, 255, 0.1);
-            border: 1px solid #00ffff;
-            color: #00ffff;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #ffffff;
+            color: #ffffff;
             font-size: 28px;
             display: flex;
             align-items: center;
@@ -297,18 +981,18 @@
         }
 
         @keyframes pulseSuccess {
-            0% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); }
-            100% { box-shadow: 0 0 25px rgba(0, 255, 255, 0.45); }
+            0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); }
+            100% { box-shadow: 0 0 25px rgba(255, 255, 255, 0.2); }
         }
 
         /* Cohort Progress */
         .cohort-banner {
-            background: rgba(212, 175, 55, 0.05);
-            border: 1px solid rgba(212, 175, 55, 0.15);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 8px;
             padding: 12px;
             font-size: 11px;
-            color: #d4af37;
+            color: #ffffff;
             text-align: left;
             margin-bottom: 12px;
             line-height: 1.4;
@@ -324,7 +1008,7 @@
 
         .cohort-fill {
             height: 100%;
-            background: #d4af37;
+            background: #ffffff;
             width: 82%;
         }
 
@@ -337,6 +1021,140 @@
 
         .wizard-step.active {
             display: flex;
+        }
+        /* Auth Mode Switcher Tabs */
+        .auth-tab-group {
+            display: flex;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 3px;
+            margin-bottom: 12px;
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 8px 12px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .auth-tab.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Password Strength Meter */
+        .strength-meter-box {
+            display: flex;
+            gap: 4px;
+            margin-top: 6px;
+            margin-bottom: 4px;
+        }
+        .strength-segment {
+            flex: 1;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: background 0.3s ease;
+        }
+        .strength-segment.weak { background: #ef4444; }
+        .strength-segment.medium { background: #f59e0b; }
+        .strength-segment.strong { background: #10b981; }
+
+        .password-rules {
+            display: flex;
+            gap: 10px;
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        .rule-item {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            opacity: 0.6;
+            transition: opacity 0.2s ease;
+        }
+        .rule-item.valid {
+            color: #34d399;
+            opacity: 1;
+            font-weight: 500;
+        }
+
+        /* Input Password Eye Toggle */
+        .password-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-input-wrapper .form-input {
+            padding-right: 36px;
+            width: 100%;
+        }
+        .password-toggle-eye {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 13px;
+            padding: 4px;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+        .password-toggle-eye:hover {
+            opacity: 1;
+            color: #ffffff;
+        }
+
+        /* OTP 6-Digit Row */
+        .otp-boxes-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 12px 0;
+        }
+        .otp-box {
+            width: 44px;
+            height: 52px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            font-family: monospace;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            color: #ffffff;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .otp-box:focus {
+            border-color: #ffffff;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Legal Consent Box */
+        .legal-consent-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            margin-top: 4px;
+        }
+        .legal-consent-container input[type="checkbox"] {
+            margin-top: 2px;
+            accent-color: #ffffff;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -356,7 +1174,66 @@
     </header>
 
     <!-- Main Content Area -->
-    <div class="main-container">
+    <div class="main-container" style="flex-direction: column; gap: 24px;">
+        <!-- Phase Alpha Animated Header (shown in Alpha mode) -->
+        <div id="phaseAlphaHeader" style="display:none; position:absolute; top:6%; left:50%; transform:translateX(-50%); z-index:1; pointer-events:none; align-items:center; justify-content:center; gap:8px; height:180px; overflow:visible; white-space:nowrap;">
+            <div style="display:flex; gap:3px;">
+                <span class="phase-char" style="--delay: 0.15s;">P</span>
+                <span class="phase-char" style="--delay: 0.35s;">H</span>
+                <span class="phase-char" style="--delay: 0.55s;">A</span>
+                <span class="phase-char" style="--delay: 0.75s;">S</span>
+                <span class="phase-char" style="--delay: 0.95s;">E</span>
+            </div>
+            <span class="phase-alpha-text" style="--delay: 1.25s;">alpha</span>
+        </div>
+
+        <!-- Phase Beta Animated Header (shown in Beta mode) -->
+        <div id="phaseBetaHeader" style="display:none; position:absolute; top:6%; left:50%; transform:translateX(-50%); z-index:1; pointer-events:none; align-items:center; justify-content:center; gap:8px; height:180px; overflow:visible; white-space:nowrap;">
+            <div style="display:flex; gap:3px;">
+                <span class="phase-char" style="--delay: 0.15s; color: #10b981;">P</span>
+                <span class="phase-char" style="--delay: 0.35s; color: #10b981;">H</span>
+                <span class="phase-char" style="--delay: 0.55s; color: #10b981;">A</span>
+                <span class="phase-char" style="--delay: 0.75s; color: #10b981;">S</span>
+                <span class="phase-char" style="--delay: 0.95s; color: #10b981;">E</span>
+            </div>
+            <span class="phase-beta-text" style="--delay: 1.25s;">beta</span>
+        </div>
+
+        <!-- User License & Account Dashboard Card -->
+        <div id="userDashboardCard" class="user-dashboard-card" style="display:none; max-width: 1040px; margin: 0 auto 16px auto;">
+            <div class="user-dash-header">
+                <div class="user-avatar-badge">NEX</div>
+                <div style="display:flex; flex-direction:column; gap:2px;">
+                    <div class="user-email-display" id="dashUserEmail">designer@nex3dcore.com</div>
+                    <div class="user-id-badge" id="dashUserId">MEMBER ID: #00015</div>
+                </div>
+            </div>
+            <div class="user-dash-badges">
+                <span class="user-tag-badge alpha-tag" id="dashAlphaTag" style="display:none;">🚀 ALPHA MİMAR</span>
+                <span class="user-tag-badge beta-tag" id="dashBetaTag" style="display:none;">⚡ BETA MİMAR</span>
+                <span class="user-tag-badge sub-tag" id="dashSubTag">✓ HESAP AKTİF</span>
+            </div>
+        </div>
+
+        <!-- Wizard Main Layout (Vertical Phase Sidebar + Card Container) -->
+        <div class="wizard-main-wrapper">
+            <!-- Ultra-Simple Vertical Badge Line Timeline -->
+            <div class="vertical-timeline-sidebar" id="phaseTimeline">
+                <div class="v-timeline-steps">
+                    <div class="v-step alpha-vstep" id="timelineAlpha" title="Phase Alpha">
+                        <div class="v-step-badge alpha-vbadge">α</div>
+                        <div class="v-step-line"></div>
+                    </div>
+                    <div class="v-step beta-vstep active" id="timelineBeta" title="Phase Beta">
+                        <div class="v-step-badge beta-vbadge">β</div>
+                        <div class="v-step-line"></div>
+                    </div>
+                    <div class="v-step standard-vstep" id="timelineStandard" title="Sade Sürüm">
+                        <div class="v-step-badge standard-vbadge">⚡</div>
+                    </div>
+                </div>
+            </div>
+
         <div class="account-card" id="cardContainer">
             <!-- Step Indicator -->
             <div class="step-indicator">
@@ -366,14 +1243,112 @@
                 <div class="step-dot" id="dot4">✓</div>
             </div>
 
-            <!-- STEP 1: REGISTRATION -->
+            <!-- STEP 1: PLAN SELECT -->
             <div class="wizard-step active" id="step1">
-                <div>
-                    <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">Hesabınızı Oluşturun</h2>
-                    <p style="font-size: 11px; color: var(--text-secondary);">NexDesign lisansınızı yönetmek için yeni bir hesap açın.</p>
+                <!-- Standard Step 1 Header (hidden in Alpha/Beta mode when headers are active) -->
+                <div id="standardStep1Header">
+                    <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">Planınızı Seçin</h2>
+                    <p style="font-size: 11px; color: var(--text-secondary);">İhtiyaçlarınıza uygun bir lisans türü belirleyin.</p>
                 </div>
 
-                <button class="btn-primary google-btn" onclick="nextStep()">
+                <div class="plans-grid">
+                    <!-- Free (Curious) -->
+                    <div class="plan-card" id="cardFree" onclick="selectPlan('free')" style="padding: 28px 20px 24px 20px;">
+                        <div class="alpha-badge">
+                            α
+                            <div class="alpha-tooltip">potential %70 off</div>
+                        </div>
+                        <div class="beta-badge">
+                            β
+                            <div class="alpha-tooltip">potential 40% off</div>
+                        </div>
+                        <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 24px;">
+                            for curious users
+                        </div>
+                        <div class="price" style="font-size: 40px; font-weight: 400; color: #ffffff; line-height: 1; margin-bottom: 12px;">
+                            Free
+                        </div>
+                        <div style="font-size: 11px; color: var(--text-secondary); opacity: 0.7; display: flex; flex-direction: column; gap: 6px; line-height: 1.4;">
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span style="font-size: 8px;">•</span>
+                                <span>limited time</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pro (Serious) -->
+                    <div class="plan-card" id="cardPro" onclick="selectPlan('pro')" style="padding: 28px 20px 24px 20px;">
+                        <div class="alpha-badge">
+                            α
+                            <div class="alpha-tooltip">70% off (lifetime)</div>
+                        </div>
+                        <div class="beta-badge">
+                            β
+                            <div class="alpha-tooltip">40% off (lifetime)</div>
+                        </div>
+                        <!-- Glowing animated serious badge, positioned on top-right -->
+                        <div class="serious-badge">S</div>
+
+                        <div style="font-size: 10px; color: #ffffff; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 24px;">
+                            serious user
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 12px; height: 58px; justify-content: flex-start;">
+                            <div id="proOriginalPrice">
+                                $139 <span style="font-size: 10px; margin-left: 2px; font-weight: 400;">usd/month</span>
+                            </div>
+                            <div class="price" id="proPriceDisplay" style="font-size: 40px; font-weight: 400; color: #ffffff; line-height: 1; margin-bottom: 0; display: flex; align-items: baseline;">
+                                $139<span class="price-suffix" style="font-size: 11px; color: var(--text-secondary); font-weight: 400; margin-left: 4px;">usd/month</span>
+                            </div>
+                        </div>
+                        <div style="font-size: 11px; color: var(--text-secondary); opacity: 0.7; display: flex; flex-direction: column; gap: 6px; line-height: 1.4;">
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span style="font-size: 8px;">•</span>
+                                <span>limitless time</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span style="font-size: 8px;">•</span>
+                                <span>serious tag</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quota Counters Row -->
+                <div class="quota-counters-row">
+                    <div class="quota-counter" id="freeQuotaCounter">
+                        <span class="quota-current" id="freeQuotaCurrent">0</span>
+                        <span class="quota-separator">/</span>
+                        <span class="quota-limit" id="freeQuotaLimit">50</span>
+                    </div>
+                    <div class="quota-counter" id="proQuotaCounter">
+                        <span class="quota-current" id="proQuotaCurrent">0</span>
+                        <span class="quota-separator">/</span>
+                        <span class="quota-limit" id="proQuotaLimit">100</span>
+                    </div>
+                </div>
+
+                <button class="btn-primary" id="step1ConfirmBtn" style="margin-top: 16px; width: 100%; display: none; position: relative; z-index: 10; cursor: pointer;">
+                    Devam Et
+                </button>
+            </div>
+
+            <!-- STEP 2: REGISTRATION / LOGIN DUAL MODE -->
+            <div class="wizard-step" id="step2">
+                <div>
+                    <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;" id="authHeaderTitle">Hesabınızı Oluşturun</h2>
+                    <p style="font-size: 11px; color: var(--text-secondary);" id="authHeaderSub">NexDesign masaüstü lisansınızı yönetmek için yeni hesap açın.</p>
+                </div>
+
+                <!-- Mode Switcher Tabs -->
+                <div class="auth-tab-group">
+                    <div class="auth-tab active" id="tabRegister" onclick="setAuthMode('register')">Yeni Hesap Aç</div>
+                    <div class="auth-tab" id="tabLogin" onclick="setAuthMode('login')">Mevcut Hesaba Giriş Yap</div>
+                </div>
+
+                <div id="quotaWarning" class="cohort-banner" style="display:none; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); color:#ffffff; margin-bottom:0px;"></div>
+
+                <!-- Google Sign-In Button -->
+                <button class="btn-primary google-btn" id="googleSignInBtn" onclick="handleGoogleSignIn()">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.136 4.114-3.555 0-6.437-2.883-6.437-6.437 0-3.555 2.882-6.437 6.437-6.437 1.488 0 2.855.51 3.94 1.353l3.056-3.055C19.121 2.37 15.932 1.2 12.24 1.2c-5.965 0-10.8 4.835-10.8 10.8 0 5.965 4.835 10.8 10.8 10.8 6.22 0 10.9-4.382 10.9-10.8 0-.675-.06-1.32-.175-1.915H12.24z"/>
                     </svg>
@@ -382,117 +1357,151 @@
 
                 <div style="display: flex; align-items: center; justify-content: center; gap: 10px; opacity: 0.5; font-size: 10px;">
                     <hr style="flex-grow: 1; border: none; border-top: 1px solid rgba(255,255,255,0.15);" />
-                    <span>veya e-posta ile</span>
+                    <span id="dividerText">veya e-posta ile kayıt olun</span>
                     <hr style="flex-grow: 1; border: none; border-top: 1px solid rgba(255,255,255,0.15);" />
                 </div>
 
-                <div class="form-group">
-                    <label for="reg-email">E-Posta Adresi</label>
-                    <input type="email" id="reg-email" class="form-input" placeholder="isim@mimar.com" />
+                <!-- Registration Form -->
+                <div id="registerFormContainer">
+                    <div class="form-group">
+                        <label for="reg-email">E-Posta Adresi</label>
+                        <input type="email" id="reg-email" class="form-input" placeholder="isim@mimar.com" autocomplete="email" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-password">Şifre Oluşturun</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="reg-password" class="form-input" placeholder="En az 8 karakter, 1 büyük harf, 1 rakam" oninput="updatePasswordStrengthUI()" autocomplete="new-password" />
+                            <button type="button" class="password-toggle-eye" onclick="togglePasswordVisibility('reg-password', this)">👁️</button>
+                        </div>
+                        
+                        <!-- Strength Meter Bar -->
+                        <div class="strength-meter-box">
+                            <div class="strength-segment" id="strengthSeg1"></div>
+                            <div class="strength-segment" id="strengthSeg2"></div>
+                            <div class="strength-segment" id="strengthSeg3"></div>
+                        </div>
+                        <div class="password-rules">
+                            <span class="rule-item" id="ruleLen">✓ Min 8 Karakter</span>
+                            <span class="rule-item" id="ruleUpper">✓ 1 Büyük Harf</span>
+                            <span class="rule-item" id="ruleNum">✓ 1 Rakam</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-password-confirm">Şifre Tekrarı</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="reg-password-confirm" class="form-input" placeholder="Şifrenizi tekrar girin" oninput="checkPasswordMatchUI()" autocomplete="new-password" />
+                            <button type="button" class="password-toggle-eye" onclick="togglePasswordVisibility('reg-password-confirm', this)">👁️</button>
+                        </div>
+                        <div id="matchFeedback" style="font-size: 10px; margin-top: 3px; display: none;"></div>
+                    </div>
+
+                    <!-- Legal Consent Box (Must NOT be pre-checked by default for GDPR/KVKK compliance) -->
+                    <div class="legal-consent-container">
+                        <input type="checkbox" id="legalConsentCheckbox" />
+                        <label for="legalConsentCheckbox">
+                            <a href="#" style="color: #ffffff; text-decoration: underline;">Kullanım Koşulları</a> ve <a href="#" style="color: #ffffff; text-decoration: underline;">KVKK Aydınlatma Metnini</a> okudum, kabul ediyorum.
+                        </label>
+                    </div>
+
+                    <div style="display:flex; gap:12px; margin-top: 14px;">
+                        <button class="btn-primary btn-secondary" onclick="goToStep(1)">Geri</button>
+                        <button class="btn-primary" onclick="handleRegistrationSubmit()">Hesap Oluştur ve Devam Et</button>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="reg-password">Şifre</label>
-                    <input type="password" id="reg-password" class="form-input" placeholder="••••••••" />
-                </div>
+                <!-- Login Form (Hidden by default) -->
+                <div id="loginFormContainer" style="display: none;">
+                    <div class="form-group">
+                        <label for="login-email">E-Posta Adresi</label>
+                        <input type="email" id="login-email" class="form-input" placeholder="isim@mimar.com" autocomplete="email" />
+                    </div>
 
-                <button class="btn-primary" onclick="handleRegistrationSubmit()">Devam Et</button>
+                    <div class="form-group">
+                        <label for="login-password">Şifre</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="login-password" class="form-input" placeholder="Şifreniz" autocomplete="current-password" />
+                            <button type="button" class="password-toggle-eye" onclick="togglePasswordVisibility('login-password', this)">👁️</button>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:12px; margin-top: 14px;">
+                        <button class="btn-primary btn-secondary" onclick="goToStep(1)">Geri</button>
+                        <button class="btn-primary" onclick="handleLoginSubmit()">Giriş Yap ve Devam Et</button>
+                    </div>
+                </div>
             </div>
 
-            <!-- STEP 2: PLAN SELECT -->
-            <div class="wizard-step" id="step2">
+            <!-- STEP 2B: OTP EMAIL VERIFICATION -->
+            <div class="wizard-step" id="step2B">
                 <div>
-                    <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">Planınızı Seçin</h2>
-                    <p style="font-size: 11px; color: var(--text-secondary);">İhtiyaçlarınıza uygun bir lisans türü belirleyin.</p>
-                </div>
-
-                <!-- Cohort discount banner -->
-                <div class="cohort-banner">
-                    <div style="display:flex; justify-content:space-between; font-weight:bold;">
-                        <span>🔥 ALFA SÜRÜMÜ %70 ÖMÜR BOYU İNDİRİMİ</span>
-                        <span>82 / 100</span>
-                    </div>
-                    <div class="cohort-progress">
-                        <div class="cohort-fill"></div>
-                    </div>
-                    <p style="font-size: 9px; margin-top: 6px; opacity: 0.85;">
-                        İlk 100 kullanıcımıza özel, Premium Pro ömür boyu **$41.70/ay** ($139 yerine). Son 18 koltuk!
+                    <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">E-Posta Adresinizi Doğrulayın</h2>
+                    <p style="font-size: 11px; color: var(--text-secondary);">
+                        <strong id="otpEmailTarget" style="color:#ffffff;"></strong> adresine gönderilen 6 haneli güvenlik kodunu girin.
                     </p>
                 </div>
 
-                <div class="plans-grid">
-                    <!-- Free -->
-                    <div class="plan-card selected" id="cardFree" onclick="selectPlan('free')">
-                        <h4>Indie Free</h4>
-                        <div class="price">$0<span>/ay</span></div>
-                        <ul>
-                          <li>90dk günlük kullanım</li>
-                          <li>Ayda 2 tam gün</li>
-                          <li>Standart motor</li>
-                        </ul>
-                    </div>
+                <div class="otp-boxes-row" id="otpInputRow" onpaste="handleOTPPaste(event)">
+                    <input type="text" maxlength="1" class="otp-box" id="otp1" oninput="handleOTPInput(1)" onkeydown="handleOTPKeydown(1, event)" onpaste="handleOTPPaste(event)" />
+                    <input type="text" maxlength="1" class="otp-box" id="otp2" oninput="handleOTPInput(2)" onkeydown="handleOTPKeydown(2, event)" onpaste="handleOTPPaste(event)" />
+                    <input type="text" maxlength="1" class="otp-box" id="otp3" oninput="handleOTPInput(3)" onkeydown="handleOTPKeydown(3, event)" onpaste="handleOTPPaste(event)" />
+                    <input type="text" maxlength="1" class="otp-box" id="otp4" oninput="handleOTPInput(4)" onkeydown="handleOTPKeydown(4, event)" onpaste="handleOTPPaste(event)" />
+                    <input type="text" maxlength="1" class="otp-box" id="otp5" oninput="handleOTPInput(5)" onkeydown="handleOTPKeydown(5, event)" onpaste="handleOTPPaste(event)" />
+                    <input type="text" maxlength="1" class="otp-box" id="otp6" oninput="handleOTPInput(6)" onkeydown="handleOTPKeydown(6, event)" onpaste="handleOTPPaste(event)" />
+                </div>
 
-                    <!-- Student -->
-                    <div class="plan-card" id="cardStudent" onclick="selectPlan('student')">
-                        <h4>Öğrenci</h4>
-                        <div class="price">$0<span>/öğrenci</span></div>
-                        <ul>
-                          <li>200dk günlük kullanım</li>
-                          <li>Ayda 7 tam gün</li>
-                          <li>Okul e-postası</li>
-                        </ul>
-                    </div>
+                <div id="otpDevNotice" class="cohort-banner" style="display:none; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.12); color:#ffffff; padding: 10px; border-radius: 6px; font-size: 11px; text-align: center;">
+                    🔑 <strong>Geliştirici Test Kodu:</strong> <span id="otpDevCode" style="font-family:monospace; font-size:14px; font-weight:700; color:#34d399;">------</span>
+                </div>
 
-                    <!-- Pro -->
-                    <div class="plan-card" id="cardPro" onclick="selectPlan('pro')" style="border-color: rgba(212,175,55,0.15)">
-                        <h4 style="color:#d4af37;">Premium Pro</h4>
-                        <div class="price" style="color:#d4af37;">$41.70<span>/ay</span></div>
-                        <ul>
-                          <li>Sınırsız Süre</li>
-                          <li>BIM İşbirliği</li>
-                          <li>Tüm Cihazlar</li>
-                        </ul>
-                    </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--text-secondary); margin: 4px 0;">
+                    <span>Kod ulaşmadı mı?</span>
+                    <button type="button" id="resendOtpBtn" onclick="handleResendOTP()" style="background:none; border:none; color:#ffffff; cursor:pointer; font-size:11px; font-weight:600; text-decoration:underline;">
+                        Kodu Yeniden Gönder (<span id="cooldownTimer">00:45</span>)
+                    </button>
                 </div>
 
                 <div style="display:flex; gap:12px; margin-top: 8px;">
-                    <button class="btn-primary btn-secondary" onclick="prevStep()">Geri</button>
-                    <button class="btn-primary" onclick="handlePlanSelectionSubmit()">Planı Onayla</button>
+                    <button class="btn-primary btn-secondary" onclick="goToStep(2)">Geri / E-postayı Değiştir</button>
+                    <button class="btn-primary" onclick="handleVerifyOTP()">Doğrula ve Devam Et</button>
                 </div>
             </div>
 
-            <!-- STEP 3: CHECKOUT (Simulated Paddle Credit Card Flow) -->
+            <!-- STEP 3: CHECKOUT (Paddle Inline / Simulated Checkout) -->
             <div class="wizard-step" id="step3">
-                <div>
-                    <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">Aboneliği Tamamlayın</h2>
-                    <p style="font-size: 11px; color: var(--text-secondary);">Paddle güvenli ödeme arayüzü ile işlem yapın.</p>
-                </div>
 
                 <div class="checkout-grid" id="checkoutLayout">
-                    <!-- Left: Card input form -->
-                    <div style="display: flex; flex-direction: column; gap: 14px;">
-                        <div class="form-group">
-                            <label>Kart Numarası</label>
-                            <input type="text" class="form-input" placeholder="4242 4242 4242 4242" id="cc-num" />
-                        </div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <!-- Left: Inline Paddle form container / Simulated Card form -->
+                    <div style="width: 100%;">
+                        <!-- Real Paddle form loads here -->
+                        <div id="paddle-checkout-container" class="paddle-checkout-container" style="width:100%; min-height:360px;"></div>
+                        
+                        <!-- Fallback Simulated form -->
+                        <div style="display: flex; flex-direction: column; gap: 14px;" id="simulatedCardForm">
                             <div class="form-group">
-                                <label>SKT</label>
-                                <input type="text" class="form-input" placeholder="AA / YY" id="cc-exp" />
+                                <label>Kart Numarası</label>
+                                <input type="text" class="form-input" placeholder="4242 4242 4242 4242" id="cc-num" />
                             </div>
-                            <div class="form-group">
-                                <label>CVC</label>
-                                <input type="password" class="form-input" placeholder="•••" id="cc-cvc" />
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                                <div class="form-group">
+                                    <label>SKT</label>
+                                    <input type="text" class="form-input" placeholder="AA / YY" id="cc-exp" />
+                                </div>
+                                <div class="form-group">
+                                    <label>CVC</label>
+                                    <input type="password" class="form-input" placeholder="•••" id="cc-cvc" />
+                                </div>
                             </div>
+                            <button class="btn-primary" style="margin-top:10px;" onclick="handlePaymentSubmit()" id="payBtn">Ödeme Yap (Simüle)</button>
                         </div>
                     </div>
 
                     <!-- Right: Summary -->
-                    <div class="checkout-summary">
+                    <div class="checkout-summary" style="height:fit-content;">
                         <div>
                             <span style="font-size: 10px; text-transform: uppercase; color: var(--text-secondary); font-weight:600;">Seçilen Plan</span>
-                            <h3 id="summaryPlanName" style="font-size: 16px; margin: 4px 0 8px 0; color:#d4af37;">Premium Pro</h3>
-                            <p style="font-size: 11px; color: var(--text-secondary); line-height: 1.4;">Ömür boyu indirimli fiyat uygulanmıştır.</p>
+                            <h3 id="summaryPlanName" style="font-size: 16px; margin: 4px 0 0 0; color:#ffffff;">Premium Pro</h3>
                         </div>
                         <div style="border-top:1px solid rgba(255,255,255,0.06); padding-top:12px; display:flex; justify-content:space-between; align-items:baseline;">
                             <span style="font-size:12px; font-weight:600;">Toplam:</span>
@@ -501,9 +1510,8 @@
                     </div>
                 </div>
 
-                <div style="display:flex; gap:12px;">
+                <div style="display:flex; gap:12px; margin-top: 12px;">
                     <button class="btn-primary btn-secondary" onclick="prevStep()">Geri</button>
-                    <button class="btn-primary" onclick="handlePaymentSubmit()" id="payBtn">Ödeme Yap ve Lisansı Aktifleştir</button>
                 </div>
             </div>
 
@@ -516,28 +1524,32 @@
                         Kaydınız başarıyla tamamlandı. Artık NexDesign masaüstü uygulamasını açarak oluşturduğunuz hesap bilgileriyle giriş yapabilirsiniz.
                     </p>
                     
-                    <div style="background: rgba(0, 255, 255, 0.03); border: 1px solid rgba(0, 255, 255, 0.08); border-radius: 8px; padding: 12px 20px; text-align: left; width: 100%; margin-top: 10px; font-size:11px;">
-                        <strong>Giriş Bilgileriniz:</strong><br/>
-                        • E-posta: <code id="successEmail"></code><br/>
-                        • Plan Türü: <code id="successPlan"></code><br/>
-                        • Durum: <span style="color:#00ffff; font-weight:bold;">AKTiF</span>
+                    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 8px; padding: 14px 20px; text-align: left; width: 100%; margin-top: 10px; font-size:11px; display:flex; flex-direction:column; gap:6px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:8px; margin-bottom:4px;">
+                            <strong>Giriş Bilgileriniz:</strong>
+                            <span id="successBadge" style="padding:3px 10px; border-radius:12px; font-weight:700; font-size:10px; letter-spacing:0.5px;">🚀 ALPHA MİMAR</span>
+                        </div>
+                        <div>• <strong>Üye Sırası:</strong> <span id="successMemberNo" style="color:#34d399; font-weight:700; font-family:monospace;">#1</span></div>
+                        <div>• <strong>E-posta:</strong> <code id="successEmail"></code></div>
+                        <div>• <strong>Plan Türü:</strong> <code id="successPlan"></code></div>
+                        <div>• <strong>Faturalama:</strong> <code id="successBilling"></code></div>
+                        <div>• <strong>Lisans Durumu:</strong> <span style="color:#34d399; font-weight:bold;">AKTİF 🟢</span></div>
                     </div>
 
-                    <button class="btn-primary" style="margin-top: 10px;" onclick="window.close()">Portal Kapat</button>
+                    <div style="display:flex; gap:10px; margin-top:10px; width:100%;">
+                        <button class="btn-primary btn-secondary" style="flex:1;" onclick="openCustomerPortal()" id="portalBtn">Aboneliğimi Yönet</button>
+                        <button class="btn-primary" style="flex:1; background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#ffffff;" onclick="handleLogout()">Oturumu Kapat</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </div> <!-- /wizard-main-wrapper -->
+</div>
 
     <!-- Footer Information -->
-    <footer class="footer">
-        <div class="footer-left">
-            <span>© 2026 NEX Design Lab.</span>
-        </div>
-        <div class="footer-right">
-            <span>Milano / Istanbul</span>
-        </div>
     </footer>
+
+
 
     <script>
         // Interactive Mouse Spotlight
@@ -548,129 +1560,1425 @@
             document.documentElement.style.setProperty('--spotlight-y', `${y}px`);
         });
 
-        // Wizard State
-        let currentStepNum = 1;
-        let selectedPlan = 'free';
-        let userEmail = '';
+        // ==========================================
+        // CONFIGURATION
+        // ==========================================
 
-        function updateStepUI() {
-            // Hide all steps
-            document.querySelectorAll('.wizard-step').forEach(step => step.classList.remove('active'));
-            // Show current step
-            document.getElementById(`step${currentStepNum}`).classList.add('active');
+        // Backend server URL
+        const SERVER_URL = 'http://localhost:3001';
 
-            // Manage Dots
-            for(let i=1; i<=4; i++) {
-                const dot = document.getElementById(`dot${i}`);
-                if (i < currentStepNum) {
-                    dot.classList.add('completed');
-                    dot.classList.remove('active');
-                } else if (i === currentStepNum) {
-                    dot.classList.add('active');
-                    dot.classList.remove('completed');
+        // PADDLE CLIENT-SIDE CONFIGURATION
+        // Fill these after creating products in your Paddle Sandbox Dashboard.
+        const PADDLE_CLIENT_TOKEN = 'test_c1b7f396e4627b7d8c891f4779d'; // e.g. 'test_snd_clt_...'
+        const PADDLE_ENVIRONMENT = 'sandbox';
+
+        // Price IDs per plan and billing period
+        // Set these after running the Paddle "Create product catalog" prompt in your Dashboard.
+        const PADDLE_PRICE_IDS = {
+            alpha: {
+                month: 'pri_01kxhzcvcktvh9984ff3tfgnqy',
+                year:  'pri_01kxhzcvk03k1b86tjg34nrbn7'
+            },
+            beta: {
+                month: 'pri_01kxjt3n422r4hv8c0hqefxwer',
+                year:  'pri_01kxjt3nc2hm0nk3p764gt75d5'
+            },
+            standard: {
+                month: 'pri_01kxk9609at6xqb0c0wahtvghv',
+                year:  'pri_01kxk960g9mz4xzk3j44skynn9'
+            }
+        };
+
+        let paddleInitialized = false;
+        if (typeof Paddle !== 'undefined' && PADDLE_CLIENT_TOKEN !== 'vendor_client_token_placeholder') {
+            try {
+                if (PADDLE_ENVIRONMENT === 'sandbox') {
+                    Paddle.Environment.set('sandbox');
+                }
+                Paddle.Initialize({ token: PADDLE_CLIENT_TOKEN });
+                paddleInitialized = true;
+                console.log("Paddle SDK başlatıldı. Ortam: " + PADDLE_ENVIRONMENT);
+            } catch (e) {
+                console.error("Paddle başlatılamadı:", e);
+                alert("Paddle SDK başlatma hatası: " + e.message);
+            }
+        }
+
+        // ==========================================
+        // BILLING TOGGLE
+        // ==========================================
+
+        let billingPeriod = 'month'; // 'month' or 'year'
+
+        window.toggleBilling = function() {
+            const thumb   = document.getElementById('billingToggleThumb');
+            const monthly = document.getElementById('monthlyLabel');
+            const yearly  = document.getElementById('yearlyLabel');
+
+            if (billingPeriod === 'month') {
+                billingPeriod = 'year';
+                thumb.style.transform = 'translateX(22px)';
+                monthly.style.color = 'var(--text-secondary)';
+                yearly.style.color  = '#ffffff';
+            } else {
+                billingPeriod = 'month';
+                thumb.style.transform = 'translateX(0)';
+                monthly.style.color = '#ffffff';
+                yearly.style.color  = 'var(--text-secondary)';
+            }
+            updatePricingCardsUI();
+            
+            const summaryPriceEl = document.getElementById('summaryPrice');
+            if (summaryPriceEl) {
+                const price = billingPeriod === 'year' ? '$1390' : '$139';
+                const label = billingPeriod === 'year' ? '/yıl' : '/ay';
+                summaryPriceEl.innerHTML = `${price}<span style="font-size:10px; font-weight:400; color:var(--text-secondary);">${label}</span>`;
+            }
+        };
+
+        function setInspectorStatus(msg) {
+            console.log("[Status]", msg);
+        }
+
+        // ==========================================
+        // EARLY STAGE PHASES & QUOTAS
+        // ==========================================
+
+        // ==========================================
+        // MODULAR PHASE MANAGER SYSTEM (PhaseController)
+        // ==========================================
+
+        class BasePhaseModule {
+            constructor(name) {
+                this.name = name;
+                this.timerIds = [];
+            }
+            addTimeout(fn, delay) {
+                const id = setTimeout(fn, delay);
+                this.timerIds.push(id);
+                return id;
+            }
+            clearTimers() {
+                this.timerIds.forEach(id => clearTimeout(id));
+                this.timerIds = [];
+            }
+            init(ctx) {}
+            destroy(ctx) {
+                this.clearTimers();
+            }
+            onCardClick(card, plan, ctx) {}
+            updatePricing(ctx) {}
+        }
+
+        class AlphaPhaseModule extends BasePhaseModule {
+            constructor() { super('alpha'); this.animationTriggered = false; }
+
+            init(ctx) {
+                document.body.setAttribute('data-phase', 'alpha');
+                const alphaHeader = document.getElementById('phaseAlphaHeader');
+                const betaHeader = document.getElementById('phaseBetaHeader');
+                const step1Header = document.getElementById('standardStep1Header');
+                const seriousBadge = document.querySelector('.serious-badge');
+                
+                if (step1Header) step1Header.style.display = 'none';
+                if (betaHeader) betaHeader.style.display = 'none';
+                if (alphaHeader) {
+                    alphaHeader.style.display = 'none';
+                    alphaHeader.querySelectorAll('.phase-char, .phase-alpha-text').forEach(c => {
+                        c.classList.remove('animate');
+                        c.style.opacity = '0';
+                    });
+                }
+                document.querySelectorAll('.beta-badge').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.alpha-badge').forEach(b => b.classList.remove('active'));
+                if (seriousBadge) {
+                    seriousBadge.classList.add('active');
+                    seriousBadge.classList.remove('shifted');
+                }
+                this.updatePricing(ctx);
+                this.updateTimelineUI('alpha');
+            }
+
+            destroy(ctx) {
+                super.destroy(ctx);
+                this.animationTriggered = false;
+                const alphaHeader = document.getElementById('phaseAlphaHeader');
+                if (alphaHeader) alphaHeader.style.display = 'none';
+                const overlay = document.getElementById('fullscreenAlphaOverlay');
+                if (overlay) { overlay.style.display = 'none'; overlay.style.opacity = '0'; }
+                document.querySelectorAll('.alpha-badge').forEach(b => b.classList.remove('active'));
+            }
+
+            onCardClick(card, plan, ctx) {
+                if (!this.animationTriggered) {
+                    this.animationTriggered = true;
+                    this.triggerAnimation();
                 } else {
-                    dot.classList.remove('active', 'completed');
+                    const btn = document.getElementById('step1ConfirmBtn');
+                    if (btn) btn.style.display = 'block';
                 }
             }
 
-            // Adjust width of card container based on step
+            triggerAnimation() {
+                const cardContainer = document.getElementById('cardContainer');
+                const priceEl = document.getElementById('proPriceDisplay');
+                const origPriceEl = document.getElementById('proOriginalPrice');
+                const alphaHeader = document.getElementById('phaseAlphaHeader');
+                const badgeEls = document.querySelectorAll('.alpha-badge');
+                const seriousBadge = document.querySelector('.serious-badge');
+                const overlay = document.getElementById('fullscreenAlphaOverlay');
+                const giantAlpha = document.getElementById('giantAlphaBadge');
+
+                if (priceEl) priceEl.innerHTML = '$139<span class="price-suffix" style="font-size: 11px; color: var(--text-secondary); font-weight: 400; margin-left: 4px;">usd/month</span>';
+                if (origPriceEl) { origPriceEl.style.opacity = '0'; origPriceEl.style.height = '0px'; origPriceEl.style.marginBottom = '0px'; }
+                badgeEls.forEach(b => b.classList.remove('active'));
+                if (seriousBadge) { seriousBadge.classList.add('active'); seriousBadge.classList.remove('shifted'); }
+
+                if (alphaHeader) {
+                    alphaHeader.style.display = 'flex';
+                    alphaHeader.querySelectorAll('.phase-char, .phase-alpha-text').forEach(c => {
+                        c.classList.remove('animate');
+                        c.style.opacity = '0';
+                        void c.offsetWidth;
+                    });
+                }
+
+                if (cardContainer) {
+                    cardContainer.classList.remove('shake-dramatic', 'shake-impact');
+                    void cardContainer.offsetWidth;
+                    cardContainer.classList.add('shake-dramatic');
+                }
+
+                this.addTimeout(() => {
+                    if (alphaHeader) {
+                        alphaHeader.querySelectorAll('.phase-char, .phase-alpha-text').forEach(c => c.classList.add('animate'));
+                    }
+                }, 400);
+
+                this.addTimeout(() => {
+                    if (overlay && giantAlpha) {
+                        overlay.style.display = 'flex';
+                        overlay.style.pointerEvents = 'auto';
+                        void overlay.offsetWidth;
+                        overlay.style.opacity = '1';
+                        giantAlpha.style.transform = 'scale(1)';
+                    }
+                    if (cardContainer) {
+                        cardContainer.classList.remove('shake-dramatic', 'shake-impact');
+                        void cardContainer.offsetWidth;
+                        cardContainer.classList.add('shake-dramatic');
+                    }
+                }, 4300);
+            }
+
+            proceedAnimation() {
+                const overlay = document.getElementById('fullscreenAlphaOverlay');
+                const giantAlpha = document.getElementById('giantAlphaBadge');
+                const cardContainer = document.getElementById('cardContainer');
+                const priceEl = document.getElementById('proPriceDisplay');
+                const origPriceEl = document.getElementById('proOriginalPrice');
+                const seriousBadge = document.querySelector('.serious-badge');
+                const btn = document.getElementById('step1ConfirmBtn');
+
+                if (overlay && giantAlpha) {
+                    overlay.style.opacity = '0';
+                    overlay.style.pointerEvents = 'none';
+                    giantAlpha.style.transform = 'scale(0.01) rotate(180deg)';
+                    this.addTimeout(() => { overlay.style.display = 'none'; }, 400);
+                }
+
+                if (btn) btn.style.display = 'none';
+                const freeAlpha = document.querySelector('#cardFree .alpha-badge');
+                if (freeAlpha) freeAlpha.classList.add('active');
+
+                this.addTimeout(() => {
+                    const proAlpha = document.querySelector('#cardPro .alpha-badge');
+                    if (proAlpha) proAlpha.classList.add('active');
+                }, 500);
+
+                this.addTimeout(() => {
+                    if (seriousBadge) seriousBadge.classList.add('active', 'shifted');
+                }, 1900);
+
+                this.addTimeout(() => {
+                    if (cardContainer) {
+                        cardContainer.classList.remove('shake-dramatic', 'shake-impact');
+                        void cardContainer.offsetWidth;
+                        cardContainer.classList.add('shake-impact');
+                    }
+                    if (priceEl) {
+                        const val = billingPeriod === 'year' ? '$417' : '$41.70';
+                        const label = billingPeriod === 'year' ? 'usd/year' : 'usd/month';
+                        priceEl.innerHTML = `${val}<span class="price-suffix" style="font-size: 11px; color: var(--text-secondary); font-weight: 400; margin-left: 4px;">${label}</span>`;
+                        priceEl.classList.remove('price-shake');
+                        void priceEl.offsetWidth;
+                        priceEl.classList.add('price-shake');
+                    }
+                    if (origPriceEl) {
+                        origPriceEl.style.height = '16px';
+                        origPriceEl.style.marginBottom = '4px';
+                        origPriceEl.style.opacity = '0.6';
+                    }
+                }, 2900);
+
+                this.addTimeout(() => {
+                    if (btn) {
+                        btn.style.display = 'block';
+                        btn.style.animation = 'cardFadeIn 0.5s ease forwards';
+                    }
+                }, 3800);
+            }
+
+            updatePricing(ctx) {
+                const priceEl = document.getElementById('proPriceDisplay');
+                const origPriceEl = document.getElementById('proOriginalPrice');
+                const badgeEls = document.querySelectorAll('.alpha-badge');
+                const seriousBadge = document.querySelector('.serious-badge');
+
+                if (this.animationTriggered) {
+                    badgeEls.forEach(b => b.classList.add('active'));
+                    if (seriousBadge) seriousBadge.classList.add('active', 'shifted');
+                    if (priceEl) {
+                        const p = billingPeriod === 'year' ? '$417' : '$41.70';
+                        const l = billingPeriod === 'year' ? 'usd/year' : 'usd/month';
+                        priceEl.innerHTML = `${p}<span class="price-suffix" style="font-size: 11px; color: var(--text-secondary); font-weight: 400; margin-left: 4px;">${l}</span>`;
+                    }
+                    if (origPriceEl) {
+                        const orig = billingPeriod === 'year' ? '$1390' : '$139';
+                        origPriceEl.innerHTML = `${orig} <span style="font-size: 10px; margin-left: 2px; font-weight: 400;">usd/${billingPeriod}</span>`;
+                        origPriceEl.style.height = '16px'; origPriceEl.style.marginBottom = '4px'; origPriceEl.style.opacity = '0.6';
+                    }
+                }
+            }
+
+            updateTimelineUI() {
+                document.querySelectorAll('.v-step').forEach(s => s.classList.remove('active'));
+                const alphaStep = document.getElementById('timelineAlpha');
+                if (alphaStep) alphaStep.classList.add('active');
+            }
+        }
+
+        class BetaPhaseModule extends BasePhaseModule {
+            constructor() { super('beta'); this.animationTriggered = false; }
+
+            init(ctx) {
+                document.body.setAttribute('data-phase', 'beta');
+                const alphaHeader = document.getElementById('phaseAlphaHeader');
+                const betaHeader = document.getElementById('phaseBetaHeader');
+                const step1Header = document.getElementById('standardStep1Header');
+                const seriousBadge = document.querySelector('.serious-badge');
+
+                if (step1Header) step1Header.style.display = 'none';
+                if (alphaHeader) alphaHeader.style.display = 'none';
+                if (betaHeader) {
+                    betaHeader.style.display = 'none';
+                    betaHeader.querySelectorAll('.phase-char, .phase-beta-text').forEach(c => {
+                        c.classList.remove('animate');
+                        c.style.opacity = '0';
+                    });
+                }
+                document.querySelectorAll('.alpha-badge').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.beta-badge').forEach(b => b.classList.remove('active'));
+                if (seriousBadge) {
+                    seriousBadge.classList.add('active');
+                    seriousBadge.classList.remove('shifted');
+                }
+
+                this.updatePricing(ctx);
+                this.updateTimelineUI();
+            }
+
+            destroy(ctx) {
+                super.destroy(ctx);
+                this.animationTriggered = false;
+                const betaHeader = document.getElementById('phaseBetaHeader');
+                if (betaHeader) betaHeader.style.display = 'none';
+                const overlay = document.getElementById('fullscreenBetaOverlay');
+                if (overlay) { overlay.style.display = 'none'; overlay.style.opacity = '0'; }
+                document.querySelectorAll('.beta-badge').forEach(b => b.classList.remove('active'));
+            }
+
+            onCardClick(card, plan, ctx) {
+                if (!this.animationTriggered) {
+                    this.animationTriggered = true;
+                    this.triggerAnimation();
+                } else {
+                    const btn = document.getElementById('step1ConfirmBtn');
+                    if (btn) btn.style.display = 'block';
+                }
+            }
+
+            triggerAnimation() {
+                const cardContainer = document.getElementById('cardContainer');
+                const priceEl = document.getElementById('proPriceDisplay');
+                const origPriceEl = document.getElementById('proOriginalPrice');
+                const betaHeader = document.getElementById('phaseBetaHeader');
+                const badgeEls = document.querySelectorAll('.beta-badge');
+                const seriousBadge = document.querySelector('.serious-badge');
+                const overlay = document.getElementById('fullscreenBetaOverlay');
+                const giantBeta = document.getElementById('giantBetaBadge');
+
+                if (priceEl) priceEl.innerHTML = '$139<span class="price-suffix" style="font-size: 11px; color: var(--text-secondary); font-weight: 400; margin-left: 4px;">usd/month</span>';
+                if (origPriceEl) { origPriceEl.style.opacity = '0'; origPriceEl.style.height = '0px'; origPriceEl.style.marginBottom = '0px'; }
+                badgeEls.forEach(b => b.classList.remove('active'));
+                if (seriousBadge) { seriousBadge.classList.add('active'); seriousBadge.classList.remove('shifted'); }
+
+                if (betaHeader) {
+                    betaHeader.style.display = 'flex';
+                    betaHeader.querySelectorAll('.phase-char, .phase-beta-text').forEach(c => {
+                        c.classList.remove('animate');
+                        c.style.opacity = '0';
+                        void c.offsetWidth;
+                    });
+                }
+
+                if (cardContainer) {
+                    cardContainer.classList.remove('shake-dramatic', 'shake-impact');
+                    void cardContainer.offsetWidth;
+                    cardContainer.classList.add('shake-dramatic');
+                }
+
+                this.addTimeout(() => {
+                    if (betaHeader) {
+                        betaHeader.querySelectorAll('.phase-char, .phase-beta-text').forEach(c => c.classList.add('animate'));
+                    }
+                }, 400);
+
+                this.addTimeout(() => {
+                    if (overlay && giantBeta) {
+                        overlay.style.display = 'flex';
+                        overlay.style.pointerEvents = 'auto';
+                        void overlay.offsetWidth;
+                        overlay.style.opacity = '1';
+                        giantBeta.style.transform = 'scale(1)';
+                    }
+                    if (cardContainer) {
+                        cardContainer.classList.remove('shake-dramatic', 'shake-impact');
+                        void cardContainer.offsetWidth;
+                        cardContainer.classList.add('shake-dramatic');
+                    }
+                }, 4300);
+            }
+
+            proceedAnimation() {
+                const overlay = document.getElementById('fullscreenBetaOverlay');
+                const giantBeta = document.getElementById('giantBetaBadge');
+                const cardContainer = document.getElementById('cardContainer');
+                const priceEl = document.getElementById('proPriceDisplay');
+                const origPriceEl = document.getElementById('proOriginalPrice');
+                const seriousBadge = document.querySelector('.serious-badge');
+                const btn = document.getElementById('step1ConfirmBtn');
+
+                if (overlay && giantBeta) {
+                    overlay.style.opacity = '0';
+                    overlay.style.pointerEvents = 'none';
+                    giantBeta.style.transform = 'scale(0.01) rotate(180deg)';
+                    this.addTimeout(() => { overlay.style.display = 'none'; }, 400);
+                }
+
+                if (btn) btn.style.display = 'none';
+
+                // 1. Trigger Free Beta Badge pop/fly (0ms)
+                const freeBeta = document.querySelector('#cardFree .beta-badge');
+                if (freeBeta) freeBeta.classList.add('active');
+
+                // 2. Trigger Pro Beta Badge pop/fly (500ms)
+                this.addTimeout(() => {
+                    const proBeta = document.querySelector('#cardPro .beta-badge');
+                    if (proBeta) proBeta.classList.add('active');
+                }, 500);
+
+                // 3. Shift Serious Badge S next to Beta badge (1900ms)
+                this.addTimeout(() => {
+                    if (seriousBadge) {
+                        seriousBadge.classList.add('active', 'shifted');
+                    }
+                }, 1900);
+
+                // 4. Final Stage: Price collapses to $83.40 with impact shake (2900ms)
+                this.addTimeout(() => {
+                    if (cardContainer) {
+                        cardContainer.classList.remove('shake-dramatic', 'shake-impact');
+                        void cardContainer.offsetWidth;
+                        cardContainer.classList.add('shake-impact');
+                    }
+
+                    if (priceEl) {
+                        const val = billingPeriod === 'year' ? '$834' : '$83.40';
+                        const label = billingPeriod === 'year' ? 'usd/year' : 'usd/month';
+                        priceEl.innerHTML = `${val}<span class="price-suffix" style="font-size: 11px; color: var(--text-secondary); font-weight: 400; margin-left: 4px;">${label}</span>`;
+                        priceEl.classList.remove('price-shake');
+                        void priceEl.offsetWidth;
+                        priceEl.classList.add('price-shake');
+                    }
+
+                    if (origPriceEl) {
+                        const orig = billingPeriod === 'year' ? '$1390' : '$139';
+                        origPriceEl.innerHTML = `${orig} <span style="font-size: 10px; margin-left: 2px; font-weight: 400;">usd/${billingPeriod}</span>`;
+                        origPriceEl.style.height = '16px'; origPriceEl.style.marginBottom = '4px'; origPriceEl.style.opacity = '0.6';
+                    }
+                }, 2900);
+
+                // 5. Reveal Devam Et button (3800ms)
+                this.addTimeout(() => {
+                    if (btn) {
+                        btn.style.display = 'block';
+                        btn.style.animation = 'cardFadeIn 0.5s ease forwards';
+                    }
+                }, 3800);
+            }
+
+            updatePricing(ctx) {
+                const priceEl = document.getElementById('proPriceDisplay');
+                const origPriceEl = document.getElementById('proOriginalPrice');
+                const seriousBadge = document.querySelector('.serious-badge');
+
+                if (this.animationTriggered) {
+                    document.querySelectorAll('.beta-badge').forEach(b => b.classList.add('active'));
+                    if (seriousBadge) seriousBadge.classList.add('active', 'shifted');
+
+                    if (priceEl) {
+                        const val = billingPeriod === 'year' ? '$834' : '$83.40';
+                        const label = billingPeriod === 'year' ? 'usd/year' : 'usd/month';
+                        priceEl.innerHTML = `${val}<span class="price-suffix" style="font-size: 11px; color: var(--text-secondary); font-weight: 400; margin-left: 4px;">${label}</span>`;
+                    }
+                    if (origPriceEl) {
+                        const orig = billingPeriod === 'year' ? '$1390' : '$139';
+                        origPriceEl.innerHTML = `${orig} <span style="font-size: 10px; margin-left: 2px; font-weight: 400;">usd/${billingPeriod}</span>`;
+                        origPriceEl.style.height = '16px'; origPriceEl.style.marginBottom = '4px'; origPriceEl.style.opacity = '0.6';
+                    }
+                }
+            }
+
+            updateTimelineUI() {
+                document.querySelectorAll('.v-step').forEach(s => s.classList.remove('active'));
+                const betaStep = document.getElementById('timelineBeta');
+                if (betaStep) betaStep.classList.add('active');
+            }
+        }
+
+        class StandardPhaseModule extends BasePhaseModule {
+            constructor() { super('standard'); }
+
+            init(ctx) {
+                document.body.setAttribute('data-phase', 'standard');
+                const alphaHeader = document.getElementById('phaseAlphaHeader');
+                const betaHeader = document.getElementById('phaseBetaHeader');
+                const step1Header = document.getElementById('standardStep1Header');
+                const seriousBadge = document.querySelector('.serious-badge');
+
+                if (alphaHeader) alphaHeader.style.display = 'none';
+                if (betaHeader) betaHeader.style.display = 'none';
+                if (step1Header) step1Header.style.display = 'block';
+                document.querySelectorAll('.alpha-badge, .beta-badge').forEach(b => b.classList.remove('active'));
+                if (seriousBadge) seriousBadge.classList.remove('active', 'shifted');
+
+                this.updatePricing(ctx);
+                this.updateTimelineUI();
+            }
+
+            onCardClick(card, plan, ctx) {
+                const btn = document.getElementById('step1ConfirmBtn');
+                if (btn) btn.style.display = 'block';
+            }
+
+            updatePricing(ctx) {
+                const priceEl = document.getElementById('proPriceDisplay');
+                const origPriceEl = document.getElementById('proOriginalPrice');
+
+                if (priceEl) {
+                    const val = billingPeriod === 'year' ? '$1390' : '$139';
+                    const label = billingPeriod === 'year' ? 'usd/year' : 'usd/month';
+                    priceEl.innerHTML = `${val}<span class="price-suffix" style="font-size: 11px; color: var(--text-secondary); font-weight: 400; margin-left: 4px;">${label}</span>`;
+                }
+                if (origPriceEl) {
+                    origPriceEl.style.height = '0px'; origPriceEl.style.marginBottom = '0px'; origPriceEl.style.opacity = '0';
+                }
+            }
+
+            updateTimelineUI() {
+                document.querySelectorAll('.v-step').forEach(s => s.classList.remove('active'));
+                const stdStep = document.getElementById('timelineStandard');
+                if (stdStep) stdStep.classList.add('active');
+            }
+        }
+
+        // Global Controller Singleton
+        const PhaseController = {
+            modules: {
+                alpha: new AlphaPhaseModule(),
+                beta: new BetaPhaseModule(),
+                standard: new StandardPhaseModule()
+            },
+            currentModule: null,
+
+            switchPhase(name, context = {}) {
+                if (this.currentModule) {
+                    this.currentModule.destroy(context);
+                }
+                const moduleToLoad = this.modules[name] || this.modules.standard;
+                this.currentModule = moduleToLoad;
+                currentActivePhase = moduleToLoad.name;
+                this.currentModule.init(context);
+                console.log(`[PhaseController] Phase switched to: ${moduleToLoad.name}`);
+                return moduleToLoad;
+            },
+
+            getActiveModule() {
+                if (!this.currentModule) {
+                    this.currentModule = this.modules.standard;
+                }
+                return this.currentModule;
+            }
+        };
+
+        window.PhaseController = PhaseController;
+
+        window.proceedAlphaAnimation = function() {
+            const active = PhaseController.getActiveModule();
+            if (active && active.name === 'alpha' && active.proceedAnimation) {
+                active.proceedAnimation();
+            }
+        };
+
+        window.proceedBetaAnimation = function() {
+            const active = PhaseController.getActiveModule();
+            if (active && active.name === 'beta' && active.proceedAnimation) {
+                active.proceedAnimation();
+            }
+        };
+
+        let earlyStageStatus   = null;
+        let currentActivePhase = 'standard';
+
+        async function loadEarlyStageStatus() {
+            try {
+                const url = userEmail ? `${SERVER_URL}/api/early-stage-status?email=${encodeURIComponent(userEmail)}` : `${SERVER_URL}/api/early-stage-status`;
+                const res = await fetch(url);
+                if (!res.ok) return;
+                earlyStageStatus = await res.json();
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                const forcePhase = urlParams.get('phase') || urlParams.get('mode');
+                const targetPhase = forcePhase || (earlyStageStatus && earlyStageStatus.phase) || 'standard';
+
+                PhaseController.switchPhase(targetPhase, { earlyStageStatus, userEmail });
+
+                // Render User Dashboard Card if logged in or status returned user
+                if (earlyStageStatus.user) {
+                    renderUserDashboardCard(earlyStageStatus.user);
+                }
+
+                // Update timeline status text with actual counts
+                const alphaStatusEl = document.getElementById('timelineAlphaStatus');
+                const betaStatusEl = document.getElementById('timelineBetaStatus');
+                if (earlyStageStatus.alpha) {
+                    const total = earlyStageStatus.alpha.total || (earlyStageStatus.alpha.freeCount + earlyStageStatus.alpha.paidCount);
+                    if (alphaStatusEl) alphaStatusEl.textContent = `${total}/150 • %70 İndirim`;
+                }
+                if (earlyStageStatus.beta) {
+                    const total = earlyStageStatus.beta.total || (earlyStageStatus.beta.freeCount + earlyStageStatus.beta.paidCount);
+                    if (betaStatusEl) betaStatusEl.textContent = targetPhase === 'beta' ? `Aktif • %40 İndirim` : 'Gelecek Aşama';
+                }
+            } catch (err) {
+                console.error("Early stage status fetch error:", err);
+                PhaseController.switchPhase('standard');
+            }
+        }
+
+        function renderUserDashboardCard(userData) {
+            const dashCard = document.getElementById('userDashboardCard');
+            const emailEl = document.getElementById('dashUserEmail');
+            const idEl = document.getElementById('dashUserId');
+            const alphaTag = document.getElementById('dashAlphaTag');
+            const betaTag = document.getElementById('dashBetaTag');
+            const subTag = document.getElementById('dashSubTag');
+
+            if (!dashCard) return;
+            dashCard.style.display = 'flex';
+            if (emailEl) emailEl.textContent = userData.email || userEmail;
+            if (idEl) {
+                const num = String(userData.memberNumber || 1).padStart(5, '0');
+                idEl.textContent = `MEMBER ID: #${num}`;
+            }
+
+            if (userData.tier_tag === 'alpha' || userData.badge === 'Alpha Mimar') {
+                if (alphaTag) alphaTag.style.display = 'inline-block';
+            } else if (userData.tier_tag === 'beta' || userData.badge === 'Beta Mimar') {
+                if (betaTag) betaTag.style.display = 'inline-block';
+            }
+
+            if (subTag && userData.hasActiveSubscription) {
+                subTag.textContent = `✓ ${userData.plan.toUpperCase()} AKTİF`;
+            }
+        }
+
+        function updatePricingCardsUI() {
+            const active = PhaseController.getActiveModule();
+            if (active && active.updatePricing) {
+                active.updatePricing();
+            }
+        }
+
+        // ==========================================
+        // WIZARD STATE & NAVIGATION
+        // ==========================================
+
+        let currentStepNum = 1;
+        let selectedPlan   = 'pro';
+        let userEmail      = '';
+        let userPassword   = '';
+
+        function updateStepUI() {
+            document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+            const targetStep = document.getElementById(`step${currentStepNum}`);
+            if (targetStep) targetStep.classList.add('active');
+
+            for (let i = 1; i <= 4; i++) {
+                const dot = document.getElementById(`dot${i}`);
+                if (dot) {
+                    if (i < currentStepNum)      { dot.classList.add('completed');    dot.classList.remove('active'); }
+                    else if (i === currentStepNum){ dot.classList.add('active');       dot.classList.remove('completed'); }
+                    else                          { dot.classList.remove('active', 'completed'); }
+                }
+            }
+
             const container = document.getElementById('cardContainer');
-            if (currentStepNum === 2) {
-                container.classList.add('wide');
+            if (container) {
+                (currentStepNum === 1 || currentStepNum === 3) ? container.classList.add('wide') : container.classList.remove('wide');
+            }
+
+            // Hide simulated card form if Paddle is active
+            const simForm = document.getElementById('simulatedCardForm');
+            const padContainer = document.getElementById('paddle-checkout-container');
+            const payBtn = document.getElementById('payBtn');
+            if (currentStepNum === 3) {
+                const priceId = PADDLE_PRICE_IDS.standard[billingPeriod];
+                if (paddleInitialized && priceId && !priceId.includes('placeholder')) {
+                    if (simForm) simForm.style.display = 'none';
+                    if (padContainer) padContainer.style.display = 'block';
+                } else {
+                    if (simForm) simForm.style.display = 'flex';
+                    if (padContainer) padContainer.style.display = 'none';
+                    if (payBtn) payBtn.innerText = 'Ödeme Yap (Simüle)';
+                }
+            }
+        }
+
+        window.goToStep = function(targetStep) {
+            if (!selectedPlan) selectedPlan = 'pro';
+            if (targetStep >= 1 && targetStep <= 4) {
+                currentStepNum = targetStep;
+                updateStepUI();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
+
+        window.nextStep = function() { 
+            if (currentStepNum === 1) {
+                goToStep(2);
+            } else if (currentStepNum < 4) { 
+                goToStep(currentStepNum + 1); 
+            }
+        };
+
+        window.prevStep = function() { 
+            if (currentStepNum > 1) { 
+                goToStep(currentStepNum - 1); 
+            } 
+        };
+
+        // ==========================================
+        // STEP 2 – Registration (hits /api/register)
+        // ==========================================
+
+        // ==========================================
+        // AUTH MODE SWITCHER & REAL-TIME VALIDATION
+        // ==========================================
+        let authMode = 'register'; // 'register' or 'login'
+        let cooldownInterval = null;
+
+        window.setAuthMode = function(mode) {
+            authMode = mode;
+            const regContainer = document.getElementById('registerFormContainer');
+            const loginContainer = document.getElementById('loginFormContainer');
+            const tabReg = document.getElementById('tabRegister');
+            const tabLogin = document.getElementById('tabLogin');
+            const title = document.getElementById('authHeaderTitle');
+            const sub = document.getElementById('authHeaderSub');
+            const divText = document.getElementById('dividerText');
+
+            if (mode === 'register') {
+                if (regContainer) regContainer.style.display = 'block';
+                if (loginContainer) loginContainer.style.display = 'none';
+                if (tabReg) tabReg.classList.add('active');
+                if (tabLogin) tabLogin.classList.remove('active');
+                if (title) title.innerText = 'Hesabınızı Oluşturun';
+                if (sub) sub.innerText = 'NexDesign masaüstü lisansınızı yönetmek için yeni hesap açın.';
+                if (divText) divText.innerText = 'veya e-posta ile kayıt olun';
             } else {
-                container.classList.remove('wide');
+                if (regContainer) regContainer.style.display = 'none';
+                if (loginContainer) loginContainer.style.display = 'block';
+                if (tabReg) tabReg.classList.remove('active');
+                if (tabLogin) tabLogin.classList.add('active');
+                if (title) title.innerText = 'Hesabınıza Giriş Yapın';
+                if (sub) sub.innerText = 'Mevcut lisansınızı ve hesabınızı yönetmek için giriş yapın.';
+                if (divText) divText.innerText = 'veya e-posta ile giriş yapın';
             }
-        }
+        };
 
-        function nextStep() {
-            if (currentStepNum < 4) {
-                currentStepNum++;
-                updateStepUI();
+        window.togglePasswordVisibility = function(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (input) {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    btn.innerText = '🔒';
+                } else {
+                    input.type = 'password';
+                    btn.innerText = '👁️';
+                }
             }
-        }
+        };
 
-        function prevStep() {
-            if (currentStepNum > 1) {
-                currentStepNum--;
-                updateStepUI();
-            }
-        }
+        window.updatePasswordStrengthUI = function() {
+            const pass = document.getElementById('reg-password').value;
+            const seg1 = document.getElementById('strengthSeg1');
+            const seg2 = document.getElementById('strengthSeg2');
+            const seg3 = document.getElementById('strengthSeg3');
+            const ruleLen = document.getElementById('ruleLen');
+            const ruleUpper = document.getElementById('ruleUpper');
+            const ruleNum = document.getElementById('ruleNum');
 
-        function selectPlan(plan) {
-            selectedPlan = plan;
-            document.querySelectorAll('.plan-card').forEach(card => card.classList.remove('selected'));
-            
-            if (plan === 'free') {
-                document.getElementById('cardFree').classList.add('selected');
-            } else if (plan === 'student') {
-                document.getElementById('cardStudent').classList.add('selected');
-            } else if (plan === 'pro') {
-                document.getElementById('cardPro').classList.add('selected');
-            }
-        }
+            const hasLen = pass.length >= 8;
+            const hasUpper = /[A-Z]/.test(pass);
+            const hasNum = /[0-9]/.test(pass);
 
-        function handleRegistrationSubmit() {
-            const emailInput = document.getElementById('reg-email').value;
-            const passInput = document.getElementById('reg-password').value;
+            if (ruleLen) hasLen ? ruleLen.classList.add('valid') : ruleLen.classList.remove('valid');
+            if (ruleUpper) hasUpper ? ruleUpper.classList.add('valid') : ruleUpper.classList.remove('valid');
+            if (ruleNum) hasNum ? ruleNum.classList.add('valid') : ruleNum.classList.remove('valid');
 
-            if (!emailInput || !emailInput.includes('@')) {
-                alert('Lütfen geçerli bir e-posta adresi girin.');
+            let score = 0;
+            if (hasLen) score++;
+            if (hasUpper) score++;
+            if (hasNum) score++;
+
+            [seg1, seg2, seg3].forEach(s => { if (s) s.className = 'strength-segment'; });
+
+            if (score === 1 && seg1) seg1.classList.add('weak');
+            else if (score === 2 && seg1 && seg2) { seg1.classList.add('medium'); seg2.classList.add('medium'); }
+            else if (score === 3 && seg1 && seg2 && seg3) { seg1.classList.add('strong'); seg2.classList.add('strong'); seg3.classList.add('strong'); }
+
+            checkPasswordMatchUI();
+        };
+
+        window.checkPasswordMatchUI = function() {
+            const pass = document.getElementById('reg-password').value;
+            const confirmPass = document.getElementById('reg-password-confirm').value;
+            const feedback = document.getElementById('matchFeedback');
+
+            if (!feedback) return;
+            if (!confirmPass) {
+                feedback.style.display = 'none';
                 return;
             }
-            if (passInput.length < 4) {
-                alert('Şifre en az 4 karakter olmalıdır.');
+
+            feedback.style.display = 'block';
+            if (pass === confirmPass) {
+                feedback.style.color = '#34d399';
+                feedback.innerText = '✓ Şifreler eşleşiyor';
+            } else {
+                feedback.style.color = '#f87171';
+                feedback.innerText = '✗ Şifreler eşleşmiyor';
+            }
+        };
+
+        // ==========================================
+        // STEP 2 – Registration & Login Handlers
+        // ==========================================
+
+        window.handleGoogleSignIn = function() {
+            if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+                try {
+                    google.accounts.id.initialize({
+                        client_id: "204998796519-hoqdv40kgt99mts0vijs15p0d78sc46s.apps.googleusercontent.com",
+                        callback: async (response) => {
+                            if (response.credential) {
+                                await submitGoogleAuth(response.credential);
+                            }
+                        }
+                    });
+                    google.accounts.id.prompt();
+                    return;
+                } catch (err) {
+                    console.warn("Google prompt warning, fallback to prompt:", err.message);
+                }
+            }
+
+            const promptEmail = prompt("Google Hesabı e-posta adresinizi giriniz:", "mimar@gmail.com");
+            if (promptEmail && promptEmail.includes('@')) {
+                submitGoogleAuth(null, promptEmail.trim());
+            }
+        };
+
+        async function submitGoogleAuth(credential = null, email = null) {
+            try {
+                const res = await fetch(`${SERVER_URL}/api/auth/google`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ credential, email })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    userEmail = data.customer.email;
+                    localStorage.setItem('nexdesign_active_email', userEmail);
+                    sessionStorage.removeItem('pending_otp_email');
+                    await proceedToNextStepAfterAuth();
+                } else {
+                    alert(data.error || "Google girişi başarısız.");
+                }
+            } catch (err) {
+                alert("Sunucuya bağlanılamadı.");
+            }
+        }
+
+        window.handleRegistrationSubmit = async function() {
+            const emailInput = document.getElementById('reg-email').value.trim();
+            const passInput  = document.getElementById('reg-password').value;
+            const confirmPass = document.getElementById('reg-password-confirm').value;
+            const legalConsent = document.getElementById('legalConsentCheckbox').checked;
+
+            if (!emailInput || !emailInput.includes('@')) { alert('Lütfen geçerli bir e-posta adresi girin.'); return; }
+            if (passInput.length < 8 || !/[A-Z]/.test(passInput) || !/[0-9]/.test(passInput)) {
+                alert('Şifreniz en az 8 karakter uzunluğunda olmalı, en az 1 büyük harf ve 1 rakam içermelidir.');
                 return;
             }
+            if (passInput !== confirmPass) { alert('Şifreleriniz birbiriyle eşleşmiyor.'); return; }
+            if (!legalConsent) { alert('Devam etmek için Kullanım Koşulları ve KVKK Aydınlatma Metnini kabul etmelisiniz.'); return; }
 
             userEmail = emailInput;
-            nextStep();
-        }
+            userPassword = passInput;
 
-        function handlePlanSelectionSubmit() {
-            if (selectedPlan === 'pro') {
-                // Pro needs checkout (Step 3)
-                nextStep();
-            } else {
-                // Free & Student skip Step 3 (No credit card needed)
+            try {
+                const res = await fetch(`${SERVER_URL}/api/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail, password: userPassword, termsAccepted: legalConsent })
+                });
+                const data = await res.json();
+                if (res.ok && data.requiresOTP) {
+                    sessionStorage.setItem('pending_otp_email', userEmail);
+                    openOTPVerificationStep(userEmail);
+                } else {
+                    alert(data.error || "Kayıt hatası.");
+                }
+            } catch (err) {
+                console.warn("Sunucu bağlantısı yok, yerel mod:", err.message);
+                saveLocalUser(userEmail, userPassword, selectedPlan);
+                sessionStorage.setItem('pending_otp_email', userEmail);
+                openOTPVerificationStep(userEmail, "123456");
+            }
+        };
+
+        async function proceedToNextStepAfterAuth() {
+            if (selectedPlan === 'free') {
+                try {
+                    await patchUserPlan('free');
+                } catch (err) {
+                    console.warn("Free plan patch warning:", err.message);
+                }
                 currentStepNum = 4;
                 showSuccessScreen();
                 updateStepUI();
+            } else {
+                const price = billingPeriod === 'year' ? '$1390' : '$139';
+                const label = billingPeriod === 'year' ? '/yıl' : '/ay';
+                const summaryName = document.getElementById('summaryPlanName');
+                const summaryPrice = document.getElementById('summaryPrice');
+                if (summaryName) summaryName.innerText = 'Ücretli';
+                if (summaryPrice) summaryPrice.innerHTML = `${price}<span style="font-size:10px; font-weight:400; color:var(--text-secondary);">${label}</span>`;
+                goToStep(3);
+                setTimeout(() => {
+                    handlePaymentSubmit();
+                }, 300);
             }
         }
 
-        function handlePaymentSubmit() {
-            const ccNum = document.getElementById('cc-num').value;
-            const ccExp = document.getElementById('cc-exp').value;
-            const ccCvc = document.getElementById('cc-cvc').value;
+        window.handleLoginSubmit = async function() {
+            const emailInput = document.getElementById('login-email').value.trim();
+            const passInput  = document.getElementById('login-password').value;
 
-            if (!ccNum || !ccExp || !ccCvc) {
-                alert('Lütfen ödeme kartı alanlarını eksiksiz doldurun.');
-                return;
+            if (!emailInput || !emailInput.includes('@')) { alert('Geçerli bir e-posta adresi girin.'); return; }
+            if (!passInput) { alert('Lütfen şifrenizi girin.'); return; }
+
+            try {
+                const res = await fetch(`${SERVER_URL}/api/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: emailInput, password: passInput })
+                });
+                const data = await res.json();
+                if (data.success && !data.requiresOTP) {
+                    userEmail = data.customer.email;
+                    localStorage.setItem('nexdesign_active_email', userEmail);
+                    sessionStorage.removeItem('pending_otp_email');
+                    await proceedToNextStepAfterAuth();
+                } else if (data.requiresOTP) {
+                    sessionStorage.setItem('pending_otp_email', emailInput);
+                    openOTPVerificationStep(emailInput, data.devCode);
+                } else {
+                    alert(data.error || "Giriş başarısız.");
+                }
+            } catch (err) {
+                alert("Sunucuya bağlanılamadı.");
+            }
+        };
+
+        // ==========================================
+        // STEP 2B – OTP Email Verification Handlers
+        // ==========================================
+
+        function openOTPVerificationStep(email, devCode = null) {
+            const targetEl = document.getElementById('otpEmailTarget');
+            if (targetEl) targetEl.innerText = email;
+
+            for (let i = 1; i <= 6; i++) {
+                const box = document.getElementById(`otp${i}`);
+                if (box) box.value = '';
             }
 
-            const payBtn = document.getElementById('payBtn');
-            payBtn.innerText = 'İşleniyor...';
-            payBtn.disabled = true;
+            const devNotice = document.getElementById('otpDevNotice');
+            const devCodeEl = document.getElementById('otpDevCode');
+            if (devCode && devNotice && devCodeEl) {
+                devCodeEl.innerText = devCode;
+                devNotice.style.display = 'block';
+            } else if (devNotice) {
+                devNotice.style.display = 'none';
+            }
+
+            startCooldownTimer(45);
+
+            document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+            const step2B = document.getElementById('step2B');
+            if (step2B) step2B.classList.add('active');
 
             setTimeout(() => {
-                currentStepNum = 4;
-                showSuccessScreen();
-                updateStepUI();
-            }, 1500);
+                const firstBox = document.getElementById('otp1');
+                if (firstBox) firstBox.focus();
+            }, 150);
         }
 
-        function showSuccessScreen() {
-            document.getElementById('successEmail').innerText = userEmail;
-            
-            let planText = 'Indie Ücretsiz Sürüm';
-            if (selectedPlan === 'student') {
-                planText = 'Öğrenci Sürümü';
-            } else if (selectedPlan === 'pro') {
-                planText = 'Premium Pro Sürümü';
+        window.handleOTPPaste = function(event) {
+            if (!event) return;
+            event.preventDefault();
+            event.stopPropagation();
+
+            const clipboardData = event.clipboardData || window.clipboardData;
+            if (!clipboardData) return;
+
+            const pastedText = clipboardData.getData('text') || '';
+            const digits = pastedText.replace(/\D/g, '').slice(0, 6);
+            if (!digits) return;
+
+            for (let i = 0; i < 6; i++) {
+                const box = document.getElementById(`otp${i + 1}`);
+                if (box) {
+                    box.value = digits[i] || '';
+                }
             }
-            
-            document.getElementById('successPlan').innerText = planText;
+
+            const focusIndex = Math.min(6, digits.length);
+            const focusBox = document.getElementById(`otp${focusIndex}`);
+            if (focusBox) focusBox.focus();
+        };
+
+        window.handleOTPInput = function(index) {
+            const box = document.getElementById(`otp${index}`);
+            if (!box) return;
+
+            if (box.value.length === 1 && index < 6) {
+                const nextBox = document.getElementById(`otp${index + 1}`);
+                if (nextBox) nextBox.focus();
+            }
+        };
+
+        window.handleOTPKeydown = function(index, event) {
+            if (event.key === 'Backspace') {
+                const box = document.getElementById(`otp${index}`);
+                if (box && box.value === '' && index > 1) {
+                    const prevBox = document.getElementById(`otp${index - 1}`);
+                    if (prevBox) {
+                        prevBox.focus();
+                        prevBox.value = '';
+                    }
+                }
+            }
+        };
+
+        window.handleVerifyOTP = async function() {
+            let code = '';
+            for (let i = 1; i <= 6; i++) {
+                const val = document.getElementById(`otp${i}`).value;
+                if (!val) { alert('Lütfen 6 haneli doğrulama kodunun tamamını girin.'); return; }
+                code += val;
+            }
+
+            const email = sessionStorage.getItem('pending_otp_email') || userEmail;
+            if (!email) { alert('Doğrulanacak e-posta bulunamadı.'); return; }
+
+            try {
+                const res = await fetch(`${SERVER_URL}/api/verify-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, code })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    userEmail = email;
+                    localStorage.setItem('nexdesign_active_email', userEmail);
+                    sessionStorage.removeItem('pending_otp_email');
+                    await proceedToNextStepAfterAuth();
+                } else {
+                    alert(data.error || "Doğrulama kodu hatalı.");
+                }
+            } catch (err) {
+                if (code === "123456" || code.length === 6) {
+                    userEmail = email;
+                    localStorage.setItem('nexdesign_active_email', userEmail);
+                    sessionStorage.removeItem('pending_otp_email');
+                    await proceedToNextStepAfterAuth();
+                } else {
+                    alert("Giriş kodunuz doğrulanamadı.");
+                }
+            }
+        };
+
+        window.handleResendOTP = async function() {
+            const email = sessionStorage.getItem('pending_otp_email') || userEmail;
+            if (!email) return;
+
+            try {
+                const res = await fetch(`${SERVER_URL}/api/resend-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    alert("Yeni 6 haneli doğrulama kodu gönderildi.");
+                    startCooldownTimer(45);
+                } else {
+                    alert(data.error || "Kod yeniden gönderilemedi.");
+                }
+            } catch (err) {
+                alert("Sunucuya bağlanılamadı.");
+            }
+        };
+
+        function startCooldownTimer(seconds) {
+            if (cooldownInterval) clearInterval(cooldownInterval);
+            let left = seconds;
+            const btn = document.getElementById('resendOtpBtn');
+            const timerEl = document.getElementById('cooldownTimer');
+
+            if (btn) btn.disabled = true;
+            if (timerEl) timerEl.innerText = `00:${left < 10 ? '0' + left : left}`;
+
+            cooldownInterval = setInterval(() => {
+                left--;
+                if (left <= 0) {
+                    clearInterval(cooldownInterval);
+                    if (btn) btn.disabled = false;
+                    if (timerEl) timerEl.innerText = `Tekrar Gönder`;
+                } else {
+                    if (timerEl) timerEl.innerText = `00:${left < 10 ? '0' + left : left}`;
+                }
+            }, 1000);
         }
+
+        window.selectPlan = async function(plan) {
+            selectedPlan = plan;
+            document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+            const map = { free: 'cardFree', pro: 'cardPro' };
+            const cardEl = map[plan] ? document.getElementById(map[plan]) : null;
+            if (cardEl) cardEl.classList.add('selected');
+
+            const activeModule = PhaseController.getActiveModule();
+            if (activeModule && activeModule.onCardClick) {
+                activeModule.onCardClick(cardEl, plan);
+            } else {
+                const btn = document.getElementById('step1ConfirmBtn');
+                if (btn) btn.style.display = 'block';
+            }
+        };
+
+        async function patchUserPlan(plan) {
+            try {
+                await fetch(`${SERVER_URL}/api/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail, password: userPassword, plan: plan })
+                });
+            } catch(_) { saveLocalUser(userEmail, userPassword, plan); }
+        }
+
+        // ==========================================
+        // STEP 3 – Payment (Paddle Checkout or Sim)
+        // ==========================================
+
+        window.handlePaymentSubmit = function() {
+            const payBtn = document.getElementById('payBtn');
+            
+            // Resolve standard or alpha price ID
+            const priceIds = PADDLE_PRICE_IDS[currentActivePhase] || PADDLE_PRICE_IDS.standard;
+            const priceId = priceIds[billingPeriod];
+
+            if (paddleInitialized && priceId && !priceId.includes('placeholder')) {
+                // === REAL PADDLE INLINE CHECKOUT ===
+                try {
+                    console.log("Paddle inline checkout açılıyor, fiyat ID:", priceId);
+                    Paddle.Checkout.open({
+                        settings: {
+                            displayMode: 'inline', // ChatGPT style inline embed
+                            frameTarget: 'paddle-checkout-container',
+                            frameStyle: 'width: 100%; min-height: 380px; border: none; background: transparent;',
+                            theme: 'dark',
+                            locale: 'tr',
+                            variant: 'one-page',
+                            showAddDiscounts: false, // Hides "İndirim kodu ekle"
+                            showAddTaxId: false      // Hides "KDV numarası ekleyin"
+                        },
+                        items: [{ priceId: priceId, quantity: 1 }],
+                        customer: { email: userEmail },
+                        eventCallback: function(ev) {
+                            console.log("Paddle Event:", ev.name, ev);
+                            if (ev.name === 'checkout.completed') {
+                                saveLocalUser(userEmail, userPassword, 'pro');
+                                setTimeout(() => { currentStepNum = 4; showSuccessScreen(); updateStepUI(); }, 1200);
+                            }
+                        }
+                    });
+                } catch (checkoutErr) {
+                    console.error("Paddle Checkout hatası:", checkoutErr);
+                    alert("Paddle Ödeme Arayüzü Açılamadı!\n\nDetay: " + checkoutErr.message);
+                }
+            } else {
+                // === SIMULATION MODE (Paddle not configured) ===
+                const ccNum = document.getElementById('cc-num').value;
+                const ccExp = document.getElementById('cc-exp').value;
+                const ccCvc = document.getElementById('cc-cvc').value;
+
+                if (!ccNum || !ccExp || !ccCvc) { alert('Lütfen ödeme kartı alanlarını eksiksiz doldurun.'); return; }
+
+                payBtn.innerText = 'Simüle Ediliyor...';
+                payBtn.disabled  = true;
+
+                setTimeout(async () => {
+                    // Try to mark as pro in server
+                    try {
+                        await fetch(`${SERVER_URL}/api/register`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email: userEmail, password: userPassword, plan: 'pro' })
+                        });
+                    } catch(_) {}
+                    saveLocalUser(userEmail, userPassword, 'pro');
+                    currentStepNum = 4;
+                    showSuccessScreen();
+                    updateStepUI();
+                }, 1500);
+            }
+        };
+
+        // ==========================================
+        // STEP 4 – Success Screen
+        // ==========================================
+
+        async function showSuccessScreen() {
+            document.getElementById('successEmail').innerText = userEmail;
+            const planNames = { free: 'Indie Ücretsiz Sürüm', student: 'Öğrenci Sürümü', pro: 'Premium Pro Sürümü' };
+            document.getElementById('successPlan').innerText = planNames[selectedPlan] || selectedPlan;
+            const billingEl = document.getElementById('successBilling');
+            if (billingEl) billingEl.innerText = selectedPlan === 'pro' ? (billingPeriod === 'year' ? 'Yıllık ($417/yıl)' : 'Aylık ($41.70/ay)') : 'Ücretsiz';
+
+            try {
+                const res = await fetch(`${SERVER_URL}/api/early-stage-status?email=${encodeURIComponent(userEmail)}`);
+                const data = await res.json();
+                if (data && data.user) {
+                    const memberNoEl = document.getElementById('successMemberNo');
+                    const badgeEl = document.getElementById('successBadge');
+                    if (memberNoEl) memberNoEl.innerText = `#${data.user.memberNumber || 1}`;
+                    if (badgeEl && data.user.badge) {
+                        badgeEl.innerText = `${data.user.badge.badgeIcon} ${data.user.badge.badgeName.toUpperCase()}`;
+                        badgeEl.style.background = `${data.user.badge.badgeColor}22`;
+                        badgeEl.style.color = data.user.badge.badgeColor;
+                        badgeEl.style.border = `1px solid ${data.user.badge.badgeColor}55`;
+                    }
+                }
+            } catch (err) {
+                console.warn("Could not fetch badge info:", err.message);
+            }
+
+            // Refresh inspector after registration
+            loadInspectorFromServer();
+        }
+
+        // Customer Portal Redirect
+        window.openCustomerPortal = async function() {
+            const btn = document.getElementById('portalBtn');
+            btn.innerText = 'Yönlendiriliyor...';
+            btn.disabled = true;
+            try {
+                const res = await fetch(`${SERVER_URL}/api/customer-portal`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail })
+                });
+                const data = await res.json();
+                if (data.url) {
+                    window.open(data.url, '_blank');
+                } else {
+                    alert('Portal açılamadı: ' + (data.error || 'Bilinmeyen hata.'));
+                }
+            } catch (err) {
+                alert('Sunucu bağlantısı yok. Paddle üzerinden aktif bir aboneliğiniz olmadığından portal kullanılamıyor.');
+            }
+            btn.innerText = 'Aboneliğimi Yönet';
+            btn.disabled = false;
+        };
+
+        window.handleLogout = function() {
+            localStorage.removeItem('nexdesign_active_email');
+            localStorage.removeItem('nexdesign_users');
+            // Reset state
+            userEmail = '';
+            userPassword = '';
+            selectedPlan = 'free';
+            currentStepNum = 1;
+            window.location.reload();
+        };
+
+        // ==========================================
+        // LOCAL STORAGE FALLBACK UTILITIES
+        // ==========================================
+
+        function getUsersFromDb() {
+            const data = localStorage.getItem('nexdesign_users');
+            return data ? JSON.parse(data) : [];
+        }
+
+        function saveLocalUser(email, password, plan = 'free') {
+            const users = getUsersFromDb();
+            let user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+            if (user) {
+                user.plan = plan;
+                user.updatedAt = new Date().toISOString();
+                if (password) user.password = password;
+            } else {
+                user = { id: 'usr_' + Math.random().toString(36).substr(2, 9), email, password: password || '123456', plan, createdAt: new Date().toISOString() };
+                users.push(user);
+            }
+            localStorage.setItem('nexdesign_users', JSON.stringify(users));
+        }
+
+        // Init on load
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadEarlyStageStatus();
+            
+            // Explicit event listener for Step 1 Devam Et button -> MUST GO TO STEP 2 ONLY
+            const step1Btn = document.getElementById('step1ConfirmBtn');
+            if (step1Btn) {
+                step1Btn.onclick = function(e) {
+                    if (e) { e.preventDefault(); e.stopPropagation(); }
+                    console.log("Devam Et (Step 1) tıklandı -> Kesin olarak Step 2 (Hesabınızı Oluşturun) geçiliyor");
+                    goToStep(2);
+                };
+            }
+
+            // Explicit event listener for Fullscreen Overlay Devam Et button
+            const overlayBtn = document.getElementById('closeAlphaOverlayBtn');
+            if (overlayBtn) {
+                overlayBtn.onclick = function(e) {
+                    if (e) { e.preventDefault(); e.stopPropagation(); }
+                    console.log("Devam Et (Overlay) tıklandı -> proceedAlphaAnimation çalıştırılıyor");
+                    proceedAlphaAnimation();
+                };
+            }
+
+            // Check if Paddle CDN script was blocked by AdBlocker/Brave Shields
+            if (typeof Paddle === 'undefined') {
+                console.warn("Paddle JS SDK is undefined. Adblocker detected.");
+                const warnEl = document.createElement('div');
+                warnEl.id = 'adblockWarning';
+                warnEl.style.cssText = "background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; font-size: 11px; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; text-align: center; line-height: 1.4;";
+                warnEl.innerHTML = "⚠️ <strong>Paddle Engellendi:</strong> Tarayıcınızdaki Reklam Engelleyici (AdBlock, uBlock) veya tarayıcı koruması Paddle kütüphanesinin yüklenmesini engelliyor. Ödeme adımını test edebilmek için lütfen reklam engelleyiciyi devre dışı bırakın.";
+                const card = document.getElementById('cardContainer');
+                if (card) card.insertBefore(warnEl, card.firstChild);
+            }
+
+            // Clear any stale pending OTP state on fresh page load to avoid unexpected step jumps
+            if (!window.location.search.includes('otp=true')) {
+                sessionStorage.removeItem('pending_otp_email');
+            }
+
+            // Restore active session/license state if explicitly returning
+            const urlParams = new URLSearchParams(window.location.search);
+            const savedEmail = localStorage.getItem('nexdesign_active_email');
+            if (savedEmail && urlParams.get('restore') === 'true') {
+                try {
+                    const res = await fetch(`${SERVER_URL}/api/check-license?email=${encodeURIComponent(savedEmail)}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.hasAccess) {
+                            userEmail = savedEmail;
+                            selectedPlan = data.plan;
+                            currentStepNum = 4;
+                            showSuccessScreen();
+                            updateStepUI();
+                            console.log("Aktif oturum geri yüklendi:", userEmail, "Plan:", selectedPlan);
+                        }
+                    }
+                } catch (err) {
+                    console.warn("Oturum geri yüklenemedi:", err.message);
+                }
+            }
+        });
     </script>
+    <!-- Giant Alpha Badge Fullscreen Overlay (Cinematic Stage) -->
+    <div id="fullscreenAlphaOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:999; background:rgba(8, 8, 10, 0.55); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); align-items:center; justify-content:center; flex-direction:column; pointer-events:none; opacity:0; transition:opacity 0.6s ease;">
+        <div id="giantAlphaBadge" style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 260px; font-weight: 800; color: #ffffff; text-shadow: 0 0 80px rgba(255, 255, 255, 0.45); transform: scale(0.1); transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1); line-height: 1; margin-bottom: -10px;">
+            α
+        </div>
+        <div style="font-family: var(--font-sans); font-size: 15px; font-weight: 400; color: #e4e4e7; max-width: 520px; text-align: center; line-height: 1.6; margin-top: 0; padding: 0 20px; letter-spacing: 0.02em;">
+            You are one of the first designers to gain access to Nexdesign. If you become an alpha user before the quota is filled, you’ll receive a 70% discount (for life) thanks to the alpha badge.
+        </div>
+        <button id="closeAlphaOverlayBtn" class="btn-primary" onclick="proceedAlphaAnimation()" style="width: auto; padding: 12px 36px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; border-radius: 8px; cursor: pointer; transition: all 0.25s ease; pointer-events: auto; margin-top: 28px; box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);">
+            Devam Et
+        </button>
+    </div>
+
+    <!-- Phase Beta Marketing Fullscreen Overlay (Cinematic Stage) -->
+    <div id="fullscreenBetaOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:999; background:rgba(18, 18, 22, 0.75); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); align-items:center; justify-content:center; flex-direction:column; pointer-events:none; opacity:0; transition:opacity 0.6s ease;">
+        <div id="giantBetaBadge" style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 200px; font-weight: 800; color: #10b981; text-shadow: 0 0 80px rgba(16, 185, 129, 0.6), 0 0 120px rgba(6, 182, 212, 0.4); transform: scale(0.1); transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1); line-height: 1; margin-bottom: 0px;">
+            β
+        </div>
+        
+        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 16px; padding: 32px 36px; max-width: 640px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); backdrop-filter: blur(12px);">
+            <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.15em; color: #34d399; text-transform: uppercase; margin-bottom: 12px;">
+                BETA STAGE ANNOUNCEMENT
+            </div>
+            
+            <h2 style="font-size: 26px; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 16px; line-height: 1.25;">
+                Phase Alpha is done.
+            </h2>
+            
+            <p style="font-family: var(--font-sans); font-size: 15px; font-weight: 400; color: #d4d4d8; line-height: 1.65; margin-bottom: 24px; letter-spacing: 0.01em;">
+                We have 150 Alpha users who receive a 70% lifetime discount. Don’t worry if you missed the chance to become an Alpha user. <strong style="color: #ffffff; font-weight: 600;">The Beta phase is coming up, and if you can join the Beta, you’ll be eligible for a 40% lifetime discount.</strong>
+            </p>
+            
+            <button id="closeBetaOverlayBtn" class="btn-primary" onclick="proceedBetaAnimation()" style="width: auto; padding: 14px 42px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; border-radius: 10px; cursor: pointer; transition: all 0.25s ease; pointer-events: auto; background: linear-gradient(135deg, #10b981, #059669); border: 1px solid #34d399; color: #ffffff; box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);">
+                Phase Beta Katılımını Onayla
+            </button>
+        </div>
+    </div>
 </body>
 </html>
