@@ -2742,8 +2742,9 @@
         window.handlePaymentSubmit = function() {
             const payBtn = document.getElementById('payBtn');
             
-            // Resolve standard or alpha price ID
-            const priceIds = PADDLE_PRICE_IDS[currentActivePhase] || PADDLE_PRICE_IDS.standard;
+            // Lifetime Discount Tier Resolution (Alpha %70, Beta %40, Standard %0)
+            const targetTier = (currentUserData && currentUserData.tier_tag) || currentActivePhase || 'standard';
+            const priceIds = PADDLE_PRICE_IDS[targetTier] || PADDLE_PRICE_IDS.standard;
             const priceId = priceIds[billingPeriod];
 
             if (paddleInitialized && priceId && !priceId.includes('placeholder')) {
