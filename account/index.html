@@ -1583,25 +1583,23 @@
             ? 'http://localhost:3001'
             : 'https://website-rla3.onrender.com';
 
-        // PADDLE CLIENT-SIDE CONFIGURATION
-        // Fill these after creating products in your Paddle Sandbox Dashboard.
-        const PADDLE_CLIENT_TOKEN = 'test_c1b7f396e4627b7d8c891f4779d'; // e.g. 'test_snd_clt_...'
-        const PADDLE_ENVIRONMENT = 'sandbox';
+        // PADDLE CLIENT-SIDE CONFIGURATION (PRODUCTION LIVE MODE)
+        const PADDLE_CLIENT_TOKEN = 'live_0586d1392cd4411d0bd9c2c7ef3';
+        const PADDLE_ENVIRONMENT = 'production';
 
-        // Price IDs per plan and billing period
-        // Set these after running the Paddle "Create product catalog" prompt in your Dashboard.
+        // Production Price IDs
         const PADDLE_PRICE_IDS = {
             alpha: {
-                month: 'pri_01kxhzcvcktvh9984ff3tfgnqy',
-                year:  'pri_01kxhzcvk03k1b86tjg34nrbn7'
+                month: 'pri_01kzd8mbykdwtt6skkk96br82a',
+                year:  'pri_01kzd8mbykdwtt6skkk96br82a'
             },
             beta: {
-                month: 'pri_01kxjt3n422r4hv8c0hqefxwer',
-                year:  'pri_01kxjt3nc2hm0nk3p764gt75d5'
+                month: 'pri_01kzd8mbykdwtt6skkk96br82a',
+                year:  'pri_01kzd8mbykdwtt6skkk96br82a'
             },
             standard: {
-                month: 'pri_01kxk9609at6xqb0c0wahtvghv',
-                year:  'pri_01kxk960g9mz4xzk3j44skynn9'
+                month: 'pri_01kzd8mbykdwtt6skkk96br82a',
+                year:  'pri_01kzd8mbykdwtt6skkk96br82a'
             }
         };
 
