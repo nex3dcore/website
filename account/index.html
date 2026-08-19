@@ -800,6 +800,11 @@
             position: relative;
             width: 100%;
             margin: 0 auto;
+            transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .wizard-main-wrapper.shifted-down {
+            transform: translateY(90px);
         }
 
         .vertical-timeline-sidebar {
@@ -1751,6 +1756,8 @@
             destroy(ctx) {
                 super.destroy(ctx);
                 this.animationTriggered = false;
+                const wrapper = document.querySelector('.wizard-main-wrapper');
+                if (wrapper) wrapper.classList.remove('shifted-down');
                 const alphaHeader = document.getElementById('phaseAlphaHeader');
                 if (alphaHeader) alphaHeader.style.display = 'none';
                 const overlay = document.getElementById('fullscreenAlphaOverlay');
@@ -1769,6 +1776,9 @@
             }
 
             triggerAnimation() {
+                const wrapper = document.querySelector('.wizard-main-wrapper');
+                if (wrapper) wrapper.classList.add('shifted-down');
+
                 const cardContainer = document.getElementById('cardContainer');
                 const priceEl = document.getElementById('proPriceDisplay');
                 const origPriceEl = document.getElementById('proOriginalPrice');
@@ -1940,6 +1950,8 @@
             destroy(ctx) {
                 super.destroy(ctx);
                 this.animationTriggered = false;
+                const wrapper = document.querySelector('.wizard-main-wrapper');
+                if (wrapper) wrapper.classList.remove('shifted-down');
                 const betaHeader = document.getElementById('phaseBetaHeader');
                 if (betaHeader) betaHeader.style.display = 'none';
                 const overlay = document.getElementById('fullscreenBetaOverlay');
@@ -1958,6 +1970,9 @@
             }
 
             triggerAnimation() {
+                const wrapper = document.querySelector('.wizard-main-wrapper');
+                if (wrapper) wrapper.classList.add('shifted-down');
+
                 const cardContainer = document.getElementById('cardContainer');
                 const priceEl = document.getElementById('proPriceDisplay');
                 const origPriceEl = document.getElementById('proOriginalPrice');
@@ -2111,6 +2126,8 @@
 
             init(ctx) {
                 document.body.setAttribute('data-phase', 'standard');
+                const wrapper = document.querySelector('.wizard-main-wrapper');
+                if (wrapper) wrapper.classList.remove('shifted-down');
                 const alphaHeader = document.getElementById('phaseAlphaHeader');
                 const betaHeader = document.getElementById('phaseBetaHeader');
                 const step1Header = document.getElementById('standardStep1Header');
