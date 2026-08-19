@@ -530,7 +530,7 @@
         }
 
         @keyframes kineticChar {
-            /* 0% to 35%: Violent sarsıntı/shake on the right side (400px away) */
+            /* 0% to 35%: Violent shake on the right side (400px away) */
             0% {
                 transform: translateX(400px) translate(0, 0);
                 opacity: 0;
@@ -565,12 +565,12 @@
                 transform: translateX(0) scale(1.4) rotate(-8deg);
                 opacity: 1;
             }
-            /* 50% to 65%: Sudden stop with hard impact snap sarsıntı */
+            /* 50% to 65%: Sudden stop with hard impact snap shake */
             65% {
                 transform: translateX(0) scale(0.85) rotate(4deg);
                 opacity: 1;
             }
-            80% {
+            70% {
                 transform: translateX(0) scale(1.08) rotate(-2deg);
                 opacity: 1;
             }
@@ -578,7 +578,7 @@
                 transform: translateX(0) scale(1) rotate(0);
                 opacity: 1; /* Settled, fully bright white! */
             }
-            /* 85% to 100%: Slow fade out to watermark (yavaşça solmalı) */
+            /* 85% to 100%: Slow fade out to watermark */
             100% {
                 transform: translateX(0) scale(1) rotate(0);
                 opacity: 0.04; /* Faded watermark opacity */
@@ -1237,9 +1237,9 @@
                 </div>
             </div>
             <div class="user-dash-badges">
-                <span class="user-tag-badge alpha-tag" id="dashAlphaTag" style="display:none;">🚀 ALPHA MİMAR</span>
-                <span class="user-tag-badge beta-tag" id="dashBetaTag" style="display:none;">⚡ BETA MİMAR</span>
-                <span class="user-tag-badge sub-tag" id="dashSubTag">✓ HESAP AKTİF</span>
+                <span class="user-tag-badge alpha-tag" id="dashAlphaTag" style="display:none;">🚀 ALPHA ARCHITECT</span>
+                <span class="user-tag-badge beta-tag" id="dashBetaTag" style="display:none;">⚡ BETA ARCHITECT</span>
+                <span class="user-tag-badge sub-tag" id="dashSubTag">✓ ACCOUNT ACTIVE</span>
             </div>
         </div>
 
@@ -1257,7 +1257,7 @@
                             <div class="v-step-badge beta-vbadge">β</div>
                             <div class="v-step-line"></div>
                         </div>
-                        <div class="v-step standard-vstep" id="timelineStandard" title="Sade Sürüm" onclick="PhaseController.switchPhase('standard')">
+                        <div class="v-step standard-vstep" id="timelineStandard" title="Standard Edition" onclick="PhaseController.switchPhase('standard')">
                             <div class="v-step-badge standard-vbadge">⚡</div>
                         </div>
                     </div>
@@ -1275,8 +1275,8 @@
             <div class="wizard-step active" id="step1">
                 <!-- Standard Step 1 Header (hidden in Alpha/Beta mode when headers are active) -->
                 <div id="standardStep1Header">
-                    <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">Planınızı Seçin</h2>
-                    <p style="font-size: 11px; color: var(--text-secondary);">İhtiyaçlarınıza uygun bir lisans türü belirleyin.</p>
+                    <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">Choose Your Plan</h2>
+                    <p style="font-size: 11px; color: var(--text-secondary);">Select the license tier that fits your workflow.</p>
                 </div>
 
                 <div class="plans-grid">
@@ -1284,7 +1284,7 @@
                     <div class="plan-card" id="cardFree" onclick="selectPlan('free')" style="padding: 28px 20px 24px 20px;">
                         <div class="alpha-badge">
                             α
-                            <div class="alpha-tooltip">potential %70 off</div>
+                            <div class="alpha-tooltip">potential 70% off</div>
                         </div>
                         <div class="beta-badge">
                             β
@@ -1356,21 +1356,21 @@
                 </div>
 
                 <button class="btn-primary" id="step1ConfirmBtn" style="margin-top: 16px; width: 100%; display: none; position: relative; z-index: 10; cursor: pointer;">
-                    Devam Et
+                    Continue
                 </button>
             </div>
 
             <!-- STEP 2: REGISTRATION / LOGIN DUAL MODE -->
             <div class="wizard-step" id="step2">
                 <div>
-                    <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;" id="authHeaderTitle">Hesabınızı Oluşturun</h2>
-                    <p style="font-size: 11px; color: var(--text-secondary);" id="authHeaderSub">NexDesign masaüstü lisansınızı yönetmek için yeni hesap açın.</p>
+                    <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;" id="authHeaderTitle">Create Your Account</h2>
+                    <p style="font-size: 11px; color: var(--text-secondary);" id="authHeaderSub">Create an account to manage your NexDesign desktop license.</p>
                 </div>
 
                 <!-- Mode Switcher Tabs -->
                 <div class="auth-tab-group">
-                    <div class="auth-tab active" id="tabRegister" onclick="setAuthMode('register')">Yeni Hesap Aç</div>
-                    <div class="auth-tab" id="tabLogin" onclick="setAuthMode('login')">Mevcut Hesaba Giriş Yap</div>
+                    <div class="auth-tab active" id="tabRegister" onclick="setAuthMode('register')">Create Account</div>
+                    <div class="auth-tab" id="tabLogin" onclick="setAuthMode('login')">Log In</div>
                 </div>
 
                 <div id="quotaWarning" class="cohort-banner" style="display:none; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); color:#ffffff; margin-bottom:0px;"></div>
@@ -1380,26 +1380,26 @@
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.136 4.114-3.555 0-6.437-2.883-6.437-6.437 0-3.555 2.882-6.437 6.437-6.437 1.488 0 2.855.51 3.94 1.353l3.056-3.055C19.121 2.37 15.932 1.2 12.24 1.2c-5.965 0-10.8 4.835-10.8 10.8 0 5.965 4.835 10.8 10.8 10.8 6.22 0 10.9-4.382 10.9-10.8 0-.675-.06-1.32-.175-1.915H12.24z"/>
                     </svg>
-                    Google ile Devam Et
+                    Continue with Google
                 </button>
 
                 <div style="display: flex; align-items: center; justify-content: center; gap: 10px; opacity: 0.5; font-size: 10px;">
                     <hr style="flex-grow: 1; border: none; border-top: 1px solid rgba(255,255,255,0.15);" />
-                    <span id="dividerText">veya e-posta ile kayıt olun</span>
+                    <span id="dividerText">or register with email</span>
                     <hr style="flex-grow: 1; border: none; border-top: 1px solid rgba(255,255,255,0.15);" />
                 </div>
 
                 <!-- Registration Form -->
                 <div id="registerFormContainer">
                     <div class="form-group">
-                        <label for="reg-email">E-Posta Adresi</label>
-                        <input type="email" id="reg-email" class="form-input" placeholder="isim@mimar.com" autocomplete="email" />
+                        <label for="reg-email">Email Address</label>
+                        <input type="email" id="reg-email" class="form-input" placeholder="name@architect.com" autocomplete="email" />
                     </div>
 
                     <div class="form-group">
-                        <label for="reg-password">Şifre Oluşturun</label>
+                        <label for="reg-password">Create Password</label>
                         <div class="password-input-wrapper">
-                            <input type="password" id="reg-password" class="form-input" placeholder="En az 8 karakter, 1 büyük harf, 1 rakam" oninput="updatePasswordStrengthUI()" autocomplete="new-password" />
+                            <input type="password" id="reg-password" class="form-input" placeholder="At least 8 chars, 1 uppercase, 1 number" oninput="updatePasswordStrengthUI()" autocomplete="new-password" />
                             <button type="button" class="password-toggle-eye" onclick="togglePasswordVisibility('reg-password', this)">👁️</button>
                         </div>
                         
@@ -1410,53 +1410,53 @@
                             <div class="strength-segment" id="strengthSeg3"></div>
                         </div>
                         <div class="password-rules">
-                            <span class="rule-item" id="ruleLen">✓ Min 8 Karakter</span>
-                            <span class="rule-item" id="ruleUpper">✓ 1 Büyük Harf</span>
-                            <span class="rule-item" id="ruleNum">✓ 1 Rakam</span>
+                            <span class="rule-item" id="ruleLen">✓ Min 8 Characters</span>
+                            <span class="rule-item" id="ruleUpper">✓ 1 Uppercase Letter</span>
+                            <span class="rule-item" id="ruleNum">✓ 1 Number</span>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="reg-password-confirm">Şifre Tekrarı</label>
+                        <label for="reg-password-confirm">Confirm Password</label>
                         <div class="password-input-wrapper">
-                            <input type="password" id="reg-password-confirm" class="form-input" placeholder="Şifrenizi tekrar girin" oninput="checkPasswordMatchUI()" autocomplete="new-password" />
+                            <input type="password" id="reg-password-confirm" class="form-input" placeholder="Re-enter your password" oninput="checkPasswordMatchUI()" autocomplete="new-password" />
                             <button type="button" class="password-toggle-eye" onclick="togglePasswordVisibility('reg-password-confirm', this)">👁️</button>
                         </div>
                         <div id="matchFeedback" style="font-size: 10px; margin-top: 3px; display: none;"></div>
                     </div>
 
-                    <!-- Legal Consent Box (Must NOT be pre-checked by default for GDPR/KVKK compliance) -->
+                    <!-- Legal Consent Box -->
                     <div class="legal-consent-container">
                         <input type="checkbox" id="legalConsentCheckbox" />
                         <label for="legalConsentCheckbox">
-                            <a href="#" style="color: #ffffff; text-decoration: underline;">Kullanım Koşulları</a> ve <a href="#" style="color: #ffffff; text-decoration: underline;">KVKK Aydınlatma Metnini</a> okudum, kabul ediyorum.
+                            I have read and agree to the <a href="#" style="color: #ffffff; text-decoration: underline;">Terms of Service</a> and <a href="#" style="color: #ffffff; text-decoration: underline;">Privacy Policy</a>.
                         </label>
                     </div>
 
                     <div style="display:flex; gap:12px; margin-top: 14px;">
-                        <button class="btn-primary btn-secondary" onclick="goToStep(1)">Geri</button>
-                        <button class="btn-primary" onclick="handleRegistrationSubmit()">Hesap Oluştur ve Devam Et</button>
+                        <button class="btn-primary btn-secondary" onclick="goToStep(1)">Back</button>
+                        <button class="btn-primary" onclick="handleRegistrationSubmit()">Create Account & Continue</button>
                     </div>
                 </div>
 
                 <!-- Login Form (Hidden by default) -->
                 <div id="loginFormContainer" style="display: none;">
                     <div class="form-group">
-                        <label for="login-email">E-Posta Adresi</label>
-                        <input type="email" id="login-email" class="form-input" placeholder="isim@mimar.com" autocomplete="email" />
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" class="form-input" placeholder="name@architect.com" autocomplete="email" />
                     </div>
 
                     <div class="form-group">
-                        <label for="login-password">Şifre</label>
+                        <label for="login-password">Password</label>
                         <div class="password-input-wrapper">
-                            <input type="password" id="login-password" class="form-input" placeholder="Şifreniz" autocomplete="current-password" />
+                            <input type="password" id="login-password" class="form-input" placeholder="Your password" autocomplete="current-password" />
                             <button type="button" class="password-toggle-eye" onclick="togglePasswordVisibility('login-password', this)">👁️</button>
                         </div>
                     </div>
 
                     <div style="display:flex; gap:12px; margin-top: 14px;">
-                        <button class="btn-primary btn-secondary" onclick="goToStep(1)">Geri</button>
-                        <button class="btn-primary" onclick="handleLoginSubmit()">Giriş Yap ve Devam Et</button>
+                        <button class="btn-primary btn-secondary" onclick="goToStep(1)">Back</button>
+                        <button class="btn-primary" onclick="handleLoginSubmit()">Log In & Continue</button>
                     </div>
                 </div>
             </div>
@@ -1464,9 +1464,9 @@
             <!-- STEP 2B: OTP EMAIL VERIFICATION -->
             <div class="wizard-step" id="step2B">
                 <div>
-                    <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">E-Posta Adresinizi Doğrulayın</h2>
+                    <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">Verify Your Email Address</h2>
                     <p style="font-size: 11px; color: var(--text-secondary);">
-                        <strong id="otpEmailTarget" style="color:#ffffff;"></strong> adresine gönderilen 6 haneli güvenlik kodunu girin.
+                        Enter the 6-digit verification code sent to <strong id="otpEmailTarget" style="color:#ffffff;"></strong>.
                     </p>
                 </div>
 
@@ -1480,19 +1480,19 @@
                 </div>
 
                 <div id="otpDevNotice" class="cohort-banner" style="display:none; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.12); color:#ffffff; padding: 10px; border-radius: 6px; font-size: 11px; text-align: center;">
-                    🔑 <strong>Geliştirici Test Kodu:</strong> <span id="otpDevCode" style="font-family:monospace; font-size:14px; font-weight:700; color:#34d399;">------</span>
+                    🔑 <strong>Developer Test Code:</strong> <span id="otpDevCode" style="font-family:monospace; font-size:14px; font-weight:700; color:#34d399;">------</span>
                 </div>
 
                 <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--text-secondary); margin: 4px 0;">
-                    <span>Kod ulaşmadı mı?</span>
+                    <span>Didn't receive the code?</span>
                     <button type="button" id="resendOtpBtn" onclick="handleResendOTP()" style="background:none; border:none; color:#ffffff; cursor:pointer; font-size:11px; font-weight:600; text-decoration:underline;">
-                        Kodu Yeniden Gönder (<span id="cooldownTimer">00:45</span>)
+                        Resend Code (<span id="cooldownTimer">00:45</span>)
                     </button>
                 </div>
 
                 <div style="display:flex; gap:12px; margin-top: 8px;">
-                    <button class="btn-primary btn-secondary" onclick="goToStep(2)">Geri / E-postayı Değiştir</button>
-                    <button class="btn-primary" onclick="handleVerifyOTP()">Doğrula ve Devam Et</button>
+                    <button class="btn-primary btn-secondary" onclick="goToStep(2)">Back / Change Email</button>
+                    <button class="btn-primary" onclick="handleVerifyOTP()">Verify & Continue</button>
                 </div>
             </div>
 
@@ -1508,38 +1508,38 @@
                         <!-- Fallback Simulated form -->
                         <div style="display: flex; flex-direction: column; gap: 14px;" id="simulatedCardForm">
                             <div class="form-group">
-                                <label>Kart Numarası</label>
+                                <label>Card Number</label>
                                 <input type="text" class="form-input" placeholder="4242 4242 4242 4242" id="cc-num" />
                             </div>
                             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                                 <div class="form-group">
-                                    <label>SKT</label>
-                                    <input type="text" class="form-input" placeholder="AA / YY" id="cc-exp" />
+                                    <label>Expiry Date</label>
+                                    <input type="text" class="form-input" placeholder="MM / YY" id="cc-exp" />
                                 </div>
                                 <div class="form-group">
                                     <label>CVC</label>
                                     <input type="password" class="form-input" placeholder="•••" id="cc-cvc" />
                                 </div>
                             </div>
-                            <button class="btn-primary" style="margin-top:10px;" onclick="handlePaymentSubmit()" id="payBtn">Ödeme Yap (Simüle)</button>
+                            <button class="btn-primary" style="margin-top:10px;" onclick="handlePaymentSubmit()" id="payBtn">Complete Payment (Simulated)</button>
                         </div>
                     </div>
 
                     <!-- Right: Summary -->
                     <div class="checkout-summary" style="height:fit-content;">
                         <div>
-                            <span style="font-size: 10px; text-transform: uppercase; color: var(--text-secondary); font-weight:600;">Seçilen Plan</span>
+                            <span style="font-size: 10px; text-transform: uppercase; color: var(--text-secondary); font-weight:600;">Selected Plan</span>
                             <h3 id="summaryPlanName" style="font-size: 16px; margin: 4px 0 0 0; color:#ffffff;">Premium Pro</h3>
                         </div>
                         <div style="border-top:1px solid rgba(255,255,255,0.06); padding-top:12px; display:flex; justify-content:space-between; align-items:baseline;">
-                            <span style="font-size:12px; font-weight:600;">Toplam:</span>
-                            <span style="font-size:20px; font-weight:800; color:#fff;" id="summaryPrice">$41.70<span style="font-size:10px; font-weight:400; color:var(--text-secondary);">/ay</span></span>
+                            <span style="font-size:12px; font-weight:600;">Total:</span>
+                            <span style="font-size:20px; font-weight:800; color:#fff;" id="summaryPrice">$41.70<span style="font-size:10px; font-weight:400; color:var(--text-secondary);">/mo</span></span>
                         </div>
                     </div>
                 </div>
 
                 <div style="display:flex; gap:12px; margin-top: 12px;">
-                    <button class="btn-primary btn-secondary" onclick="prevStep()">Geri</button>
+                    <button class="btn-primary btn-secondary" onclick="prevStep()">Back</button>
                 </div>
             </div>
 
@@ -1547,26 +1547,26 @@
             <div class="wizard-step" id="step4">
                 <div class="success-panel">
                     <div class="success-icon">✓</div>
-                    <h2 style="font-size: 20px; font-weight: 600;">Hesabınız Aktifleştirildi!</h2>
+                    <h2 style="font-size: 20px; font-weight: 600;">Account Activated!</h2>
                     <p style="font-size: 12px; color: var(--text-secondary); max-width: 320px; line-height: 1.5; margin: 0 auto;">
-                        Kaydınız başarıyla tamamlandı. Artık NexDesign masaüstü uygulamasını açarak oluşturduğunuz hesap bilgileriyle giriş yapabilirsiniz.
+                        Your registration is complete. You can now launch the NexDesign desktop application and sign in with your credentials.
                     </p>
                     
                     <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 8px; padding: 14px 20px; text-align: left; width: 100%; margin-top: 10px; font-size:11px; display:flex; flex-direction:column; gap:6px;">
                         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:8px; margin-bottom:4px;">
-                            <strong>Giriş Bilgileriniz:</strong>
-                            <span id="successBadge" style="padding:3px 10px; border-radius:12px; font-weight:700; font-size:10px; letter-spacing:0.5px;">🚀 ALPHA MİMAR</span>
+                            <strong>Account Details:</strong>
+                            <span id="successBadge" style="padding:3px 10px; border-radius:12px; font-weight:700; font-size:10px; letter-spacing:0.5px;">🚀 ALPHA ARCHITECT</span>
                         </div>
-                        <div>• <strong>Üye Sırası:</strong> <span id="successMemberNo" style="color:#34d399; font-weight:700; font-family:monospace;">#1</span></div>
-                        <div>• <strong>E-posta:</strong> <code id="successEmail"></code></div>
-                        <div>• <strong>Plan Türü:</strong> <code id="successPlan"></code></div>
-                        <div>• <strong>Faturalama:</strong> <code id="successBilling"></code></div>
-                        <div>• <strong>Lisans Durumu:</strong> <span style="color:#34d399; font-weight:bold;">AKTİF 🟢</span></div>
+                        <div>• <strong>Member Sequence:</strong> <span id="successMemberNo" style="color:#34d399; font-weight:700; font-family:monospace;">#1</span></div>
+                        <div>• <strong>Email:</strong> <code id="successEmail"></code></div>
+                        <div>• <strong>License Tier:</strong> <code id="successPlan"></code></div>
+                        <div>• <strong>Billing:</strong> <code id="successBilling"></code></div>
+                        <div>• <strong>License Status:</strong> <span style="color:#34d399; font-weight:bold;">ACTIVE 🟢</span></div>
                     </div>
 
                     <div style="display:flex; gap:10px; margin-top:10px; width:100%;">
-                        <button class="btn-primary btn-secondary" style="flex:1;" onclick="openCustomerPortal()" id="portalBtn">Aboneliğimi Yönet</button>
-                        <button class="btn-primary" style="flex:1; background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#ffffff;" onclick="handleLogout()">Oturumu Kapat</button>
+                        <button class="btn-primary btn-secondary" style="flex:1;" onclick="openCustomerPortal()" id="portalBtn">Manage Subscription</button>
+                        <button class="btn-primary" style="flex:1; background:rgba(255, 255, 255, 0.05); border:1px solid rgba(255, 255, 255, 0.1); color:#ffffff;" onclick="handleLogout()">Log Out</button>
                     </div>
                 </div>
             </div>
@@ -1625,10 +1625,10 @@
                 }
                 Paddle.Initialize({ token: PADDLE_CLIENT_TOKEN });
                 paddleInitialized = true;
-                console.log("Paddle SDK başlatıldı. Ortam: " + PADDLE_ENVIRONMENT);
+                console.log("Paddle SDK initialized. Environment: " + PADDLE_ENVIRONMENT);
             } catch (e) {
-                console.error("Paddle başlatılamadı:", e);
-                alert("Paddle SDK başlatma hatası: " + e.message);
+                console.error("Failed to initialize Paddle:", e);
+                alert("Paddle SDK initialization error: " + e.message);
             }
         }
 
@@ -1659,7 +1659,7 @@
             const summaryPriceEl = document.getElementById('summaryPrice');
             if (summaryPriceEl) {
                 const price = billingPeriod === 'year' ? '$1390' : '$139';
-                const label = billingPeriod === 'year' ? '/yıl' : '/ay';
+                const label = billingPeriod === 'year' ? '/yr' : '/mo';
                 summaryPriceEl.innerHTML = `${price}<span style="font-size:10px; font-weight:400; color:var(--text-secondary);">${label}</span>`;
             }
         };
@@ -2231,14 +2231,14 @@
                 idEl.textContent = `MEMBER ID: #${num}`;
             }
 
-            if (userData.tier_tag === 'alpha' || userData.badge === 'Alpha Mimar') {
+            if (userData.tier_tag === 'alpha' || userData.badge === 'Alpha Architect' || userData.badge === 'Alpha Mimar') {
                 if (alphaTag) alphaTag.style.display = 'inline-block';
-            } else if (userData.tier_tag === 'beta' || userData.badge === 'Beta Mimar') {
+            } else if (userData.tier_tag === 'beta' || userData.badge === 'Beta Architect' || userData.badge === 'Beta Mimar') {
                 if (betaTag) betaTag.style.display = 'inline-block';
             }
 
             if (subTag && userData.hasActiveSubscription) {
-                subTag.textContent = `✓ ${userData.plan.toUpperCase()} AKTİF`;
+                subTag.textContent = `✓ ${userData.plan.toUpperCase()} ACTIVE`;
             }
         }
 
@@ -2309,7 +2309,7 @@
                 } else {
                     if (simForm) simForm.style.display = 'flex';
                     if (padContainer) padContainer.style.display = 'none';
-                    if (payBtn) payBtn.innerText = 'Ödeme Yap (Simüle)';
+                    if (payBtn) payBtn.innerText = 'Complete Payment (Simulated)';
                 }
             }
         }
@@ -2362,17 +2362,17 @@
                 if (loginContainer) loginContainer.style.display = 'none';
                 if (tabReg) tabReg.classList.add('active');
                 if (tabLogin) tabLogin.classList.remove('active');
-                if (title) title.innerText = 'Hesabınızı Oluşturun';
-                if (sub) sub.innerText = 'NexDesign masaüstü lisansınızı yönetmek için yeni hesap açın.';
-                if (divText) divText.innerText = 'veya e-posta ile kayıt olun';
+                if (title) title.innerText = 'Create Your Account';
+                if (sub) sub.innerText = 'Create an account to manage your NexDesign desktop license.';
+                if (divText) divText.innerText = 'or register with email';
             } else {
                 if (regContainer) regContainer.style.display = 'none';
                 if (loginContainer) loginContainer.style.display = 'block';
                 if (tabReg) tabReg.classList.remove('active');
                 if (tabLogin) tabLogin.classList.add('active');
-                if (title) title.innerText = 'Hesabınıza Giriş Yapın';
-                if (sub) sub.innerText = 'Mevcut lisansınızı ve hesabınızı yönetmek için giriş yapın.';
-                if (divText) divText.innerText = 'veya e-posta ile giriş yapın';
+                if (title) title.innerText = 'Log in to Your Account';
+                if (sub) sub.innerText = 'Log in to manage your active license and account.';
+                if (divText) divText.innerText = 'or sign in with email';
             }
         };
 
@@ -2434,10 +2434,10 @@
             feedback.style.display = 'block';
             if (pass === confirmPass) {
                 feedback.style.color = '#34d399';
-                feedback.innerText = '✓ Şifreler eşleşiyor';
+                feedback.innerText = '✓ Passwords match';
             } else {
                 feedback.style.color = '#f87171';
-                feedback.innerText = '✗ Şifreler eşleşmiyor';
+                feedback.innerText = '✗ Passwords do not match';
             }
         };
 
@@ -2463,7 +2463,7 @@
                 }
             }
 
-            const promptEmail = prompt("Google Hesabı e-posta adresinizi giriniz:", "mimar@gmail.com");
+            const promptEmail = prompt("Enter your Google Account email address:", "architect@gmail.com");
             if (promptEmail && promptEmail.includes('@')) {
                 submitGoogleAuth(null, promptEmail.trim());
             }
@@ -2483,10 +2483,10 @@
                     sessionStorage.removeItem('pending_otp_email');
                     await proceedToNextStepAfterAuth();
                 } else {
-                    alert(data.error || "Google girişi başarısız.");
+                    alert(data.error || "Google sign-in failed.");
                 }
             } catch (err) {
-                alert("Sunucuya bağlanılamadı.");
+                alert("Could not connect to the server.");
             }
         }
 
@@ -2496,13 +2496,13 @@
             const confirmPass = document.getElementById('reg-password-confirm').value;
             const legalConsent = document.getElementById('legalConsentCheckbox').checked;
 
-            if (!emailInput || !emailInput.includes('@')) { alert('Lütfen geçerli bir e-posta adresi girin.'); return; }
+            if (!emailInput || !emailInput.includes('@')) { alert('Please enter a valid email address.'); return; }
             if (passInput.length < 8 || !/[A-Z]/.test(passInput) || !/[0-9]/.test(passInput)) {
-                alert('Şifreniz en az 8 karakter uzunluğunda olmalı, en az 1 büyük harf ve 1 rakam içermelidir.');
+                alert('Password must be at least 8 characters long with at least 1 uppercase letter and 1 number.');
                 return;
             }
-            if (passInput !== confirmPass) { alert('Şifreleriniz birbiriyle eşleşmiyor.'); return; }
-            if (!legalConsent) { alert('Devam etmek için Kullanım Koşulları ve KVKK Aydınlatma Metnini kabul etmelisiniz.'); return; }
+            if (passInput !== confirmPass) { alert('Passwords do not match.'); return; }
+            if (!legalConsent) { alert('You must agree to the Terms of Service and Privacy Policy to continue.'); return; }
 
             userEmail = emailInput;
             userPassword = passInput;
@@ -2518,10 +2518,10 @@
                     sessionStorage.setItem('pending_otp_email', userEmail);
                     openOTPVerificationStep(userEmail);
                 } else {
-                    alert(data.error || "Kayıt hatası.");
+                    alert(data.error || "Registration error.");
                 }
             } catch (err) {
-                console.warn("Sunucu bağlantısı yok, yerel mod:", err.message);
+                console.warn("Server unavailable, falling back to local demo mode:", err.message);
                 saveLocalUser(userEmail, userPassword, selectedPlan);
                 sessionStorage.setItem('pending_otp_email', userEmail);
                 openOTPVerificationStep(userEmail, "123456");
@@ -2540,10 +2540,10 @@
                 updateStepUI();
             } else {
                 const price = billingPeriod === 'year' ? '$1390' : '$139';
-                const label = billingPeriod === 'year' ? '/yıl' : '/ay';
+                const label = billingPeriod === 'year' ? '/yr' : '/mo';
                 const summaryName = document.getElementById('summaryPlanName');
                 const summaryPrice = document.getElementById('summaryPrice');
-                if (summaryName) summaryName.innerText = 'Ücretli';
+                if (summaryName) summaryName.innerText = 'Premium Pro';
                 if (summaryPrice) summaryPrice.innerHTML = `${price}<span style="font-size:10px; font-weight:400; color:var(--text-secondary);">${label}</span>`;
                 goToStep(3);
                 setTimeout(() => {
@@ -2556,8 +2556,8 @@
             const emailInput = document.getElementById('login-email').value.trim();
             const passInput  = document.getElementById('login-password').value;
 
-            if (!emailInput || !emailInput.includes('@')) { alert('Geçerli bir e-posta adresi girin.'); return; }
-            if (!passInput) { alert('Lütfen şifrenizi girin.'); return; }
+            if (!emailInput || !emailInput.includes('@')) { alert('Please enter a valid email address.'); return; }
+            if (!passInput) { alert('Please enter your password.'); return; }
 
             try {
                 const res = await fetch(`${SERVER_URL}/api/login`, {
@@ -2575,10 +2575,10 @@
                     sessionStorage.setItem('pending_otp_email', emailInput);
                     openOTPVerificationStep(emailInput, data.devCode);
                 } else {
-                    alert(data.error || "Giriş başarısız.");
+                    alert(data.error || "Login failed.");
                 }
             } catch (err) {
-                alert("Sunucuya bağlanılamadı.");
+                alert("Could not connect to the server.");
             }
         };
 
@@ -2667,12 +2667,12 @@
             let code = '';
             for (let i = 1; i <= 6; i++) {
                 const val = document.getElementById(`otp${i}`).value;
-                if (!val) { alert('Lütfen 6 haneli doğrulama kodunun tamamını girin.'); return; }
+                if (!val) { alert('Please enter the complete 6-digit verification code.'); return; }
                 code += val;
             }
 
             const email = sessionStorage.getItem('pending_otp_email') || userEmail;
-            if (!email) { alert('Doğrulanacak e-posta bulunamadı.'); return; }
+            if (!email) { alert('No pending email to verify.'); return; }
 
             try {
                 const res = await fetch(`${SERVER_URL}/api/verify-otp`, {
@@ -2687,7 +2687,7 @@
                     sessionStorage.removeItem('pending_otp_email');
                     await proceedToNextStepAfterAuth();
                 } else {
-                    alert(data.error || "Doğrulama kodu hatalı.");
+                    alert(data.error || "Invalid verification code.");
                 }
             } catch (err) {
                 if (code === "123456" || code.length === 6) {
@@ -2696,7 +2696,7 @@
                     sessionStorage.removeItem('pending_otp_email');
                     await proceedToNextStepAfterAuth();
                 } else {
-                    alert("Giriş kodunuz doğrulanamadı.");
+                    alert("Verification code could not be validated.");
                 }
             }
         };
@@ -2713,13 +2713,13 @@
                 });
                 const data = await res.json();
                 if (res.ok && data.success) {
-                    alert("Yeni 6 haneli doğrulama kodu gönderildi.");
+                    alert("A new 6-digit verification code has been sent.");
                     startCooldownTimer(45);
                 } else {
-                    alert(data.error || "Kod yeniden gönderilemedi.");
+                    alert(data.error || "Failed to resend verification code.");
                 }
             } catch (err) {
-                alert("Sunucuya bağlanılamadı.");
+                alert("Could not connect to the server.");
             }
         };
 
@@ -2737,7 +2737,7 @@
                 if (left <= 0) {
                     clearInterval(cooldownInterval);
                     if (btn) btn.disabled = false;
-                    if (timerEl) timerEl.innerText = `Tekrar Gönder`;
+                    if (timerEl) timerEl.innerText = `Resend Code`;
                 } else {
                     if (timerEl) timerEl.innerText = `00:${left < 10 ? '0' + left : left}`;
                 }
@@ -2785,17 +2785,17 @@
             if (paddleInitialized && priceId && !priceId.includes('placeholder')) {
                 // === REAL PADDLE INLINE CHECKOUT ===
                 try {
-                    console.log("Paddle inline checkout açılıyor, fiyat ID:", priceId);
+                    console.log("Opening Paddle inline checkout, Price ID:", priceId);
                     Paddle.Checkout.open({
                         settings: {
                             displayMode: 'inline', // ChatGPT style inline embed
                             frameTarget: 'paddle-checkout-container',
                             frameStyle: 'width: 100%; min-height: 380px; border: none; background: transparent;',
                             theme: 'dark',
-                            locale: 'tr',
+                            locale: 'en',
                             variant: 'one-page',
-                            showAddDiscounts: false, // Hides "İndirim kodu ekle"
-                            showAddTaxId: false      // Hides "KDV numarası ekleyin"
+                            showAddDiscounts: false, // Hides "Add discount coupon"
+                            showAddTaxId: false      // Hides "Add Tax ID"
                         },
                         items: [{ priceId: priceId, quantity: 1 }],
                         customer: { email: userEmail },
@@ -2808,8 +2808,8 @@
                         }
                     });
                 } catch (checkoutErr) {
-                    console.error("Paddle Checkout hatası:", checkoutErr);
-                    alert("Paddle Ödeme Arayüzü Açılamadı!\n\nDetay: " + checkoutErr.message);
+                    console.error("Paddle Checkout error:", checkoutErr);
+                    alert("Could not open Paddle Checkout!\n\nDetails: " + checkoutErr.message);
                 }
             } else {
                 // === SIMULATION MODE (Paddle not configured) ===
@@ -2817,9 +2817,9 @@
                 const ccExp = document.getElementById('cc-exp').value;
                 const ccCvc = document.getElementById('cc-cvc').value;
 
-                if (!ccNum || !ccExp || !ccCvc) { alert('Lütfen ödeme kartı alanlarını eksiksiz doldurun.'); return; }
+                if (!ccNum || !ccExp || !ccCvc) { alert('Please fill in all card details.'); return; }
 
-                payBtn.innerText = 'Simüle Ediliyor...';
+                payBtn.innerText = 'Processing Simulation...';
                 payBtn.disabled  = true;
 
                 setTimeout(async () => {
@@ -2845,10 +2845,10 @@
 
         async function showSuccessScreen() {
             document.getElementById('successEmail').innerText = userEmail;
-            const planNames = { free: 'Indie Ücretsiz Sürüm', student: 'Öğrenci Sürümü', pro: 'Premium Pro Sürümü' };
+            const planNames = { free: 'Indie Free Edition', student: 'Student Edition', pro: 'Premium Pro Edition' };
             document.getElementById('successPlan').innerText = planNames[selectedPlan] || selectedPlan;
             const billingEl = document.getElementById('successBilling');
-            if (billingEl) billingEl.innerText = selectedPlan === 'pro' ? (billingPeriod === 'year' ? 'Yıllık ($417/yıl)' : 'Aylık ($41.70/ay)') : 'Ücretsiz';
+            if (billingEl) billingEl.innerText = selectedPlan === 'pro' ? (billingPeriod === 'year' ? 'Yearly ($417/yr)' : 'Monthly ($41.70/mo)') : 'Free';
 
             try {
                 const res = await fetch(`${SERVER_URL}/api/early-stage-status?email=${encodeURIComponent(userEmail)}`);
@@ -2875,7 +2875,7 @@
         // Customer Portal Redirect
         window.openCustomerPortal = async function() {
             const btn = document.getElementById('portalBtn');
-            btn.innerText = 'Yönlendiriliyor...';
+            btn.innerText = 'Redirecting...';
             btn.disabled = true;
             try {
                 const res = await fetch(`${SERVER_URL}/api/customer-portal`, {
@@ -2887,12 +2887,12 @@
                 if (data.url) {
                     window.open(data.url, '_blank');
                 } else {
-                    alert('Portal açılamadı: ' + (data.error || 'Bilinmeyen hata.'));
+                    alert('Could not open portal: ' + (data.error || 'Unknown error.'));
                 }
             } catch (err) {
-                alert('Sunucu bağlantısı yok. Paddle üzerinden aktif bir aboneliğiniz olmadığından portal kullanılamıyor.');
+                alert('No server connection or active Paddle subscription found.');
             }
-            btn.innerText = 'Aboneliğimi Yönet';
+            btn.innerText = 'Manage Subscription';
             btn.disabled = false;
         };
 
@@ -2934,22 +2934,22 @@
         window.addEventListener('DOMContentLoaded', async () => {
             await loadEarlyStageStatus();
             
-            // Explicit event listener for Step 1 Devam Et button -> MUST GO TO STEP 2 ONLY
+            // Explicit event listener for Step 1 Continue button -> MUST GO TO STEP 2 ONLY
             const step1Btn = document.getElementById('step1ConfirmBtn');
             if (step1Btn) {
                 step1Btn.onclick = function(e) {
                     if (e) { e.preventDefault(); e.stopPropagation(); }
-                    console.log("Devam Et (Step 1) tıklandı -> Kesin olarak Step 2 (Hesabınızı Oluşturun) geçiliyor");
+                    console.log("Continue (Step 1) clicked -> Transitioning to Step 2 (Create Your Account)");
                     goToStep(2);
                 };
             }
 
-            // Explicit event listener for Fullscreen Overlay Devam Et button
+            // Explicit event listener for Fullscreen Overlay Continue button
             const overlayBtn = document.getElementById('closeAlphaOverlayBtn');
             if (overlayBtn) {
                 overlayBtn.onclick = function(e) {
                     if (e) { e.preventDefault(); e.stopPropagation(); }
-                    console.log("Devam Et (Overlay) tıklandı -> proceedAlphaAnimation çalıştırılıyor");
+                    console.log("Continue (Overlay) clicked -> Running proceedAlphaAnimation");
                     proceedAlphaAnimation();
                 };
             }
@@ -2960,7 +2960,7 @@
                 const warnEl = document.createElement('div');
                 warnEl.id = 'adblockWarning';
                 warnEl.style.cssText = "background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; font-size: 11px; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; text-align: center; line-height: 1.4;";
-                warnEl.innerHTML = "⚠️ <strong>Paddle Engellendi:</strong> Tarayıcınızdaki Reklam Engelleyici (AdBlock, uBlock) veya tarayıcı koruması Paddle kütüphanesinin yüklenmesini engelliyor. Ödeme adımını test edebilmek için lütfen reklam engelleyiciyi devre dışı bırakın.";
+                warnEl.innerHTML = "⚠️ <strong>Payment Gateway Blocked:</strong> Your browser's ad blocker (uBlock, AdBlock, Brave Shields) is blocking the Paddle checkout SDK. Please disable your ad blocker to complete checkout.";
                 const card = document.getElementById('cardContainer');
                 if (card) card.insertBefore(warnEl, card.firstChild);
             }
@@ -2984,11 +2984,11 @@
                             currentStepNum = 4;
                             showSuccessScreen();
                             updateStepUI();
-                            console.log("Aktif oturum geri yüklendi:", userEmail, "Plan:", selectedPlan);
+                            console.log("Active session restored:", userEmail, "Plan:", selectedPlan);
                         }
                     }
                 } catch (err) {
-                    console.warn("Oturum geri yüklenemedi:", err.message);
+                    console.warn("Session could not be restored:", err.message);
                 }
             }
         });
@@ -3002,7 +3002,7 @@
             You are one of the first designers to gain access to Nexdesign. If you become an alpha user before the quota is filled, you’ll receive a 70% discount (for life) thanks to the alpha badge.
         </div>
         <button id="closeAlphaOverlayBtn" class="btn-primary" onclick="proceedAlphaAnimation()" style="width: auto; padding: 12px 36px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; border-radius: 8px; cursor: pointer; transition: all 0.25s ease; pointer-events: auto; margin-top: 28px; box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);">
-            Devam Et
+            Continue
         </button>
     </div>
 
@@ -3015,7 +3015,7 @@
             You are one of the second phase designers to gain access to Nexdesign. If you become an beta user before the quota is filled, you’ll receive a 40% discount (for life) thanks to the beta badge.
         </div>
         <button id="closeBetaOverlayBtn" class="btn-primary" onclick="proceedBetaAnimation()" style="width: auto; padding: 12px 36px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; border-radius: 8px; cursor: pointer; transition: all 0.25s ease; pointer-events: auto; margin-top: 28px; box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);">
-            Devam Et
+            Continue
         </button>
     </div>
 </body>
