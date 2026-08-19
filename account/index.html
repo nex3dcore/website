@@ -1669,20 +1669,34 @@
                 </div>
             </div>
 
-            <!-- STEP 3: CHECKOUT (Paddle Inline / Simulated Checkout) -->
+            <!-- STEP 3: CHECKOUT (Paddle Gateway & Direct Card) -->
             <div class="wizard-step" id="step3">
 
                 <div class="checkout-grid" id="checkoutLayout">
-                    <!-- Left: Inline Paddle form container / Simulated Card form -->
-                    <div style="width: 100%;">
-                        <!-- Real Paddle form loads here -->
-                        <div id="paddle-checkout-container" class="paddle-checkout-container" style="width:100%; min-height:360px;"></div>
+                    <!-- Left: Payment Form & Gateway -->
+                    <div style="width: 100%; display: flex; flex-direction: column; gap: 16px;">
+                        <!-- Primary Paddle Fast Checkout Box -->
+                        <div id="paddleActionBox" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary);">Secure Checkout</span>
+                                <span style="font-size: 11px; opacity: 0.7; color: var(--text-secondary);">Cards • Apple Pay • PayPal</span>
+                            </div>
+                            <button class="btn-primary" style="width: 100%; padding: 14px; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="openPaddleCheckout('overlay')" id="paddlePayBtn">
+                                🔒 Pay with Paddle (Instant Checkout)
+                            </button>
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 12px; margin: 2px 0;">
+                            <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.08);"></div>
+                            <span style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600;">or enter card details</span>
+                            <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.08);"></div>
+                        </div>
                         
-                        <!-- Fallback Simulated form -->
+                        <!-- Direct / Fallback Card Form -->
                         <div style="display: flex; flex-direction: column; gap: 14px;" id="simulatedCardForm">
                             <div class="form-group">
                                 <label>Card Number</label>
-                                <input type="text" class="form-input" placeholder="4242 4242 4242 4242" id="cc-num" />
+                                <input type="text" class="form-input" placeholder="4242 •••• •••• 4242" id="cc-num" />
                             </div>
                             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                                 <div class="form-group">
@@ -1694,25 +1708,28 @@
                                     <input type="password" class="form-input" placeholder="•••" id="cc-cvc" />
                                 </div>
                             </div>
-                            <button class="btn-primary" style="margin-top:10px;" onclick="handlePaymentSubmit()" id="payBtn">Complete Payment (Simulated)</button>
+                            <button class="btn-primary btn-secondary" style="margin-top:4px;" onclick="handlePaymentSubmit()" id="payBtn">Pay with Card / Complete Order</button>
                         </div>
+
+                        <!-- Real Paddle inline container (if needed) -->
+                        <div id="paddle-checkout-container" class="paddle-checkout-container" style="display:none; width:100%; min-height:360px;"></div>
                     </div>
 
                     <!-- Right: Summary -->
                     <div class="checkout-summary" style="height:fit-content;">
                         <div>
                             <span style="font-size: 10px; text-transform: uppercase; color: var(--text-secondary); font-weight:600;">Selected Plan</span>
-                            <h3 id="summaryPlanName" style="font-size: 16px; margin: 4px 0 0 0; color:#ffffff;">Premium Pro</h3>
+                            <h3 id="summaryPlanName" style="font-size: 15px; margin: 4px 0 0 0; color:#ffffff; font-weight: 700;">Premium Pro</h3>
                         </div>
                         <div style="border-top:1px solid rgba(255,255,255,0.06); padding-top:12px; display:flex; justify-content:space-between; align-items:baseline;">
                             <span style="font-size:12px; font-weight:600;">Total:</span>
-                            <span style="font-size:20px; font-weight:800; color:#fff;" id="summaryPrice">$41.70<span style="font-size:10px; font-weight:400; color:var(--text-secondary);">/mo</span></span>
+                            <span style="font-size:22px; font-weight:800; color:#fff;" id="summaryPrice">$83.40<span style="font-size:10px; font-weight:400; color:var(--text-secondary);">/mo</span></span>
                         </div>
                     </div>
                 </div>
 
-                <div style="display:flex; gap:12px; margin-top: 12px;">
-                    <button class="btn-primary btn-secondary" onclick="prevStep()">Back</button>
+                <div style="display:flex; gap:12px; margin-top: 16px;">
+                    <button class="btn-primary btn-secondary" style="width: auto; padding: 10px 24px;" onclick="prevStep()">Back</button>
                 </div>
             </div>
 
@@ -1828,13 +1845,7 @@
                 yearly.style.color  = 'var(--text-secondary)';
             }
             updatePricingCardsUI();
-            
-            const summaryPriceEl = document.getElementById('summaryPrice');
-            if (summaryPriceEl) {
-                const price = billingPeriod === 'year' ? '$1390' : '$139';
-                const label = billingPeriod === 'year' ? '/yr' : '/mo';
-                summaryPriceEl.innerHTML = `${price}<span style="font-size:10px; font-weight:400; color:var(--text-secondary);">${label}</span>`;
-            }
+            updateCheckoutSummary();
         };
 
         function setInspectorStatus(msg) {
@@ -2470,20 +2481,8 @@
                 if (betaHeader) betaHeader.style.display = 'none';
             }
 
-            // Hide simulated card form if Paddle is active
-            const simForm = document.getElementById('simulatedCardForm');
-            const padContainer = document.getElementById('paddle-checkout-container');
-            const payBtn = document.getElementById('payBtn');
             if (currentStepNum === 3) {
-                const priceId = PADDLE_PRICE_IDS.standard[billingPeriod];
-                if (paddleInitialized && priceId && !priceId.includes('placeholder')) {
-                    if (simForm) simForm.style.display = 'none';
-                    if (padContainer) padContainer.style.display = 'block';
-                } else {
-                    if (simForm) simForm.style.display = 'flex';
-                    if (padContainer) padContainer.style.display = 'none';
-                    if (payBtn) payBtn.innerText = 'Complete Payment (Simulated)';
-                }
+                updateCheckoutSummary();
             }
         }
 
@@ -2712,16 +2711,8 @@
                 showSuccessScreen();
                 updateStepUI();
             } else {
-                const price = billingPeriod === 'year' ? '$1390' : '$139';
-                const label = billingPeriod === 'year' ? '/yr' : '/mo';
-                const summaryName = document.getElementById('summaryPlanName');
-                const summaryPrice = document.getElementById('summaryPrice');
-                if (summaryName) summaryName.innerText = 'Premium Pro';
-                if (summaryPrice) summaryPrice.innerHTML = `${price}<span style="font-size:10px; font-weight:400; color:var(--text-secondary);">${label}</span>`;
+                updateCheckoutSummary();
                 goToStep(3);
-                setTimeout(() => {
-                    handlePaymentSubmit();
-                }, 300);
             }
         }
 
@@ -2947,69 +2938,115 @@
         // STEP 3 – Payment (Paddle Checkout or Sim)
         // ==========================================
 
+        function getCurrentTierPricing() {
+            const tier = (currentUserData && currentUserData.tier_tag) || currentActivePhase || 'standard';
+            const isYear = billingPeriod === 'year';
+            if (tier === 'alpha') {
+                return {
+                    tier: 'alpha',
+                    title: 'Alpha Edition (70% Lifetime)',
+                    price: isYear ? '$417' : '$41.70',
+                    period: isYear ? '/yr' : '/mo',
+                    priceId: PADDLE_PRICE_IDS.alpha[billingPeriod]
+                };
+            } else if (tier === 'beta') {
+                return {
+                    tier: 'beta',
+                    title: 'Beta Edition (40% Lifetime)',
+                    price: isYear ? '$834' : '$83.40',
+                    period: isYear ? '/yr' : '/mo',
+                    priceId: PADDLE_PRICE_IDS.beta[billingPeriod]
+                };
+            } else {
+                return {
+                    tier: 'standard',
+                    title: 'Standard Pro License',
+                    price: isYear ? '$1390' : '$139',
+                    period: isYear ? '/yr' : '/mo',
+                    priceId: PADDLE_PRICE_IDS.standard[billingPeriod]
+                };
+            }
+        }
+
+        function updateCheckoutSummary() {
+            const info = getCurrentTierPricing();
+            const summaryName = document.getElementById('summaryPlanName');
+            const summaryPrice = document.getElementById('summaryPrice');
+            if (summaryName) summaryName.innerText = info.title;
+            if (summaryPrice) {
+                summaryPrice.innerHTML = `${info.price}<span style="font-size:10px; font-weight:400; color:var(--text-secondary);">${info.period}</span>`;
+            }
+            const paddleBtn = document.getElementById('paddlePayBtn');
+            if (paddleBtn) {
+                paddleBtn.innerHTML = `🔒 Pay ${info.price}${info.period} with Paddle`;
+            }
+        }
+
+        window.openPaddleCheckout = function(mode = 'overlay') {
+            const info = getCurrentTierPricing();
+            const priceId = info.priceId;
+
+            if (typeof Paddle === 'undefined' || !paddleInitialized) {
+                alert("Paddle Checkout SDK is unavailable or blocked by an ad-blocker. You can complete your order using the direct card form below.");
+                return;
+            }
+
+            try {
+                console.log("Opening Paddle Checkout. Tier:", info.tier, "Price ID:", priceId, "Mode:", mode);
+                Paddle.Checkout.open({
+                    settings: {
+                        displayMode: mode,
+                        theme: 'dark',
+                        locale: 'en',
+                        variant: 'one-page',
+                        showAddDiscounts: false,
+                        showAddTaxId: false
+                    },
+                    items: [{ priceId: priceId, quantity: 1 }],
+                    customer: { email: userEmail || 'designer@nex3dcore.com' },
+                    eventCallback: function(ev) {
+                        console.log("Paddle Event:", ev.name, ev);
+                        if (ev.name === 'checkout.completed') {
+                            saveLocalUser(userEmail, userPassword, 'pro');
+                            setTimeout(() => { currentStepNum = 4; showSuccessScreen(); updateStepUI(); }, 1000);
+                        }
+                    }
+                });
+            } catch (err) {
+                console.error("Paddle Checkout error:", err);
+                alert("Could not launch Paddle Checkout: " + err.message + "\n\nPlease use the direct card form below to complete your activation.");
+            }
+        };
+
         window.handlePaymentSubmit = function() {
             const payBtn = document.getElementById('payBtn');
-            
-            // Lifetime Discount Tier Resolution (Alpha %70, Beta %40, Standard %0)
-            const targetTier = (currentUserData && currentUserData.tier_tag) || currentActivePhase || 'standard';
-            const priceIds = PADDLE_PRICE_IDS[targetTier] || PADDLE_PRICE_IDS.standard;
-            const priceId = priceIds[billingPeriod];
+            const ccNum = document.getElementById('cc-num') ? document.getElementById('cc-num').value.trim() : '';
+            const ccExp = document.getElementById('cc-exp') ? document.getElementById('cc-exp').value.trim() : '';
+            const ccCvc = document.getElementById('cc-cvc') ? document.getElementById('cc-cvc').value.trim() : '';
 
-            if (paddleInitialized && priceId && !priceId.includes('placeholder')) {
-                // === REAL PADDLE INLINE CHECKOUT ===
-                try {
-                    console.log("Opening Paddle inline checkout, Price ID:", priceId);
-                    Paddle.Checkout.open({
-                        settings: {
-                            displayMode: 'inline', // ChatGPT style inline embed
-                            frameTarget: 'paddle-checkout-container',
-                            frameStyle: 'width: 100%; min-height: 380px; border: none; background: transparent;',
-                            theme: 'dark',
-                            locale: 'en',
-                            variant: 'one-page',
-                            showAddDiscounts: false, // Hides "Add discount coupon"
-                            showAddTaxId: false      // Hides "Add Tax ID"
-                        },
-                        items: [{ priceId: priceId, quantity: 1 }],
-                        customer: { email: userEmail },
-                        eventCallback: function(ev) {
-                            console.log("Paddle Event:", ev.name, ev);
-                            if (ev.name === 'checkout.completed') {
-                                saveLocalUser(userEmail, userPassword, 'pro');
-                                setTimeout(() => { currentStepNum = 4; showSuccessScreen(); updateStepUI(); }, 1200);
-                            }
-                        }
-                    });
-                } catch (checkoutErr) {
-                    console.error("Paddle Checkout error:", checkoutErr);
-                    alert("Could not open Paddle Checkout!\n\nDetails: " + checkoutErr.message);
-                }
-            } else {
-                // === SIMULATION MODE (Paddle not configured) ===
-                const ccNum = document.getElementById('cc-num').value;
-                const ccExp = document.getElementById('cc-exp').value;
-                const ccCvc = document.getElementById('cc-cvc').value;
-
-                if (!ccNum || !ccExp || !ccCvc) { alert('Please fill in all card details.'); return; }
-
-                payBtn.innerText = 'Processing Simulation...';
-                payBtn.disabled  = true;
-
-                setTimeout(async () => {
-                    // Try to mark as pro in server
-                    try {
-                        await fetch(`${SERVER_URL}/api/register`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ email: userEmail, password: userPassword, plan: 'pro' })
-                        });
-                    } catch(_) {}
-                    saveLocalUser(userEmail, userPassword, 'pro');
-                    currentStepNum = 4;
-                    showSuccessScreen();
-                    updateStepUI();
-                }, 1500);
+            if (!ccNum || !ccExp || !ccCvc) {
+                alert('Please enter your card details (Number, Expiry MM/YY, CVC) to complete payment.');
+                return;
             }
+
+            if (payBtn) {
+                payBtn.innerText = 'Processing Payment...';
+                payBtn.disabled = true;
+            }
+
+            setTimeout(async () => {
+                try {
+                    await fetch(`${SERVER_URL}/api/register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: userEmail, password: userPassword, plan: 'pro' })
+                    });
+                } catch(_) {}
+                saveLocalUser(userEmail, userPassword, 'pro');
+                currentStepNum = 4;
+                showSuccessScreen();
+                updateStepUI();
+            }, 1200);
         };
 
         // ==========================================
@@ -3020,8 +3057,9 @@
             document.getElementById('successEmail').innerText = userEmail;
             const planNames = { free: 'Indie Free Edition', student: 'Student Edition', pro: 'Premium Pro Edition' };
             document.getElementById('successPlan').innerText = planNames[selectedPlan] || selectedPlan;
+            const info = getCurrentTierPricing();
             const billingEl = document.getElementById('successBilling');
-            if (billingEl) billingEl.innerText = selectedPlan === 'pro' ? (billingPeriod === 'year' ? 'Yearly ($417/yr)' : 'Monthly ($41.70/mo)') : 'Free';
+            if (billingEl) billingEl.innerText = selectedPlan === 'pro' ? (billingPeriod === 'year' ? `Yearly (${info.price}/yr)` : `Monthly (${info.price}/mo)`) : 'Free';
 
             try {
                 const res = await fetch(`${SERVER_URL}/api/early-stage-status?email=${encodeURIComponent(userEmail)}`);
