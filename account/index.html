@@ -878,15 +878,18 @@
 
         #cardFree .beta-badge.active {
             opacity: 1;
-            background: #24242c;
-            color: #71717a;
-            border-color: #3f3f46;
+            background: #3e3e4a; /* Distinctly lighter gray background */
+            color: #e4e4e7;      /* Lighter gray beta symbol */
+            border-color: #68687a; /* Lighter gray border */
             box-shadow: none;
             animation: flyFreeBeta 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         #cardPro .beta-badge.active {
             opacity: 1;
+            background: #18181d; /* Dark gray background */
+            color: #a1a1aa;
+            border-color: #a1a1aa;
             transform: scale(1);
             animation: flyProBeta 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
