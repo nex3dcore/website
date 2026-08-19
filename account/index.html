@@ -32,6 +32,22 @@
         /* Specific Styles for Account Portal */
         body {
             overflow-y: auto !important; /* Allow scrolling on account page if needed */
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .main-container {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 20px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 5;
         }
         
         .account-card {
@@ -51,6 +67,7 @@
             z-index: 10; /* Stack on top of background poster */
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             animation: cardFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            margin: 0 auto;
         }
 
         .account-card.wide {
@@ -768,17 +785,27 @@
         /* Ultra-Simple Vertical Badge Line Timeline */
         .wizard-main-wrapper {
             display: flex;
-            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            position: relative;
             width: 100%;
-            max-width: 900px;
             margin: 0 auto;
-            align-items: flex-start;
         }
 
         .vertical-timeline-sidebar {
+            position: absolute;
+            right: calc(100% + 24px);
+            top: 40px;
             width: auto;
             flex-shrink: 0;
-            padding: 12px 0 0 0;
+            padding: 0;
+            z-index: 20;
+        }
+
+        @media (max-width: 768px) {
+            .vertical-timeline-sidebar {
+                display: none;
+            }
         }
 
         .v-timeline-steps {
@@ -1188,7 +1215,7 @@
     <!-- Main Content Area -->
     <div class="main-container" style="flex-direction: column; gap: 24px;">
         <!-- Phase Alpha Animated Header (shown in Alpha mode) -->
-        <div id="phaseAlphaHeader" style="display:none; position:absolute; top:6%; left:50%; transform:translateX(-50%); z-index:1; pointer-events:none; align-items:center; justify-content:center; gap:8px; height:180px; overflow:visible; white-space:nowrap;">
+        <div id="phaseAlphaHeader" style="display:none; position:absolute; top:calc(50% - 320px); left:50%; transform:translateX(-50%); z-index:1; pointer-events:none; align-items:center; justify-content:center; gap:8px; height:180px; overflow:visible; white-space:nowrap;">
             <div style="display:flex; gap:3px;">
                 <span class="phase-char" style="--delay: 0.15s;">P</span>
                 <span class="phase-char" style="--delay: 0.35s;">H</span>
@@ -1200,7 +1227,7 @@
         </div>
 
         <!-- Phase Beta Animated Header (shown in Beta mode) -->
-        <div id="phaseBetaHeader" style="display:none; position:absolute; top:6%; left:50%; transform:translateX(-50%); z-index:1; pointer-events:none; align-items:center; justify-content:center; gap:8px; height:180px; overflow:visible; white-space:nowrap;">
+        <div id="phaseBetaHeader" style="display:none; position:absolute; top:calc(50% - 320px); left:50%; transform:translateX(-50%); z-index:1; pointer-events:none; align-items:center; justify-content:center; gap:8px; height:180px; overflow:visible; white-space:nowrap;">
             <div style="display:flex; gap:3px;">
                 <span class="phase-char" style="--delay: 0.15s; color: #10b981;">P</span>
                 <span class="phase-char" style="--delay: 0.35s; color: #10b981;">H</span>
@@ -1229,31 +1256,31 @@
 
         <!-- Wizard Main Layout (Vertical Phase Sidebar + Card Container) -->
         <div class="wizard-main-wrapper">
-            <!-- Ultra-Simple Vertical Badge Line Timeline -->
-            <div class="vertical-timeline-sidebar" id="phaseTimeline">
-                <div class="v-timeline-steps">
-                    <div class="v-step alpha-vstep" id="timelineAlpha" title="Phase Alpha">
-                        <div class="v-step-badge alpha-vbadge">α</div>
-                        <div class="v-step-line"></div>
-                    </div>
-                    <div class="v-step beta-vstep active" id="timelineBeta" title="Phase Beta">
-                        <div class="v-step-badge beta-vbadge">β</div>
-                        <div class="v-step-line"></div>
-                    </div>
-                    <div class="v-step standard-vstep" id="timelineStandard" title="Sade Sürüm">
-                        <div class="v-step-badge standard-vbadge">⚡</div>
+            <div class="account-card" id="cardContainer">
+                <!-- Ultra-Simple Vertical Badge Line Timeline -->
+                <div class="vertical-timeline-sidebar" id="phaseTimeline">
+                    <div class="v-timeline-steps">
+                        <div class="v-step alpha-vstep" id="timelineAlpha" title="Phase Alpha" onclick="PhaseController.switchPhase('alpha')">
+                            <div class="v-step-badge alpha-vbadge">α</div>
+                            <div class="v-step-line"></div>
+                        </div>
+                        <div class="v-step beta-vstep active" id="timelineBeta" title="Phase Beta" onclick="PhaseController.switchPhase('beta')">
+                            <div class="v-step-badge beta-vbadge">β</div>
+                            <div class="v-step-line"></div>
+                        </div>
+                        <div class="v-step standard-vstep" id="timelineStandard" title="Sade Sürüm" onclick="PhaseController.switchPhase('standard')">
+                            <div class="v-step-badge standard-vbadge">⚡</div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-        <div class="account-card" id="cardContainer">
-            <!-- Step Indicator -->
-            <div class="step-indicator">
-                <div class="step-dot active" id="dot1">1</div>
-                <div class="step-dot" id="dot2">2</div>
-                <div class="step-dot" id="dot3">3</div>
-                <div class="step-dot" id="dot4">✓</div>
-            </div>
+                <!-- Step Indicator -->
+                <div class="step-indicator">
+                    <div class="step-dot active" id="dot1">1</div>
+                    <div class="step-dot" id="dot2">2</div>
+                    <div class="step-dot" id="dot3">3</div>
+                    <div class="step-dot" id="dot4">✓</div>
+                </div>
 
             <!-- STEP 1: PLAN SELECT -->
             <div class="wizard-step active" id="step1">
@@ -1695,11 +1722,15 @@
                 if (step1Header) step1Header.style.display = 'none';
                 if (betaHeader) betaHeader.style.display = 'none';
                 if (alphaHeader) {
-                    alphaHeader.style.display = 'none';
+                    alphaHeader.style.display = 'flex';
                     alphaHeader.querySelectorAll('.phase-char, .phase-alpha-text').forEach(c => {
                         c.classList.remove('animate');
                         c.style.opacity = '0';
+                        void c.offsetWidth;
                     });
+                    this.addTimeout(() => {
+                        alphaHeader.querySelectorAll('.phase-char, .phase-alpha-text').forEach(c => c.classList.add('animate'));
+                    }, 150);
                 }
                 document.querySelectorAll('.beta-badge').forEach(b => b.classList.remove('active'));
                 document.querySelectorAll('.alpha-badge').forEach(b => b.classList.remove('active'));
@@ -1883,11 +1914,15 @@
                 if (step1Header) step1Header.style.display = 'none';
                 if (alphaHeader) alphaHeader.style.display = 'none';
                 if (betaHeader) {
-                    betaHeader.style.display = 'none';
+                    betaHeader.style.display = 'flex';
                     betaHeader.querySelectorAll('.phase-char, .phase-beta-text').forEach(c => {
                         c.classList.remove('animate');
                         c.style.opacity = '0';
+                        void c.offsetWidth;
                     });
+                    this.addTimeout(() => {
+                        betaHeader.querySelectorAll('.phase-char, .phase-beta-text').forEach(c => c.classList.add('animate'));
+                    }, 150);
                 }
                 document.querySelectorAll('.alpha-badge').forEach(b => b.classList.remove('active'));
                 document.querySelectorAll('.beta-badge').forEach(b => b.classList.remove('active'));
@@ -2164,38 +2199,27 @@
         let currentActivePhase = 'standard';
 
         async function loadEarlyStageStatus() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const forcePhase = urlParams.get('phase') || urlParams.get('mode');
+            let targetPhase = forcePhase || 'beta';
+
             try {
                 const url = userEmail ? `${SERVER_URL}/api/early-stage-status?email=${encodeURIComponent(userEmail)}` : `${SERVER_URL}/api/early-stage-status`;
                 const res = await fetch(url);
-                if (!res.ok) return;
-                earlyStageStatus = await res.json();
-                
-                const urlParams = new URLSearchParams(window.location.search);
-                const forcePhase = urlParams.get('phase') || urlParams.get('mode');
-                const targetPhase = forcePhase || (earlyStageStatus && earlyStageStatus.phase) || 'standard';
-
-                PhaseController.switchPhase(targetPhase, { earlyStageStatus, userEmail });
-
-                // Render User Dashboard Card if logged in or status returned user
-                if (earlyStageStatus.user) {
-                    renderUserDashboardCard(earlyStageStatus.user);
-                }
-
-                // Update timeline status text with actual counts
-                const alphaStatusEl = document.getElementById('timelineAlphaStatus');
-                const betaStatusEl = document.getElementById('timelineBetaStatus');
-                if (earlyStageStatus.alpha) {
-                    const total = earlyStageStatus.alpha.total || (earlyStageStatus.alpha.freeCount + earlyStageStatus.alpha.paidCount);
-                    if (alphaStatusEl) alphaStatusEl.textContent = `${total}/150 • %70 İndirim`;
-                }
-                if (earlyStageStatus.beta) {
-                    const total = earlyStageStatus.beta.total || (earlyStageStatus.beta.freeCount + earlyStageStatus.beta.paidCount);
-                    if (betaStatusEl) betaStatusEl.textContent = targetPhase === 'beta' ? `Aktif • %40 İndirim` : 'Gelecek Aşama';
+                if (res.ok) {
+                    earlyStageStatus = await res.json();
+                    if (!forcePhase && earlyStageStatus && earlyStageStatus.phase) {
+                        targetPhase = earlyStageStatus.phase;
+                    }
+                    if (earlyStageStatus.user) {
+                        renderUserDashboardCard(earlyStageStatus.user);
+                    }
                 }
             } catch (err) {
                 console.error("Early stage status fetch error:", err);
-                PhaseController.switchPhase('standard');
             }
+
+            PhaseController.switchPhase(targetPhase, { earlyStageStatus, userEmail });
         }
 
         function renderUserDashboardCard(userData) {
