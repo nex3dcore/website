@@ -665,93 +665,143 @@
             border-color: rgba(255, 255, 255, 0.35);
         }
 
-        /* Phase Beta: Koyu Gri & Gri Tonlu Tipografi Theme */
+        /* Phase Beta: Koyu Gri & Gri (Dark Gray - Gray) Theme */
         body[data-phase="beta"] {
-            background-color: #16161b !important;
-            color: #d4d4d8;
-        }
-        body[data-phase="beta"] .spotlight {
-            background: radial-gradient(circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(212, 212, 216, 0.05) 0%, rgba(140, 140, 160, 0.02) 35%, transparent 70%);
-        }
-        body[data-phase="beta"] .grid-overlay {
-            background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
-        }
-        body[data-phase="beta"] .account-card {
-            background: rgba(28, 28, 35, 0.75);
-            border: 1px solid rgba(255, 255, 255, 0.09);
-            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.07);
-            color: #d4d4d8;
-        }
-        body[data-phase="beta"] h2,
-        body[data-phase="beta"] h3,
-        body[data-phase="beta"] .price,
-        body[data-phase="beta"] .user-email-display,
-        body[data-phase="beta"] .user-tag-badge {
-            color: #e4e4e7 !important;
-        }
-        body[data-phase="beta"] p,
-        body[data-phase="beta"] .price-suffix,
-        body[data-phase="beta"] label,
-        body[data-phase="beta"] .quota-counter,
-        body[data-phase="beta"] .auth-tab {
+            background-color: #18181d !important;
             color: #a1a1aa !important;
         }
+        body[data-phase="beta"] .spotlight {
+            background: radial-gradient(circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(161, 161, 170, 0.06) 0%, rgba(100, 100, 115, 0.02) 35%, transparent 70%);
+        }
+        body[data-phase="beta"] .grid-overlay {
+            background-image: radial-gradient(rgba(161, 161, 170, 0.08) 1px, transparent 1px);
+        }
+        body[data-phase="beta"] .account-card {
+            background: rgba(26, 26, 32, 0.85);
+            border: 1px solid rgba(161, 161, 170, 0.18);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(161, 161, 170, 0.1);
+            color: #a1a1aa;
+        }
+        body[data-phase="beta"] h1,
+        body[data-phase="beta"] h2,
+        body[data-phase="beta"] h3,
+        body[data-phase="beta"] h4,
+        body[data-phase="beta"] p,
+        body[data-phase="beta"] span,
+        body[data-phase="beta"] label,
+        body[data-phase="beta"] div,
+        body[data-phase="beta"] strong,
+        body[data-phase="beta"] .price,
+        body[data-phase="beta"] .price-suffix,
+        body[data-phase="beta"] .user-email-display,
+        body[data-phase="beta"] .user-tag-badge,
+        body[data-phase="beta"] .quota-current,
+        body[data-phase="beta"] .quota-separator,
+        body[data-phase="beta"] .quota-limit,
+        body[data-phase="beta"] .plan-feature,
+        body[data-phase="beta"] .billing-toggle-option,
+        body[data-phase="beta"] .step-title,
+        body[data-phase="beta"] .step-desc,
+        body[data-phase="beta"] .nav-link,
+        body[data-phase="beta"] .brand {
+            color: #a1a1aa !important;
+        }
+        body[data-phase="beta"] .auth-tab {
+            color: #71717a !important;
+            border-bottom: 2px solid transparent;
+        }
         body[data-phase="beta"] .auth-tab.active {
-            color: #f4f4f5 !important;
-            border-bottom-color: #d4d4d8 !important;
+            color: #a1a1aa !important;
+            border-bottom-color: #a1a1aa !important;
         }
         body[data-phase="beta"] .plan-card {
-            background: rgba(38, 38, 48, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.09);
-            color: #d4d4d8;
+            background: rgba(36, 36, 44, 0.6);
+            border: 1px solid rgba(161, 161, 170, 0.15);
+            color: #a1a1aa;
         }
         body[data-phase="beta"] .plan-card.selected {
-            background: rgba(48, 48, 62, 0.8);
-            border-color: rgba(212, 212, 216, 0.35);
+            background: rgba(45, 45, 55, 0.85);
+            border-color: #a1a1aa;
         }
         body[data-phase="beta"] .form-input {
-            background: rgba(255, 255, 255, 0.04);
-            border-color: rgba(255, 255, 255, 0.1);
-            color: #e4e4e7;
+            background: rgba(32, 32, 38, 0.6);
+            border: 1px solid rgba(161, 161, 170, 0.18);
+            color: #a1a1aa;
         }
         body[data-phase="beta"] .form-input:focus {
             border-color: #a1a1aa;
-            background: rgba(255, 255, 255, 0.07);
+            background: rgba(40, 40, 48, 0.8);
+            box-shadow: 0 0 15px rgba(161, 161, 170, 0.1);
         }
         body[data-phase="beta"] .step-dot {
-            background: #1e1e24;
-            border-color: rgba(255, 255, 255, 0.18);
+            background: #24242c;
+            border: 1px solid rgba(161, 161, 170, 0.25);
             color: #a1a1aa;
         }
         body[data-phase="beta"] .step-dot.active,
         body[data-phase="beta"] .step-dot.completed {
-            background: #d4d4d8;
-            border-color: #d4d4d8;
-            color: #18181b;
+            background: #a1a1aa;
+            border-color: #a1a1aa;
+            color: #18181d;
         }
         body[data-phase="beta"] .btn-primary {
-            background: #d4d4d8;
-            color: #18181b;
+            background: #a1a1aa;
+            color: #18181d;
+            border: none;
         }
         body[data-phase="beta"] .btn-primary:hover {
-            background: #e4e4e7;
-            box-shadow: 0 8px 24px rgba(212, 212, 216, 0.2);
+            background: #b4b4bc;
+            color: #18181d;
+            box-shadow: 0 8px 24px rgba(161, 161, 170, 0.2);
         }
         body[data-phase="beta"] .btn-secondary {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            color: #d4d4d8;
+            background: rgba(32, 32, 38, 0.5);
+            border: 1px solid rgba(161, 161, 170, 0.2);
+            color: #a1a1aa;
+        }
+        body[data-phase="beta"] .btn-secondary:hover {
+            background: rgba(45, 45, 55, 0.7);
+            border-color: #a1a1aa;
         }
         body[data-phase="beta"] .google-btn {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: #d4d4d8;
+            background: rgba(32, 32, 38, 0.6);
+            border: 1px solid rgba(161, 161, 170, 0.2);
+            color: #a1a1aa;
+        }
+        body[data-phase="beta"] .google-btn:hover {
+            background: rgba(45, 45, 55, 0.8);
+            border-color: #a1a1aa;
+        }
+        body[data-phase="beta"] .v-step-badge {
+            background: #24242c;
+            color: #a1a1aa;
+            border-color: rgba(161, 161, 170, 0.25);
         }
         body[data-phase="beta"] .v-step.active .beta-vbadge {
-            background: #d4d4d8;
-            color: #18181b;
-            border-color: #d4d4d8;
-            box-shadow: 0 0 14px rgba(212, 212, 216, 0.4);
+            background: #a1a1aa;
+            color: #18181d;
+            border-color: #a1a1aa;
+            box-shadow: 0 0 14px rgba(161, 161, 170, 0.4);
+        }
+        body[data-phase="beta"] .beta-badge {
+            background: #24242c;
+            color: #a1a1aa;
+            border-color: #a1a1aa;
+        }
+        body[data-phase="beta"] .user-avatar-badge {
+            background: #24242c;
+            color: #a1a1aa;
+            border-color: rgba(161, 161, 170, 0.25);
+        }
+        body[data-phase="beta"] .quota-pill {
+            background: rgba(36, 36, 44, 0.6);
+            border: 1px solid rgba(161, 161, 170, 0.18);
+            color: #a1a1aa;
+        }
+        body[data-phase="beta"] .summary-card {
+            background: rgba(36, 36, 44, 0.6);
+            border: 1px solid rgba(161, 161, 170, 0.18);
+            color: #a1a1aa;
         }
 
         /* Standard Phase Theme */
@@ -770,23 +820,23 @@
             background-image: radial-gradient(rgba(34, 197, 94, 0.18) 1px, transparent 1px);
         }
 
-        /* Phase Beta Header Animations (Refined Gray Tone) */
+        /* Phase Beta Header Animations (Uniform Gray) */
         #phaseBetaHeader .phase-char {
-            color: #d4d4d8;
-            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+            color: #a1a1aa;
+            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4);
         }
 
         .phase-beta-text {
             font-family: 'Great Vibes', 'Alex Brush', cursive;
             font-size: 165px;
             font-weight: 400;
-            color: #d4d4d8;
+            color: #a1a1aa;
             display: inline-block;
             margin-left: 20px;
             padding: 20px 40px;
             overflow: visible;
             opacity: 0;
-            text-shadow: 0 0 35px rgba(212, 212, 216, 0.35), 1px 1px 0px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 0 35px rgba(161, 161, 170, 0.35), 1px 1px 0px rgba(0, 0, 0, 0.4);
             clip-path: polygon(0% -40%, 0% -40%, 0% 160%, 0% 160%);
             vertical-align: middle;
             line-height: 1.2;
@@ -797,13 +847,13 @@
                        alphaGlow 6s calc(var(--delay) + 3.2s) infinite ease-in-out;
         }
 
-        /* Beta Badge & Flying Animations (Refined Gray Tone) */
+        /* Beta Badge & Flying Animations (Uniform Gray) */
         .beta-badge {
             position: absolute;
             top: -12px;
             left: 20px;
-            background: #18181c;
-            color: #d4d4d8;
+            background: #24242c;
+            color: #a1a1aa;
             border-radius: 50%;
             width: 24px;
             height: 24px;
@@ -813,7 +863,7 @@
             font-size: 12.5px;
             font-weight: 700;
             line-height: 1;
-            border: 1.5px solid #71717a;
+            border: 1.5px solid #a1a1aa;
             z-index: 10;
             opacity: 0;
             transform: scale(0);
@@ -828,7 +878,7 @@
 
         #cardFree .beta-badge.active {
             opacity: 1;
-            background: #222226;
+            background: #24242c;
             color: #71717a;
             border-color: #3f3f46;
             box-shadow: none;
@@ -3121,14 +3171,14 @@
     </div>
 
     <!-- Giant Beta Badge Fullscreen Overlay (Cinematic Stage) -->
-    <div id="fullscreenBetaOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:999; background:rgba(22, 22, 27, 0.75); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); align-items:center; justify-content:center; flex-direction:column; pointer-events:none; opacity:0; transition:opacity 0.6s ease;">
-        <div id="giantBetaBadge" style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 110px; font-weight: 800; color: #d4d4d8; text-shadow: 0 0 70px rgba(212, 212, 216, 0.4); transform: scale(0.1); transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1); line-height: 1; margin-bottom: 24px;">
+    <div id="fullscreenBetaOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:999; background:rgba(24, 24, 29, 0.85); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); align-items:center; justify-content:center; flex-direction:column; pointer-events:none; opacity:0; transition:opacity 0.6s ease;">
+        <div id="giantBetaBadge" style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 110px; font-weight: 800; color: #a1a1aa; text-shadow: 0 0 70px rgba(161, 161, 170, 0.4); transform: scale(0.1); transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1); line-height: 1; margin-bottom: 24px;">
             β
         </div>
         <div style="font-family: var(--font-sans); font-size: 15px; font-weight: 400; color: #a1a1aa; max-width: 520px; text-align: center; line-height: 1.6; margin-top: 0; padding: 0 20px; letter-spacing: 0.02em;">
             You are one of the second phase designers to gain access to Nexdesign. If you become an beta user before the quota is filled, you’ll receive a 40% discount (for life) thanks to the beta badge.
         </div>
-        <button id="closeBetaOverlayBtn" class="btn-primary" onclick="proceedBetaAnimation()" style="width: auto; padding: 12px 36px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; border-radius: 8px; cursor: pointer; transition: all 0.25s ease; pointer-events: auto; margin-top: 28px; background: #d4d4d8; color: #18181b; box-shadow: 0 0 20px rgba(212, 212, 216, 0.15);">
+        <button id="closeBetaOverlayBtn" class="btn-primary" onclick="proceedBetaAnimation()" style="width: auto; padding: 12px 36px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; border-radius: 8px; cursor: pointer; transition: all 0.25s ease; pointer-events: auto; margin-top: 28px; background: #a1a1aa; color: #18181d; box-shadow: 0 0 20px rgba(161, 161, 170, 0.15);">
             Continue
         </button>
     </div>
