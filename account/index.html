@@ -641,20 +641,9 @@
         }
 
         /* Dynamic Phase Themes */
-        body[data-phase="alpha"] {
-            background-color: #09090b !important;
-        }
-        
+        body[data-phase="alpha"],
         body[data-phase="beta"] {
-            background-color: #141417 !important;
-        }
-        body[data-phase="beta"] .account-card {
-            background: rgba(26, 26, 31, 0.85);
-            border-color: rgba(255, 255, 255, 0.12);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
-        }
-        body[data-phase="beta"] .spotlight {
-            background: radial-gradient(circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(16, 185, 129, 0.08) 0%, rgba(6, 182, 212, 0.03) 40%, transparent 70%);
+            background-color: #09090b !important;
         }
 
         body[data-phase="standard"] {
@@ -1244,11 +1233,11 @@
         <!-- Phase Beta Animated Header (shown in Beta mode) -->
         <div id="phaseBetaHeader" style="display:none; position:absolute; top:calc(50% - 320px); left:50%; transform:translateX(-50%); z-index:1; pointer-events:none; align-items:center; justify-content:center; gap:8px; height:180px; overflow:visible; white-space:nowrap;">
             <div style="display:flex; gap:3px;">
-                <span class="phase-char" style="--delay: 0.15s; color: #10b981;">P</span>
-                <span class="phase-char" style="--delay: 0.35s; color: #10b981;">H</span>
-                <span class="phase-char" style="--delay: 0.55s; color: #10b981;">A</span>
-                <span class="phase-char" style="--delay: 0.75s; color: #10b981;">S</span>
-                <span class="phase-char" style="--delay: 0.95s; color: #10b981;">E</span>
+                <span class="phase-char" style="--delay: 0.15s;">P</span>
+                <span class="phase-char" style="--delay: 0.35s;">H</span>
+                <span class="phase-char" style="--delay: 0.55s;">A</span>
+                <span class="phase-char" style="--delay: 0.75s;">S</span>
+                <span class="phase-char" style="--delay: 0.95s;">E</span>
             </div>
             <span class="phase-beta-text" style="--delay: 1.25s;">beta</span>
         </div>
@@ -3032,29 +3021,17 @@
         </button>
     </div>
 
-    <!-- Phase Beta Marketing Fullscreen Overlay (Cinematic Stage) -->
-    <div id="fullscreenBetaOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:999; background:rgba(18, 18, 22, 0.75); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); align-items:center; justify-content:center; flex-direction:column; pointer-events:none; opacity:0; transition:opacity 0.6s ease;">
-        <div id="giantBetaBadge" style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 200px; font-weight: 800; color: #10b981; text-shadow: 0 0 80px rgba(16, 185, 129, 0.6), 0 0 120px rgba(6, 182, 212, 0.4); transform: scale(0.1); transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1); line-height: 1; margin-bottom: 0px;">
+    <!-- Giant Beta Badge Fullscreen Overlay (Cinematic Stage) -->
+    <div id="fullscreenBetaOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:999; background:rgba(8, 8, 10, 0.55); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); align-items:center; justify-content:center; flex-direction:column; pointer-events:none; opacity:0; transition:opacity 0.6s ease;">
+        <div id="giantBetaBadge" style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 260px; font-weight: 800; color: #10b981; text-shadow: 0 0 80px rgba(16, 185, 129, 0.6); transform: scale(0.1); transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1); line-height: 1; margin-bottom: -10px;">
             β
         </div>
-        
-        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 16px; padding: 32px 36px; max-width: 640px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); backdrop-filter: blur(12px);">
-            <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.15em; color: #34d399; text-transform: uppercase; margin-bottom: 12px;">
-                BETA STAGE ANNOUNCEMENT
-            </div>
-            
-            <h2 style="font-size: 26px; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 16px; line-height: 1.25;">
-                Phase Alpha is done.
-            </h2>
-            
-            <p style="font-family: var(--font-sans); font-size: 15px; font-weight: 400; color: #d4d4d8; line-height: 1.65; margin-bottom: 24px; letter-spacing: 0.01em;">
-                We have 150 Alpha users who receive a 70% lifetime discount. Don’t worry if you missed the chance to become an Alpha user. <strong style="color: #ffffff; font-weight: 600;">The Beta phase is coming up, and if you can join the Beta, you’ll be eligible for a 40% lifetime discount.</strong>
-            </p>
-            
-            <button id="closeBetaOverlayBtn" class="btn-primary" onclick="proceedBetaAnimation()" style="width: auto; padding: 14px 42px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; border-radius: 10px; cursor: pointer; transition: all 0.25s ease; pointer-events: auto; background: linear-gradient(135deg, #10b981, #059669); border: 1px solid #34d399; color: #ffffff; box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);">
-                Phase Beta Katılımını Onayla
-            </button>
+        <div style="font-family: var(--font-sans); font-size: 15px; font-weight: 400; color: #e4e4e7; max-width: 520px; text-align: center; line-height: 1.6; margin-top: 0; padding: 0 20px; letter-spacing: 0.02em;">
+            You are one of the second phase designers to gain access to Nexdesign. If you become an beta user before the quota is filled, you’ll receive a 40% discount (for life) thanks to the beta badge.
         </div>
+        <button id="closeBetaOverlayBtn" class="btn-primary" onclick="proceedBetaAnimation()" style="width: auto; padding: 12px 36px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; border-radius: 8px; cursor: pointer; transition: all 0.25s ease; pointer-events: auto; margin-top: 28px; box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);">
+            Devam Et
+        </button>
     </div>
 </body>
 </html>
