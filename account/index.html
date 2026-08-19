@@ -22,7 +22,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,400;1,600&family=Outfit:wght@200;300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@1,300;1,400;1,600&family=Dancing+Script:wght@400;700&family=Great+Vibes&family=Outfit:wght@200;300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style.css">
     <!-- Paddle Billing SDK v3 -->
     <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
@@ -508,18 +508,23 @@
         }
 
         .phase-alpha-text {
-            font-family: 'Dancing Script', cursive;
-            font-size: 140px; /* Massive cursive alpha background poster */
+            font-family: 'Great Vibes', 'Alex Brush', cursive;
+            font-size: 165px; /* Elegant signature cursive alpha */
+            font-weight: 400;
             color: #ffffff;
             display: inline-block;
-            margin-left: 30px;
+            margin-left: 20px;
+            padding: 20px 40px;
+            overflow: visible;
             opacity: 0;
-            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
-            clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
+            text-shadow: 0 0 35px rgba(255, 255, 255, 0.45), 1px 1px 0px rgba(0, 0, 0, 0.3);
+            clip-path: polygon(0% -40%, 0% -40%, 0% 160%, 0% 160%);
+            vertical-align: middle;
+            line-height: 1.2;
         }
 
         .phase-alpha-text.animate {
-            /* writeCursive writes it in 3s and fades to 0.12, then alphaGlow glimmers periodically */
+            /* writeCursive writes it in 3s and fades to 0.14, then alphaGlow glimmers periodically */
             animation: writeCursive 3s var(--delay) forwards ease-in-out,
                        alphaGlow 6s calc(var(--delay) + 3.2s) infinite ease-in-out;
         }
@@ -583,26 +588,26 @@
         @keyframes writeCursive {
             0% {
                 opacity: 0;
-                clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+                clip-path: polygon(0% -40%, 0% -40%, 0% 160%, 0% 160%);
             }
             15% {
                 opacity: 1; /* Writes in fully bright white! */
-                clip-path: polygon(0 0, 15% 0, 15% 100%, 0 100%);
+                clip-path: polygon(0% -40%, 20% -40%, 20% 160%, 0% 160%);
             }
             35% {
-                clip-path: polygon(0 0, 45% 0, 45% 100%, 0 100%);
+                clip-path: polygon(0% -40%, 50% -40%, 50% 160%, 0% 160%);
             }
             60% {
-                clip-path: polygon(0 0, 70% 0, 70% 100%, 0 100%);
+                clip-path: polygon(0% -40%, 75% -40%, 75% 160%, 0% 160%);
             }
             80% {
-                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+                clip-path: polygon(0% -40%, 105% -40%, 105% 160%, 0% 160%);
                 opacity: 1; /* Fully written, bright white! */
             }
             /* 80% to 100%: Slow fade out to cursive watermark */
             100% {
-                opacity: 0.12; /* Faded watermark cursive */
-                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+                opacity: 0.14; /* Faded watermark cursive */
+                clip-path: polygon(0% -40%, 105% -40%, 105% 160%, 0% 160%);
             }
         }
 
@@ -669,14 +674,19 @@
 
         /* Phase Beta Header Animations */
         .phase-beta-text {
-            font-family: 'Dancing Script', cursive;
-            font-size: 140px;
+            font-family: 'Great Vibes', 'Alex Brush', cursive;
+            font-size: 165px;
+            font-weight: 400;
             color: #10b981;
             display: inline-block;
-            margin-left: 30px;
+            margin-left: 20px;
+            padding: 20px 40px;
+            overflow: visible;
             opacity: 0;
-            text-shadow: 0 0 20px rgba(16, 185, 129, 0.4), 0 0 40px rgba(6, 182, 212, 0.3);
-            clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
+            text-shadow: 0 0 25px rgba(16, 185, 129, 0.5), 0 0 50px rgba(6, 182, 212, 0.4);
+            clip-path: polygon(0% -40%, 0% -40%, 0% 160%, 0% 160%);
+            vertical-align: middle;
+            line-height: 1.2;
         }
 
         .phase-beta-text.animate {
@@ -1722,15 +1732,11 @@
                 if (step1Header) step1Header.style.display = 'none';
                 if (betaHeader) betaHeader.style.display = 'none';
                 if (alphaHeader) {
-                    alphaHeader.style.display = 'flex';
+                    alphaHeader.style.display = 'none';
                     alphaHeader.querySelectorAll('.phase-char, .phase-alpha-text').forEach(c => {
                         c.classList.remove('animate');
                         c.style.opacity = '0';
-                        void c.offsetWidth;
                     });
-                    this.addTimeout(() => {
-                        alphaHeader.querySelectorAll('.phase-char, .phase-alpha-text').forEach(c => c.classList.add('animate'));
-                    }, 150);
                 }
                 document.querySelectorAll('.beta-badge').forEach(b => b.classList.remove('active'));
                 document.querySelectorAll('.alpha-badge').forEach(b => b.classList.remove('active'));
@@ -1914,15 +1920,11 @@
                 if (step1Header) step1Header.style.display = 'none';
                 if (alphaHeader) alphaHeader.style.display = 'none';
                 if (betaHeader) {
-                    betaHeader.style.display = 'flex';
+                    betaHeader.style.display = 'none';
                     betaHeader.querySelectorAll('.phase-char, .phase-beta-text').forEach(c => {
                         c.classList.remove('animate');
                         c.style.opacity = '0';
-                        void c.offsetWidth;
                     });
-                    this.addTimeout(() => {
-                        betaHeader.querySelectorAll('.phase-char, .phase-beta-text').forEach(c => c.classList.add('animate'));
-                    }, 150);
                 }
                 document.querySelectorAll('.alpha-badge').forEach(b => b.classList.remove('active'));
                 document.querySelectorAll('.beta-badge').forEach(b => b.classList.remove('active'));
