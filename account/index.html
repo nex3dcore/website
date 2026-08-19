@@ -665,36 +665,93 @@
             border-color: rgba(255, 255, 255, 0.35);
         }
 
-        /* Phase Beta: Koyu Gri (Premium Dark Charcoal & Slate Gray Theme) */
+        /* Phase Beta: Koyu Gri & Gri Tonlu Tipografi Theme */
         body[data-phase="beta"] {
             background-color: #16161b !important;
+            color: #d4d4d8;
         }
         body[data-phase="beta"] .spotlight {
-            background: radial-gradient(circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(255, 255, 255, 0.06) 0%, rgba(140, 140, 160, 0.03) 35%, transparent 70%);
+            background: radial-gradient(circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(212, 212, 216, 0.05) 0%, rgba(140, 140, 160, 0.02) 35%, transparent 70%);
         }
         body[data-phase="beta"] .grid-overlay {
             background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
         }
         body[data-phase="beta"] .account-card {
             background: rgba(28, 28, 35, 0.75);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.07);
+            color: #d4d4d8;
+        }
+        body[data-phase="beta"] h2,
+        body[data-phase="beta"] h3,
+        body[data-phase="beta"] .price,
+        body[data-phase="beta"] .user-email-display,
+        body[data-phase="beta"] .user-tag-badge {
+            color: #e4e4e7 !important;
+        }
+        body[data-phase="beta"] p,
+        body[data-phase="beta"] .price-suffix,
+        body[data-phase="beta"] label,
+        body[data-phase="beta"] .quota-counter,
+        body[data-phase="beta"] .auth-tab {
+            color: #a1a1aa !important;
+        }
+        body[data-phase="beta"] .auth-tab.active {
+            color: #f4f4f5 !important;
+            border-bottom-color: #d4d4d8 !important;
         }
         body[data-phase="beta"] .plan-card {
             background: rgba(38, 38, 48, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            color: #d4d4d8;
         }
         body[data-phase="beta"] .plan-card.selected {
             background: rgba(48, 48, 62, 0.8);
-            border-color: rgba(255, 255, 255, 0.35);
+            border-color: rgba(212, 212, 216, 0.35);
         }
         body[data-phase="beta"] .form-input {
             background: rgba(255, 255, 255, 0.04);
             border-color: rgba(255, 255, 255, 0.1);
+            color: #e4e4e7;
+        }
+        body[data-phase="beta"] .form-input:focus {
+            border-color: #a1a1aa;
+            background: rgba(255, 255, 255, 0.07);
         }
         body[data-phase="beta"] .step-dot {
             background: #1e1e24;
             border-color: rgba(255, 255, 255, 0.18);
+            color: #a1a1aa;
+        }
+        body[data-phase="beta"] .step-dot.active,
+        body[data-phase="beta"] .step-dot.completed {
+            background: #d4d4d8;
+            border-color: #d4d4d8;
+            color: #18181b;
+        }
+        body[data-phase="beta"] .btn-primary {
+            background: #d4d4d8;
+            color: #18181b;
+        }
+        body[data-phase="beta"] .btn-primary:hover {
+            background: #e4e4e7;
+            box-shadow: 0 8px 24px rgba(212, 212, 216, 0.2);
+        }
+        body[data-phase="beta"] .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #d4d4d8;
+        }
+        body[data-phase="beta"] .google-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #d4d4d8;
+        }
+        body[data-phase="beta"] .v-step.active .beta-vbadge {
+            background: #d4d4d8;
+            color: #18181b;
+            border-color: #d4d4d8;
+            box-shadow: 0 0 14px rgba(212, 212, 216, 0.4);
         }
 
         /* Standard Phase Theme */
@@ -713,18 +770,23 @@
             background-image: radial-gradient(rgba(34, 197, 94, 0.18) 1px, transparent 1px);
         }
 
-        /* Phase Beta Header Animations */
+        /* Phase Beta Header Animations (Refined Gray Tone) */
+        #phaseBetaHeader .phase-char {
+            color: #d4d4d8;
+            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+        }
+
         .phase-beta-text {
             font-family: 'Great Vibes', 'Alex Brush', cursive;
             font-size: 165px;
             font-weight: 400;
-            color: #ffffff;
+            color: #d4d4d8;
             display: inline-block;
             margin-left: 20px;
             padding: 20px 40px;
             overflow: visible;
             opacity: 0;
-            text-shadow: 0 0 35px rgba(255, 255, 255, 0.45), 1px 1px 0px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 0 35px rgba(212, 212, 216, 0.35), 1px 1px 0px rgba(0, 0, 0, 0.3);
             clip-path: polygon(0% -40%, 0% -40%, 0% 160%, 0% 160%);
             vertical-align: middle;
             line-height: 1.2;
@@ -735,23 +797,23 @@
                        alphaGlow 6s calc(var(--delay) + 3.2s) infinite ease-in-out;
         }
 
-        /* Beta Badge & Flying Animations (Matching Alpha 1-to-1) */
+        /* Beta Badge & Flying Animations (Refined Gray Tone) */
         .beta-badge {
             position: absolute;
             top: -12px;
             left: 20px;
-            background: #000000;
-            color: #ffffff;
+            background: #18181c;
+            color: #d4d4d8;
             border-radius: 50%;
             width: 24px;
             height: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 12.5px;
             font-weight: 700;
             line-height: 1;
-            border: 1.5px solid #ffffff;
+            border: 1.5px solid #71717a;
             z-index: 10;
             opacity: 0;
             transform: scale(0);
@@ -3060,13 +3122,13 @@
 
     <!-- Giant Beta Badge Fullscreen Overlay (Cinematic Stage) -->
     <div id="fullscreenBetaOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:999; background:rgba(22, 22, 27, 0.75); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); align-items:center; justify-content:center; flex-direction:column; pointer-events:none; opacity:0; transition:opacity 0.6s ease;">
-        <div id="giantBetaBadge" style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 110px; font-weight: 800; color: #ffffff; text-shadow: 0 0 70px rgba(255, 255, 255, 0.45); transform: scale(0.1); transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1); line-height: 1; margin-bottom: 24px;">
+        <div id="giantBetaBadge" style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 110px; font-weight: 800; color: #d4d4d8; text-shadow: 0 0 70px rgba(212, 212, 216, 0.4); transform: scale(0.1); transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1); line-height: 1; margin-bottom: 24px;">
             β
         </div>
-        <div style="font-family: var(--font-sans); font-size: 15px; font-weight: 400; color: #e4e4e7; max-width: 520px; text-align: center; line-height: 1.6; margin-top: 0; padding: 0 20px; letter-spacing: 0.02em;">
+        <div style="font-family: var(--font-sans); font-size: 15px; font-weight: 400; color: #a1a1aa; max-width: 520px; text-align: center; line-height: 1.6; margin-top: 0; padding: 0 20px; letter-spacing: 0.02em;">
             You are one of the second phase designers to gain access to Nexdesign. If you become an beta user before the quota is filled, you’ll receive a 40% discount (for life) thanks to the beta badge.
         </div>
-        <button id="closeBetaOverlayBtn" class="btn-primary" onclick="proceedBetaAnimation()" style="width: auto; padding: 12px 36px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; border-radius: 8px; cursor: pointer; transition: all 0.25s ease; pointer-events: auto; margin-top: 28px; box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);">
+        <button id="closeBetaOverlayBtn" class="btn-primary" onclick="proceedBetaAnimation()" style="width: auto; padding: 12px 36px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; border-radius: 8px; cursor: pointer; transition: all 0.25s ease; pointer-events: auto; margin-top: 28px; background: #d4d4d8; color: #18181b; box-shadow: 0 0 20px rgba(212, 212, 216, 0.15);">
             Continue
         </button>
     </div>
