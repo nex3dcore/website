@@ -1,0 +1,23 @@
+﻿name: Keep Render Backend Awake
+
+on:
+  schedule:
+    # Run every 10 minutes (UTC)
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping-backend:
+    name: Ping Render API
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send keep-alive HTTP ping to Render backend
+        run: |
+          echo "Sending keep-alive ping to https://website-rla3.onrender.com/api/early-stage-status..."
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 60 https://website-rla3.onrender.com/api/early-stage-status || echo "000")
+          echo "HTTP Status Response: $HTTP_STATUS"
+          if [ "$HTTP_STATUS" -eq 200 ] || [ "$HTTP_STATUS" -eq 301 ] || [ "$HTTP_STATUS" -eq 302 ]; then
+            echo "Backend is awake and healthy! (Status $HTTP_STATUS)"
+          else
+            echo "Backend responded with status $HTTP_STATUS (Waking up / cold start handled)"
+          fi

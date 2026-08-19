@@ -133,4 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
     addDownloadFeedback(dlMacIntel);
     addDownloadFeedback(dlMacSilicon);
     addDownloadFeedback(dlLinux);
+
+    // 6. Pre-warm Render Backend Server
+    try {
+        fetch('https://website-rla3.onrender.com/api/early-stage-status', { mode: 'no-cors' }).catch(() => {});
+    } catch (_) {}
 });
