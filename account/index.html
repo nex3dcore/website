@@ -1716,14 +1716,30 @@
                     </div>
 
                     <!-- Right: Summary -->
-                    <div class="checkout-summary" style="height:fit-content;">
+                    <div class="checkout-summary" style="height:fit-content; display: flex; flex-direction: column; gap: 14px;">
                         <div>
                             <span style="font-size: 10px; text-transform: uppercase; color: var(--text-secondary); font-weight:600;">Selected Plan</span>
-                            <h3 id="summaryPlanName" style="font-size: 15px; margin: 4px 0 0 0; color:#ffffff; font-weight: 700;">Premium Pro</h3>
+                            <h3 id="summaryPlanName" style="font-size: 15px; margin: 4px 0 0 0; color:#ffffff; font-weight: 700;">Beta Edition (40% Lifetime)</h3>
                         </div>
                         <div style="border-top:1px solid rgba(255,255,255,0.06); padding-top:12px; display:flex; justify-content:space-between; align-items:baseline;">
                             <span style="font-size:12px; font-weight:600;">Total:</span>
                             <span style="font-size:22px; font-weight:800; color:#fff;" id="summaryPrice">$83.40<span style="font-size:10px; font-weight:400; color:var(--text-secondary);">/mo</span></span>
+                        </div>
+                        
+                        <!-- Trust & Customer Guarantees -->
+                        <div style="border-top:1px solid rgba(255,255,255,0.06); padding-top:12px; display:flex; flex-direction:column; gap:8px; font-size:11px; color:var(--text-secondary); line-height:1.4;">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span>🔒</span>
+                                <span>Encrypted & Secured by Paddle</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span>⚡</span>
+                                <span>Instant License Key & Download</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span>🛡️</span>
+                                <span>Cancel anytime in your portal</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1791,19 +1807,16 @@
         const PADDLE_CLIENT_TOKEN = 'live_0586d1392cd4411d0bd9c2c7ef3';
         const PADDLE_ENVIRONMENT = 'production';
 
-        // Production Price IDs (Generated Live via Paddle API)
+        // Production Monthly Price IDs (Generated Live via Paddle API)
         const PADDLE_PRICE_IDS = {
             alpha: {
-                month: 'pri_01kzd8mbykdwtt6skkk96br82a', // %70 Lifetime Discount ($41.70/mo)
-                year:  'pri_01kzd8mbykdwtt6skkk96br82a'
+                month: 'pri_01kzd8mbykdwtt6skkk96br82a' // %70 Lifetime Discount ($41.70/mo)
             },
             beta: {
-                month: 'pri_01kzd9w6rzyvx4hfs9yhcag2k0', // %40 Lifetime Discount ($83.40/mo)
-                year:  'pri_01kzd9w6rzyvx4hfs9yhcag2k0'
+                month: 'pri_01kzd9w6rzyvx4hfs9yhcag2k0' // %40 Lifetime Discount ($83.40/mo)
             },
             standard: {
-                month: 'pri_01kzd9w709bcvs0tyv2vdeywg3', // Standard Release ($139.00/mo)
-                year:  'pri_01kzd9w709bcvs0tyv2vdeywg3'
+                month: 'pri_01kzd9w709bcvs0tyv2vdeywg3' // Standard Release ($139.00/mo)
             }
         };
 
@@ -1823,30 +1836,10 @@
         }
 
         // ==========================================
-        // BILLING TOGGLE
+        // BILLING CONFIGURATION (Monthly Subscription)
         // ==========================================
 
-        let billingPeriod = 'month'; // 'month' or 'year'
-
-        window.toggleBilling = function() {
-            const thumb   = document.getElementById('billingToggleThumb');
-            const monthly = document.getElementById('monthlyLabel');
-            const yearly  = document.getElementById('yearlyLabel');
-
-            if (billingPeriod === 'month') {
-                billingPeriod = 'year';
-                thumb.style.transform = 'translateX(22px)';
-                monthly.style.color = 'var(--text-secondary)';
-                yearly.style.color  = '#ffffff';
-            } else {
-                billingPeriod = 'month';
-                thumb.style.transform = 'translateX(0)';
-                monthly.style.color = '#ffffff';
-                yearly.style.color  = 'var(--text-secondary)';
-            }
-            updatePricingCardsUI();
-            updateCheckoutSummary();
-        };
+        const billingPeriod = 'month';
 
         function setInspectorStatus(msg) {
             console.log("[Status]", msg);
@@ -2982,30 +2975,29 @@
 
         function getCurrentTierPricing() {
             const tier = (currentUserData && currentUserData.tier_tag) || currentActivePhase || 'standard';
-            const isYear = billingPeriod === 'year';
             if (tier === 'alpha') {
                 return {
                     tier: 'alpha',
                     title: 'Alpha Edition (70% Lifetime)',
-                    price: isYear ? '$417' : '$41.70',
-                    period: isYear ? '/yr' : '/mo',
-                    priceId: PADDLE_PRICE_IDS.alpha[billingPeriod]
+                    price: '$41.70',
+                    period: '/mo',
+                    priceId: PADDLE_PRICE_IDS.alpha.month
                 };
             } else if (tier === 'beta') {
                 return {
                     tier: 'beta',
                     title: 'Beta Edition (40% Lifetime)',
-                    price: isYear ? '$834' : '$83.40',
-                    period: isYear ? '/yr' : '/mo',
-                    priceId: PADDLE_PRICE_IDS.beta[billingPeriod]
+                    price: '$83.40',
+                    period: '/mo',
+                    priceId: PADDLE_PRICE_IDS.beta.month
                 };
             } else {
                 return {
                     tier: 'standard',
                     title: 'Standard Pro License',
-                    price: isYear ? '$1390' : '$139',
-                    period: isYear ? '/yr' : '/mo',
-                    priceId: PADDLE_PRICE_IDS.standard[billingPeriod]
+                    price: '$139',
+                    period: '/mo',
+                    priceId: PADDLE_PRICE_IDS.standard.month
                 };
             }
         }
@@ -3101,7 +3093,7 @@
             document.getElementById('successPlan').innerText = planNames[selectedPlan] || selectedPlan;
             const info = getCurrentTierPricing();
             const billingEl = document.getElementById('successBilling');
-            if (billingEl) billingEl.innerText = selectedPlan === 'pro' ? (billingPeriod === 'year' ? `Yearly (${info.price}/yr)` : `Monthly (${info.price}/mo)`) : 'Free';
+            if (billingEl) billingEl.innerText = selectedPlan === 'pro' ? `Monthly (${info.price}/mo)` : 'Free';
 
             try {
                 const res = await fetch(`${SERVER_URL}/api/early-stage-status?email=${encodeURIComponent(userEmail)}`);
