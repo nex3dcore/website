@@ -641,11 +641,63 @@
         }
 
         /* Dynamic Phase Themes */
-        body[data-phase="alpha"],
-        body[data-phase="beta"] {
-            background-color: #09090b !important;
+        /* Phase Alpha: Siyah Beyaz (Pitch Black & Pure White Monochrome) */
+        body[data-phase="alpha"] {
+            background-color: #000000 !important;
+        }
+        body[data-phase="alpha"] .spotlight {
+            background: radial-gradient(circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.015) 35%, transparent 70%);
+        }
+        body[data-phase="alpha"] .grid-overlay {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+        }
+        body[data-phase="alpha"] .account-card {
+            background: rgba(8, 8, 10, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+        }
+        body[data-phase="alpha"] .plan-card {
+            background: rgba(14, 14, 18, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        body[data-phase="alpha"] .plan-card.selected {
+            background: rgba(22, 22, 28, 0.8);
+            border-color: rgba(255, 255, 255, 0.35);
         }
 
+        /* Phase Beta: Koyu Gri (Premium Dark Charcoal & Slate Gray Theme) */
+        body[data-phase="beta"] {
+            background-color: #16161b !important;
+        }
+        body[data-phase="beta"] .spotlight {
+            background: radial-gradient(circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(255, 255, 255, 0.06) 0%, rgba(140, 140, 160, 0.03) 35%, transparent 70%);
+        }
+        body[data-phase="beta"] .grid-overlay {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+        }
+        body[data-phase="beta"] .account-card {
+            background: rgba(28, 28, 35, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+        }
+        body[data-phase="beta"] .plan-card {
+            background: rgba(38, 38, 48, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        body[data-phase="beta"] .plan-card.selected {
+            background: rgba(48, 48, 62, 0.8);
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+        body[data-phase="beta"] .form-input {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        body[data-phase="beta"] .step-dot {
+            background: #1e1e24;
+            border-color: rgba(255, 255, 255, 0.18);
+        }
+
+        /* Standard Phase Theme */
         body[data-phase="standard"] {
             background-color: #030712 !important;
         }
@@ -2994,7 +3046,7 @@
         });
     </script>
     <!-- Giant Alpha Badge Fullscreen Overlay (Cinematic Stage) -->
-    <div id="fullscreenAlphaOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:999; background:rgba(8, 8, 10, 0.55); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); align-items:center; justify-content:center; flex-direction:column; pointer-events:none; opacity:0; transition:opacity 0.6s ease;">
+    <div id="fullscreenAlphaOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:999; background:rgba(0, 0, 0, 0.7); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); align-items:center; justify-content:center; flex-direction:column; pointer-events:none; opacity:0; transition:opacity 0.6s ease;">
         <div id="giantAlphaBadge" style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 160px; font-weight: 800; color: #ffffff; text-shadow: 0 0 70px rgba(255, 255, 255, 0.45); transform: scale(0.1); transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1); line-height: 0.9; margin-bottom: 24px;">
             α
         </div>
@@ -3007,7 +3059,7 @@
     </div>
 
     <!-- Giant Beta Badge Fullscreen Overlay (Cinematic Stage) -->
-    <div id="fullscreenBetaOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:999; background:rgba(8, 8, 10, 0.55); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); align-items:center; justify-content:center; flex-direction:column; pointer-events:none; opacity:0; transition:opacity 0.6s ease;">
+    <div id="fullscreenBetaOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:999; background:rgba(22, 22, 27, 0.75); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); align-items:center; justify-content:center; flex-direction:column; pointer-events:none; opacity:0; transition:opacity 0.6s ease;">
         <div id="giantBetaBadge" style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 110px; font-weight: 800; color: #ffffff; text-shadow: 0 0 70px rgba(255, 255, 255, 0.45); transform: scale(0.1); transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1); line-height: 1; margin-bottom: 24px;">
             β
         </div>
