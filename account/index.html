@@ -280,7 +280,7 @@
             top: -12px;
             left: 20px; /* Default left */
             background: #ffffff;
-            color: #000000;
+            color: #000000 !important;
             border-radius: 50%;
             width: 24px;
             height: 24px;
@@ -787,6 +787,12 @@
             background: #24242c;
             color: #a1a1aa;
             border-color: #a1a1aa;
+        }
+        body[data-phase="beta"] .serious-badge {
+            background: #a1a1aa !important;
+            color: #000000 !important;
+            border-color: #a1a1aa !important;
+            box-shadow: 0 0 12px rgba(161, 161, 170, 0.4) !important;
         }
         body[data-phase="beta"] .user-avatar-badge {
             background: #24242c;
