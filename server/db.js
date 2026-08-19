@@ -631,12 +631,8 @@ function checkAccess(email) {
     if (!customer) return { hasAccess: false, tier: 0, reason: "Kullanıcı bulunamadı" };
     if (customer.email_verified === 0) return { hasAccess: false, tier: 0, requiresOTP: true, reason: "E-posta henüz doğrulanmamıştır." };
     
-    if (email.toLowerCase().includes('pro')) {
-        return { hasAccess: true, tier: 2, plan: "pro", reason: "Pro (E-posta Kuralları)" };
-    }
-
     const sub = getSubscriptionByCustomerId(customer.customer_id);
-    if (!sub) return { hasAccess: false, tier: 0, reason: "Aktif abonelik bulunamadı" };
+    if (!sub) return { hasAccess: false, tier: 0, plan: 'free', reason: "Aktif abonelik bulunamadı" };
     
     const isGranted = sub.status === 'active' || sub.status === 'trialing';
     let tier = 0;

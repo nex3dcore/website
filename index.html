@@ -146,6 +146,89 @@
         </div>
     </div>
 
+    <!-- Interactive Legal Documents Modal (Terms, Privacy, Refund) -->
+    <div id="legalModalBackdrop" class="legal-modal-backdrop" onclick="handleLegalBackdropClick(event)">
+        <div class="legal-modal-content">
+            <div class="legal-modal-header">
+                <div class="legal-modal-tabs">
+                    <button class="legal-tab-btn active" id="tabBtnTerms" onclick="switchLegalTab('terms')">Terms of Service</button>
+                    <button class="legal-tab-btn" id="tabBtnPrivacy" onclick="switchLegalTab('privacy')">Privacy Policy</button>
+                    <button class="legal-tab-btn" id="tabBtnRefund" onclick="switchLegalTab('refund')">Refund & Cancellation</button>
+                </div>
+                <button class="legal-modal-close-btn" onclick="closeLegalModal()" title="Close">✕</button>
+            </div>
+            
+            <div class="legal-modal-body">
+                <!-- TERMS OF SERVICE PANE -->
+                <div id="paneTerms" class="legal-pane active">
+                    <h3>1. Acceptance of Terms</h3>
+                    <p>By accessing NexDesign websites (nex3dcore.com) or using the NexDesign software applications, you agree to be bound by these Terms of Service, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws.</p>
+                    
+                    <h3>2. Software License Grant</h3>
+                    <p>NexDesign grants you a non-exclusive, non-transferable, revocable license to use the NexDesign CAD/BIM architectural editor. Indie Free users receive community access; Premium Pro users receive unrestricted computational modules, priority updates, and commercial license capabilities for professional architectural deliverables.</p>
+
+                    <h3>3. Early Adopter Lifetime Badges (Alpha & Beta)</h3>
+                    <p>Users who register and activate during the Alpha phase receive a permanent 70% lifetime discount; users during Beta receive a permanent 40% discount (for life). These discounts remain attached to the user account in perpetuity as long as the subscription remains active or is renewed under the badge entitlement.</p>
+
+                    <h3>4. Subscription Billing & Merchant of Record</h3>
+                    <p>Payment processing, currency conversion, and global tax/VAT remittance are handled securely by Paddle (our authorized Merchant of Record). Subscriptions renew on a monthly recurring basis unless cancelled before the renewal date.</p>
+
+                    <h3>5. Intellectual Property</h3>
+                    <p>All architectural 3D models, geometry, BIM layouts, and project files created using NexDesign belong 100% exclusively to the user. NexDesign claims no intellectual property ownership over your work.</p>
+
+                    <h3>6. Limitation of Liability</h3>
+                    <p>NexDesign is provided "as is". In no event shall NexDesign or its developers be liable for any damages arising out of the use or inability to use the software.</p>
+                </div>
+
+                <!-- PRIVACY POLICY PANE -->
+                <div id="panePrivacy" class="legal-pane">
+                    <h3>1. Information We Collect</h3>
+                    <p>We collect your email address and authentication credentials for account creation and license verification. If you sign in via Google OAuth, we receive only your verified email and profile identifier.</p>
+
+                    <h3>2. Payment Data Security</h3>
+                    <p>We never process, store, or have access to your raw credit card numbers or banking credentials. All financial transactions are processed by Paddle under PCI-DSS Level 1 certification with end-to-end 256-bit SSL encryption.</p>
+
+                    <h3>3. Passwords & Cryptographic Security</h3>
+                    <p>User passwords are never stored in plain text. They are cryptographically hashed using standard Scrypt key derivation with unique per-user cryptographic salts.</p>
+
+                    <h3>4. Data Usage & Cookies</h3>
+                    <p>We use essential local storage tokens to preserve your active license status on your device so that you can work offline. We do not sell your personal information or track you across third-party websites.</p>
+
+                    <h3>5. User Rights & Data Deletion (GDPR / KVKK)</h3>
+                    <p>You have the right to access, rectify, or request complete deletion of your account and personal data at any time by contacting support@nex3dcore.com.</p>
+                </div>
+
+                <!-- REFUND & CANCELLATION PANE -->
+                <div id="paneRefund" class="legal-pane">
+                    <h3>1. 14-Day Statutory Money-Back Guarantee</h3>
+                    <p>We want you to be completely satisfied with NexDesign. If you are not satisfied with your Pro subscription, you are entitled to a full refund within 14 days of your initial purchase.</p>
+
+                    <h3>2. 1-Click Self-Service Cancellation</h3>
+                    <p>You can cancel your subscription at any time with a single click from your account dashboard or through the secure Paddle Customer Portal. There are no cancellation fees, hidden penalties, or required phone calls.</p>
+
+                    <h3>3. Access After Cancellation</h3>
+                    <p>When you cancel your subscription, your Pro access remains fully active until the end of your current monthly billing period. After this date, your account transitions to the Indie Free plan without losing any of your saved project files.</p>
+
+                    <h3>4. How to Request a Refund</h3>
+                    <p>To request a refund within your 14-day window, simply email support@nex3dcore.com with your registered account email, and our team will process your refund promptly.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Landing Footer -->
+    <footer class="landing-footer">
+        <span>© 2026 NexDesign Architecture</span>
+        <span>•</span>
+        <a href="javascript:void(0)" onclick="openLegalModal('terms')">Terms of Service</a>
+        <span>•</span>
+        <a href="javascript:void(0)" onclick="openLegalModal('privacy')">Privacy Policy</a>
+        <span>•</span>
+        <a href="javascript:void(0)" onclick="openLegalModal('refund')">Refund & Cancellation</a>
+        <span>•</span>
+        <a href="mailto:support@nex3dcore.com">Support</a>
+    </footer>
+
     <script src="main.js"></script>
 </body>
 </html>

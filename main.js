@@ -139,3 +139,41 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch('https://website-rla3.onrender.com/api/early-stage-status', { mode: 'no-cors' }).catch(() => {});
     } catch (_) {}
 });
+
+// ==========================================
+// LEGAL MODAL CONTROLLER
+// ==========================================
+window.openLegalModal = function(tab = 'terms') {
+    const modal = document.getElementById('legalModalBackdrop');
+    if (modal) {
+        modal.classList.add('active');
+        switchLegalTab(tab);
+    }
+};
+
+window.closeLegalModal = function() {
+    const modal = document.getElementById('legalModalBackdrop');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+};
+
+window.handleLegalBackdropClick = function(event) {
+    if (event.target && event.target.id === 'legalModalBackdrop') {
+        closeLegalModal();
+    }
+};
+
+window.switchLegalTab = function(tab) {
+    document.querySelectorAll('.legal-tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.legal-pane').forEach(pane => pane.classList.remove('active'));
+
+    const btnMap = { terms: 'tabBtnTerms', privacy: 'tabBtnPrivacy', refund: 'tabBtnRefund' };
+    const paneMap = { terms: 'paneTerms', privacy: 'panePrivacy', refund: 'paneRefund' };
+
+    const targetBtn = document.getElementById(btnMap[tab] || 'tabBtnTerms');
+    const targetPane = document.getElementById(paneMap[tab] || 'paneTerms');
+
+    if (targetBtn) targetBtn.classList.add('active');
+    if (targetPane) targetPane.classList.add('active');
+};
