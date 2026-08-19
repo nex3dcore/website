@@ -2303,6 +2303,26 @@
                 (currentStepNum === 1 || currentStepNum === 3) ? container.classList.add('wide') : container.classList.remove('wide');
             }
 
+            // Only Step 1 slides down during phase animation; other steps stay at default centered position
+            const wrapper = document.querySelector('.wizard-main-wrapper');
+            const alphaHeader = document.getElementById('phaseAlphaHeader');
+            const betaHeader = document.getElementById('phaseBetaHeader');
+            const activeModule = (typeof PhaseController !== 'undefined') ? PhaseController.getActiveModule() : null;
+
+            if (currentStepNum === 1) {
+                if (activeModule && activeModule.animationTriggered) {
+                    if (wrapper) wrapper.classList.add('shifted-down');
+                    if (activeModule.name === 'alpha' && alphaHeader) alphaHeader.style.display = 'flex';
+                    if (activeModule.name === 'beta' && betaHeader) betaHeader.style.display = 'flex';
+                } else {
+                    if (wrapper) wrapper.classList.remove('shifted-down');
+                }
+            } else {
+                if (wrapper) wrapper.classList.remove('shifted-down');
+                if (alphaHeader) alphaHeader.style.display = 'none';
+                if (betaHeader) betaHeader.style.display = 'none';
+            }
+
             // Hide simulated card form if Paddle is active
             const simForm = document.getElementById('simulatedCardForm');
             const padContainer = document.getElementById('paddle-checkout-container');
