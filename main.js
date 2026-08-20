@@ -168,12 +168,25 @@ window.switchLegalTab = function(tab) {
     document.querySelectorAll('.legal-tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.legal-pane').forEach(pane => pane.classList.remove('active'));
 
-    const btnMap = { terms: 'tabBtnTerms', privacy: 'tabBtnPrivacy', refund: 'tabBtnRefund' };
-    const paneMap = { terms: 'paneTerms', privacy: 'panePrivacy', refund: 'paneRefund' };
+    const btnMap = { terms: 'tabBtnTerms', privacy: 'tabBtnPrivacy', support: 'tabBtnSupport' };
+    const paneMap = { terms: 'paneTerms', privacy: 'panePrivacy', support: 'paneSupport' };
 
     const targetBtn = document.getElementById(btnMap[tab] || 'tabBtnTerms');
     const targetPane = document.getElementById(paneMap[tab] || 'paneTerms');
 
     if (targetBtn) targetBtn.classList.add('active');
     if (targetPane) targetPane.classList.add('active');
+};
+
+window.copySupportEmail = function(btn) {
+    navigator.clipboard.writeText('nex3dcore@gmail.com').then(() => {
+        const textEl = document.getElementById('copyBtnText') || btn;
+        const originalText = textEl.innerText;
+        textEl.innerText = 'Copied to Clipboard! ✓';
+        setTimeout(() => {
+            textEl.innerText = originalText;
+        }, 2500);
+    }).catch(() => {
+        alert('Support email: nex3dcore@gmail.com');
+    });
 };

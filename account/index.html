@@ -1931,11 +1931,6 @@
     </div> <!-- /wizard-main-wrapper -->
 </div>
 
-    <!-- Footer Information -->
-    </footer>
-
-
-
     <script>
         // Interactive Mouse Spotlight
         document.addEventListener('mousemove', (e) => {
@@ -3414,8 +3409,8 @@
             document.querySelectorAll('.legal-tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.legal-pane').forEach(pane => pane.classList.remove('active'));
 
-            const btnMap = { terms: 'tabBtnTerms', privacy: 'tabBtnPrivacy', refund: 'tabBtnRefund' };
-            const paneMap = { terms: 'paneTerms', privacy: 'panePrivacy', refund: 'paneRefund' };
+            const btnMap = { terms: 'tabBtnTerms', privacy: 'tabBtnPrivacy', support: 'tabBtnSupport' };
+            const paneMap = { terms: 'paneTerms', privacy: 'panePrivacy', support: 'paneSupport' };
 
             const targetBtn = document.getElementById(btnMap[tab] || 'tabBtnTerms');
             const targetPane = document.getElementById(paneMap[tab] || 'paneTerms');
@@ -3423,15 +3418,29 @@
             if (targetBtn) targetBtn.classList.add('active');
             if (targetPane) targetPane.classList.add('active');
         };
+
+        window.copySupportEmail = function(btn) {
+            navigator.clipboard.writeText('nex3dcore@gmail.com').then(() => {
+                const textEl = document.getElementById('copyBtnText') || btn;
+                const originalText = textEl.innerText;
+                textEl.innerText = 'Copied to Clipboard! ✓';
+                setTimeout(() => {
+                    textEl.innerText = originalText;
+                }, 2500);
+            }).catch(() => {
+                alert('Support email: nex3dcore@gmail.com');
+            });
+        };
     </script>
 
-    <!-- Interactive Legal Documents Modal (Terms, Privacy, Refund) -->
+    <!-- Interactive Legal & Support Modal -->
     <div id="legalModalBackdrop" class="legal-modal-backdrop" onclick="handleLegalBackdropClick(event)">
         <div class="legal-modal-content">
             <div class="legal-modal-header">
                 <div class="legal-modal-tabs">
                     <button class="legal-tab-btn active" id="tabBtnTerms" onclick="switchLegalTab('terms')">Terms of Service</button>
                     <button class="legal-tab-btn" id="tabBtnPrivacy" onclick="switchLegalTab('privacy')">Privacy Policy</button>
+                    <button class="legal-tab-btn" id="tabBtnSupport" onclick="switchLegalTab('support')">Support</button>
                 </div>
                 <button class="legal-modal-close-btn" onclick="closeLegalModal()" title="Close">✕</button>
             </div>
@@ -3475,6 +3484,32 @@
                     <h3>5. User Rights & Data Deletion (GDPR / KVKK)</h3>
                     <p>You have the right to access, rectify, or request complete deletion of your account and personal data at any time by contacting nex3dcore@gmail.com.</p>
                 </div>
+
+                <!-- SUPPORT PANE -->
+                <div id="paneSupport" class="legal-pane">
+                    <h3>NexDesign Customer Support</h3>
+                    <p>Have questions about your account, licenses, or technical features? Our team is here to assist you directly.</p>
+                    
+                    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 18px; margin: 16px 0; display: flex; flex-direction: column; gap: 12px;">
+                        <div>
+                            <div style="font-size: 10px; text-transform: uppercase; color: var(--text-secondary); font-weight: 600; letter-spacing: 0.05em;">Official Support Email</div>
+                            <div style="font-size: 15px; font-weight: 700; color: #ffffff; font-family: monospace; margin-top: 2px;">nex3dcore@gmail.com</div>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px;">
+                            <button class="btn-primary" style="flex: 1; min-width: 140px; padding: 10px 16px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="copySupportEmail(this)">
+                                <span>📋</span>
+                                <span id="copyBtnText">Copy Email Address</span>
+                            </button>
+                            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=nex3dcore@gmail.com" target="_blank" rel="noopener noreferrer" class="btn-primary btn-secondary" style="flex: 1; min-width: 140px; padding: 10px 16px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; text-align: center;">
+                                <span>🌐</span>
+                                <span>Open in Web Gmail</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <p style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 0;">We typically respond to inquiries and technical support requests within 24 hours.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -3487,7 +3522,7 @@
         <span>•</span>
         <a href="javascript:void(0)" onclick="openLegalModal('privacy')">Privacy Policy</a>
         <span>•</span>
-        <a href="mailto:nex3dcore@gmail.com">Support</a>
+        <a href="javascript:void(0)" onclick="openLegalModal('support')">Support</a>
     </footer>
 
     <!-- Giant Alpha Badge Fullscreen Overlay (Cinematic Stage) -->
