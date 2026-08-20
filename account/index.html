@@ -1673,13 +1673,8 @@
 
             <!-- STEP 2: REGISTRATION / LOGIN DUAL MODE -->
             <div class="wizard-step" id="step2">
-                <div>
-                    <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;" id="authHeaderTitle">Create Your Account</h2>
-                    <p style="font-size: 11px; color: var(--text-secondary);" id="authHeaderSub">Create an account to manage your NexDesign desktop license.</p>
-                </div>
-
                 <!-- Mode Switcher Tabs -->
-                <div class="auth-tab-group">
+                <div class="auth-tab-group" style="margin-bottom: 16px;">
                     <div class="auth-tab active" id="tabRegister" onclick="setAuthMode('register')">Create Account</div>
                     <div class="auth-tab" id="tabLogin" onclick="setAuthMode('login')">Log In</div>
                 </div>
@@ -1694,67 +1689,62 @@
                     Continue with Google
                 </button>
 
-                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; opacity: 0.5; font-size: 10px;">
-                    <hr style="flex-grow: 1; border: none; border-top: 1px solid rgba(255,255,255,0.15);" />
-                    <span id="dividerText">or register with email</span>
-                    <hr style="flex-grow: 1; border: none; border-top: 1px solid rgba(255,255,255,0.15);" />
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; opacity: 0.4; font-size: 10px; margin: 4px 0;">
+                    <hr style="flex-grow: 1; border: none; border-top: 1px solid rgba(255,255,255,0.12);" />
+                    <span id="dividerText">or with email</span>
+                    <hr style="flex-grow: 1; border: none; border-top: 1px solid rgba(255,255,255,0.12);" />
                 </div>
 
                 <!-- Registration Form -->
                 <div id="registerFormContainer">
                     <div class="form-group">
-                        <label for="reg-email">Email Address</label>
-                        <input type="email" id="reg-email" class="form-input" placeholder="name@architect.com" autocomplete="email" />
+                        <label for="reg-email">Email</label>
+                        <input type="email" id="reg-email" class="form-input" placeholder="name@domain.com" autocomplete="email" />
                     </div>
 
                     <div class="form-group">
-                        <label for="reg-password">Create Password</label>
+                        <label for="reg-password">Password</label>
                         <div class="password-input-wrapper">
-                            <input type="password" id="reg-password" class="form-input" placeholder="At least 8 chars, 1 uppercase, 1 number" oninput="updatePasswordStrengthUI()" autocomplete="new-password" />
+                            <input type="password" id="reg-password" class="form-input" placeholder="Min. 8 characters" oninput="updatePasswordStrengthUI()" autocomplete="new-password" />
                             <button type="button" class="password-toggle-eye" onclick="togglePasswordVisibility('reg-password', this)">👁️</button>
                         </div>
                         
-                        <!-- Strength Meter Bar -->
-                        <div class="strength-meter-box">
+                        <!-- Minimal Strength Meter Bar -->
+                        <div class="strength-meter-box" style="margin-top: 6px;">
                             <div class="strength-segment" id="strengthSeg1"></div>
                             <div class="strength-segment" id="strengthSeg2"></div>
                             <div class="strength-segment" id="strengthSeg3"></div>
-                        </div>
-                        <div class="password-rules">
-                            <span class="rule-item" id="ruleLen">✓ Min 8 Characters</span>
-                            <span class="rule-item" id="ruleUpper">✓ 1 Uppercase Letter</span>
-                            <span class="rule-item" id="ruleNum">✓ 1 Number</span>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="reg-password-confirm">Confirm Password</label>
                         <div class="password-input-wrapper">
-                            <input type="password" id="reg-password-confirm" class="form-input" placeholder="Re-enter your password" oninput="checkPasswordMatchUI()" autocomplete="new-password" />
+                            <input type="password" id="reg-password-confirm" class="form-input" placeholder="Re-enter password" oninput="checkPasswordMatchUI()" autocomplete="new-password" />
                             <button type="button" class="password-toggle-eye" onclick="togglePasswordVisibility('reg-password-confirm', this)">👁️</button>
                         </div>
                         <div id="matchFeedback" style="font-size: 10px; margin-top: 3px; display: none;"></div>
                     </div>
 
                     <!-- Legal Consent Box -->
-                    <div class="legal-consent-container">
+                    <div class="legal-consent-container" style="margin-top: 8px;">
                         <input type="checkbox" id="legalConsentCheckbox" />
                         <label for="legalConsentCheckbox">
-                            I have read and agree to the <a href="javascript:void(0)" onclick="openLegalModal('terms')" style="color: #ffffff; text-decoration: underline;">Terms of Service</a> and <a href="javascript:void(0)" onclick="openLegalModal('privacy')" style="color: #ffffff; text-decoration: underline;">Privacy Policy</a>.
+                            I agree to the <a href="javascript:void(0)" onclick="openLegalModal('terms')" style="color: #ffffff; text-decoration: underline;">Terms of Service</a> and <a href="javascript:void(0)" onclick="openLegalModal('privacy')" style="color: #ffffff; text-decoration: underline;">Privacy Policy</a>.
                         </label>
                     </div>
 
-                    <div style="display:flex; gap:12px; margin-top: 14px;">
+                    <div style="display:flex; gap:12px; margin-top: 16px;">
                         <button class="btn-primary btn-secondary" onclick="goToStep(1)">Back</button>
-                        <button class="btn-primary" onclick="handleRegistrationSubmit()">Create Account & Continue</button>
+                        <button class="btn-primary" onclick="handleRegistrationSubmit()">Continue</button>
                     </div>
                 </div>
 
                 <!-- Login Form (Hidden by default) -->
                 <div id="loginFormContainer" style="display: none;">
                     <div class="form-group">
-                        <label for="login-email">Email Address</label>
-                        <input type="email" id="login-email" class="form-input" placeholder="name@architect.com" autocomplete="email" />
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" class="form-input" placeholder="name@domain.com" autocomplete="email" />
                     </div>
 
                     <div class="form-group">
@@ -1765,9 +1755,9 @@
                         </div>
                     </div>
 
-                    <div style="display:flex; gap:12px; margin-top: 14px;">
+                    <div style="display:flex; gap:12px; margin-top: 16px;">
                         <button class="btn-primary btn-secondary" onclick="goToStep(1)">Back</button>
-                        <button class="btn-primary" onclick="handleLoginSubmit()">Log In & Continue</button>
+                        <button class="btn-primary" onclick="handleLoginSubmit()">Log In</button>
                     </div>
                 </div>
             </div>
@@ -2656,8 +2646,6 @@
             const loginContainer = document.getElementById('loginFormContainer');
             const tabReg = document.getElementById('tabRegister');
             const tabLogin = document.getElementById('tabLogin');
-            const title = document.getElementById('authHeaderTitle');
-            const sub = document.getElementById('authHeaderSub');
             const divText = document.getElementById('dividerText');
 
             if (mode === 'register') {
@@ -2665,17 +2653,13 @@
                 if (loginContainer) loginContainer.style.display = 'none';
                 if (tabReg) tabReg.classList.add('active');
                 if (tabLogin) tabLogin.classList.remove('active');
-                if (title) title.innerText = 'Create Your Account';
-                if (sub) sub.innerText = 'Create an account to manage your NexDesign desktop license.';
-                if (divText) divText.innerText = 'or register with email';
+                if (divText) divText.innerText = 'or with email';
             } else {
                 if (regContainer) regContainer.style.display = 'none';
                 if (loginContainer) loginContainer.style.display = 'block';
                 if (tabReg) tabReg.classList.remove('active');
                 if (tabLogin) tabLogin.classList.add('active');
-                if (title) title.innerText = 'Log in to Your Account';
-                if (sub) sub.innerText = 'Log in to manage your active license and account.';
-                if (divText) divText.innerText = 'or sign in with email';
+                if (divText) divText.innerText = 'or with email';
             }
         };
 
