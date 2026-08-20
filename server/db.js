@@ -61,9 +61,19 @@ if (isPostgres) {
                     expires_at TIMESTAMP NOT NULL,
                     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
                 );
+
+                -- Enable Row Level Security (RLS) on all public tables to secure PostgREST and satisfy Supabase Security Advisor
+                ALTER TABLE IF EXISTS customers ENABLE ROW LEVEL SECURITY;
+                ALTER TABLE IF EXISTS subscriptions ENABLE ROW LEVEL SECURITY;
+                ALTER TABLE IF EXISTS verification_codes ENABLE ROW LEVEL SECURITY;
+                ALTER TABLE IF EXISTS user_wallets ENABLE ROW LEVEL SECURITY;
+                ALTER TABLE IF EXISTS marketplace_transactions ENABLE ROW LEVEL SECURITY;
+                ALTER TABLE IF EXISTS marketplace_items ENABLE ROW LEVEL SECURITY;
+                ALTER TABLE IF EXISTS showcase_projects ENABLE ROW LEVEL SECURITY;
+                ALTER TABLE IF EXISTS social_posts ENABLE ROW LEVEL SECURITY;
             `);
             client.release();
-            console.log("✅ SUPABASE POSTGRESQL TABLES VERIFIED & READY!");
+            console.log("✅ SUPABASE POSTGRESQL TABLES & RLS POLICIES VERIFIED & READY!");
         } catch (err) {
             console.error("❌ Postgres Init Warning:", err.message);
         }

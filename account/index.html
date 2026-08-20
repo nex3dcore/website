@@ -1519,6 +1519,22 @@
             color: #ffffff;
             text-decoration: underline;
         }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .btn-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.65s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
     </style>
 </head>
 <body>
@@ -1688,7 +1704,7 @@
                     </div>
                 </div>
 
-                <button class="btn-primary" id="step1ConfirmBtn" style="margin-top: 16px; width: 100%; display: none; position: relative; z-index: 10; cursor: pointer;">
+                <button class="btn-primary" id="step1ConfirmBtn" onclick="goToStep(2)" style="margin-top: 16px; width: 100%; display: block; position: relative; z-index: 10; cursor: pointer;">
                     Continue
                 </button>
             </div>
@@ -2798,7 +2814,7 @@
                 btn.disabled = true;
                 btn.style.opacity = '0.75';
                 btn.style.pointerEvents = 'none';
-                btn.innerHTML = `<span style="display:inline-block; width:12px; height:12px; border:2px solid #ffffff; border-top-color:transparent; border-radius:50%; animation:spin 0.6s linear infinite; margin-right:8px; vertical-align:middle;"></span>${loadingText}`;
+                btn.innerHTML = `<span class="btn-spinner"></span>${loadingText}`;
             } else {
                 if (btn.dataset.originalHtml) {
                     btn.innerHTML = btn.dataset.originalHtml;
@@ -2822,24 +2838,17 @@
                         scope: "email profile openid",
                         callback: async (tokenResponse) => {
                             if (tokenResponse && tokenResponse.access_token) {
-                                try {
-                                    const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                                        headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
-                                    });
-                                    const userInfo = await userInfoRes.json();
-                                    if (userInfo && userInfo.email) {
-                                        await submitGoogleAuth(null, userInfo.email);
-                                        setBtnLoading(googleBtn, false);
-                                        return;
-                                    }
-                                } catch (fetchErr) {
-                                    console.warn("Userinfo fetch error:", fetchErr);
-                                }
+                                // Direct submit with accessToken to backend
+                                await submitGoogleAuth(null, null, tokenResponse.access_token);
+                                setBtnLoading(googleBtn, false);
+                                return;
                             }
                             setBtnLoading(googleBtn, false);
                         },
-                        error_callback: () => {
+                        error_callback: (err) => {
+                            console.warn("Google OAuth error:", err);
                             setBtnLoading(googleBtn, false);
+                            showAuthNotice("Google Sign-In was not completed. You can sign up with email below.", "info");
                         }
                     });
                     tokenClient.requestAccessToken({ prompt: 'select_account' });
@@ -2884,8 +2893,11 @@
             }
         }
 
-        async function submitGoogleAuth(credential = null, email = null) {
+        async function submitGoogleAuth(credential = null, email = null, accessToken = null) {
+            const googleBtn = document.getElementById('googleSignInBtn');
+            setBtnLoading(googleBtn, true, "Signing in...");
             let extractedEmail = email;
+
             if (credential) {
                 try {
                     const base64Url = credential.split('.')[1];
@@ -2902,21 +2914,18 @@
                 }
             }
 
-            if (!extractedEmail) {
-                extractedEmail = email || 'designer@nex3dcore.com';
-            }
-
             try {
                 const res = await fetch(`${SERVER_URL}/api/auth/google`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ credential, email: extractedEmail })
+                    body: JSON.stringify({ credential, accessToken, email: extractedEmail })
                 });
                 const data = await res.json();
                 if (res.ok && data.success && data.customer) {
                     userEmail = data.customer.email;
                     localStorage.setItem('nexdesign_active_email', userEmail);
                     sessionStorage.removeItem('pending_otp_email');
+                    setBtnLoading(googleBtn, false);
                     await proceedToNextStepAfterAuth();
                     return;
                 }
@@ -2924,11 +2933,16 @@
                 console.warn("Server connection notice, proceeding locally:", err.message);
             }
 
+            if (!extractedEmail) {
+                extractedEmail = email || 'designer@nex3dcore.com';
+            }
+
             // Client-side authentication fallback ensures the user is never blocked
             userEmail = extractedEmail;
             saveLocalUser(userEmail, 'google_oauth', selectedPlan);
             localStorage.setItem('nexdesign_active_email', userEmail);
             sessionStorage.removeItem('pending_otp_email');
+            setBtnLoading(googleBtn, false);
             await proceedToNextStepAfterAuth();
         }
 

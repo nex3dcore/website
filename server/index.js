@@ -386,11 +386,29 @@ app.post('/api/login', (req, res) => {
 
 // 3.5 Google OAuth Backend Authentication & Account Linking Route
 app.post('/api/auth/google', async (req, res) => {
-    const { credential, email: inputEmail, googleId: inputGoogleId } = req.body;
+    const { credential, accessToken, email: inputEmail, googleId: inputGoogleId } = req.body;
 
     let email = inputEmail;
     let googleId = inputGoogleId || 'g_' + Math.random().toString(36).substr(2, 9);
     let name = 'Google User';
+
+    if (accessToken && (!email || !email.includes('@'))) {
+        try {
+            const googleRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                headers: { Authorization: `Bearer ${accessToken}` }
+            });
+            if (googleRes.ok) {
+                const gUser = await googleRes.json();
+                if (gUser && gUser.email) {
+                    email = gUser.email;
+                    googleId = gUser.sub || googleId;
+                    name = gUser.name || name;
+                }
+            }
+        } catch (err) {
+            console.warn("Backend Google Userinfo fetch warning:", err.message);
+        }
+    }
 
     if (credential) {
         try {
