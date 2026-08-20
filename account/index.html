@@ -652,17 +652,33 @@
             background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
         }
         body[data-phase="alpha"] .account-card {
-            background: rgba(8, 8, 10, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+            background: #000000 !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.95), inset 0 1px 0 0 rgba(255, 255, 255, 0.08) !important;
         }
         body[data-phase="alpha"] .plan-card {
-            background: rgba(14, 14, 18, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: #000000 !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            color: #ffffff !important;
+        }
+        body[data-phase="alpha"] .plan-card:hover {
+            border-color: rgba(255, 255, 255, 0.3) !important;
+            background: #000000 !important;
         }
         body[data-phase="alpha"] .plan-card.selected {
-            background: rgba(22, 22, 28, 0.8);
-            border-color: rgba(255, 255, 255, 0.35);
+            background: #000000 !important;
+            border-color: #ffffff !important;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.15) !important;
+        }
+        body[data-phase="alpha"] .form-input {
+            background: #000000 !important;
+            border: 1px solid rgba(255, 255, 255, 0.16) !important;
+            color: #ffffff !important;
+        }
+        body[data-phase="alpha"] .form-input:focus {
+            background: #000000 !important;
+            border-color: #ffffff !important;
+            box-shadow: 0 0 16px rgba(255, 255, 255, 0.2) !important;
         }
 
         /* Phase Beta: Koyu Gri & Gri (Dark Gray - Gray) Theme */
@@ -1302,15 +1318,21 @@
         }
         .password-toggle-eye {
             position: absolute;
-            right: 10px;
+            right: 12px;
             background: none;
             border: none;
             color: var(--text-secondary);
             cursor: pointer;
-            font-size: 13px;
             padding: 4px;
-            opacity: 0.7;
-            transition: opacity 0.2s ease;
+            opacity: 0.6;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .password-toggle-eye:hover {
+            opacity: 1;
+            color: #ffffff;
         }
         .password-toggle-eye:hover {
             opacity: 1;
@@ -1696,66 +1718,67 @@
                 </div>
 
                 <!-- Registration Form -->
-                <div id="registerFormContainer">
-                    <div class="form-group">
-                        <label for="reg-email">Email</label>
-                        <input type="email" id="reg-email" class="form-input" placeholder="name@domain.com" autocomplete="email" />
+                <div id="registerFormContainer" style="display: flex; flex-direction: column; gap: 11px;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <input type="email" id="reg-email" class="form-input" placeholder="Email" autocomplete="email" />
                     </div>
 
-                    <div class="form-group">
-                        <label for="reg-password">Password</label>
+                    <div class="form-group" style="margin-bottom: 0;">
                         <div class="password-input-wrapper">
-                            <input type="password" id="reg-password" class="form-input" placeholder="Min. 8 characters" oninput="updatePasswordStrengthUI()" autocomplete="new-password" />
-                            <button type="button" class="password-toggle-eye" onclick="togglePasswordVisibility('reg-password', this)">👁️</button>
+                            <input type="password" id="reg-password" class="form-input" placeholder="Password (min. 8 characters)" oninput="updatePasswordStrengthUI()" autocomplete="new-password" />
+                            <button type="button" class="password-toggle-eye" onclick="togglePasswordVisibility('reg-password', this)" title="Show / Hide Password">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
                         </div>
                         
                         <!-- Minimal Strength Meter Bar -->
-                        <div class="strength-meter-box" style="margin-top: 6px;">
+                        <div class="strength-meter-box" style="margin-top: 5px;">
                             <div class="strength-segment" id="strengthSeg1"></div>
                             <div class="strength-segment" id="strengthSeg2"></div>
                             <div class="strength-segment" id="strengthSeg3"></div>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="reg-password-confirm">Confirm Password</label>
+                    <div class="form-group" style="margin-bottom: 0;">
                         <div class="password-input-wrapper">
-                            <input type="password" id="reg-password-confirm" class="form-input" placeholder="Re-enter password" oninput="checkPasswordMatchUI()" autocomplete="new-password" />
-                            <button type="button" class="password-toggle-eye" onclick="togglePasswordVisibility('reg-password-confirm', this)">👁️</button>
+                            <input type="password" id="reg-password-confirm" class="form-input" placeholder="Confirm Password" oninput="checkPasswordMatchUI()" autocomplete="new-password" />
+                            <button type="button" class="password-toggle-eye" onclick="togglePasswordVisibility('reg-password-confirm', this)" title="Show / Hide Password">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
                         </div>
                         <div id="matchFeedback" style="font-size: 10px; margin-top: 3px; display: none;"></div>
                     </div>
 
                     <!-- Legal Consent Box -->
-                    <div class="legal-consent-container" style="margin-top: 8px;">
+                    <div class="legal-consent-container" style="margin-top: 2px;">
                         <input type="checkbox" id="legalConsentCheckbox" />
                         <label for="legalConsentCheckbox">
                             I agree to the <a href="javascript:void(0)" onclick="openLegalModal('terms')" style="color: #ffffff; text-decoration: underline;">Terms of Service</a> and <a href="javascript:void(0)" onclick="openLegalModal('privacy')" style="color: #ffffff; text-decoration: underline;">Privacy Policy</a>.
                         </label>
                     </div>
 
-                    <div style="display:flex; gap:12px; margin-top: 16px;">
+                    <div style="display:flex; gap:10px; margin-top: 8px;">
                         <button class="btn-primary btn-secondary" onclick="goToStep(1)">Back</button>
                         <button class="btn-primary" onclick="handleRegistrationSubmit()">Continue</button>
                     </div>
                 </div>
 
                 <!-- Login Form (Hidden by default) -->
-                <div id="loginFormContainer" style="display: none;">
-                    <div class="form-group">
-                        <label for="login-email">Email</label>
-                        <input type="email" id="login-email" class="form-input" placeholder="name@domain.com" autocomplete="email" />
+                <div id="loginFormContainer" style="display: none; flex-direction: column; gap: 11px;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <input type="email" id="login-email" class="form-input" placeholder="Email" autocomplete="email" />
                     </div>
 
-                    <div class="form-group">
-                        <label for="login-password">Password</label>
+                    <div class="form-group" style="margin-bottom: 0;">
                         <div class="password-input-wrapper">
-                            <input type="password" id="login-password" class="form-input" placeholder="Your password" autocomplete="current-password" />
-                            <button type="button" class="password-toggle-eye" onclick="togglePasswordVisibility('login-password', this)">👁️</button>
+                            <input type="password" id="login-password" class="form-input" placeholder="Password" autocomplete="current-password" />
+                            <button type="button" class="password-toggle-eye" onclick="togglePasswordVisibility('login-password', this)" title="Show / Hide Password">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
                         </div>
                     </div>
 
-                    <div style="display:flex; gap:12px; margin-top: 16px;">
+                    <div style="display:flex; gap:10px; margin-top: 8px;">
                         <button class="btn-primary btn-secondary" onclick="goToStep(1)">Back</button>
                         <button class="btn-primary" onclick="handleLoginSubmit()">Log In</button>
                     </div>
@@ -2663,15 +2686,18 @@
             }
         };
 
+        const SVG_EYE = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`;
+        const SVG_EYE_OFF = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/></svg>`;
+
         window.togglePasswordVisibility = function(inputId, btn) {
             const input = document.getElementById(inputId);
             if (input) {
                 if (input.type === 'password') {
                     input.type = 'text';
-                    btn.innerText = '🔒';
+                    btn.innerHTML = SVG_EYE_OFF;
                 } else {
                     input.type = 'password';
-                    btn.innerText = '👁️';
+                    btn.innerHTML = SVG_EYE;
                 }
             }
         };
