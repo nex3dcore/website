@@ -73,13 +73,6 @@
         </div>
     </main>
 
-    <!-- Footer Information -->
-    <footer class="footer">
-        <div class="footer-left">
-            <span>© 2026 NEX Design Lab.</span>
-        </div>
-    </footer>
-
     <!-- Interactive Modal (Download Info/Option) -->
     <div class="modal" id="downloadModal">
         <div class="modal-backdrop"></div>
@@ -146,14 +139,13 @@
         </div>
     </div>
 
-    <!-- Interactive Legal & Support Modal -->
+    <!-- Interactive Legal Modal (Terms of Service, Privacy Policy) -->
     <div id="legalModalBackdrop" class="legal-modal-backdrop" onclick="handleLegalBackdropClick(event)">
         <div class="legal-modal-content">
             <div class="legal-modal-header">
                 <div class="legal-modal-tabs">
                     <button class="legal-tab-btn active" id="tabBtnTerms" onclick="switchLegalTab('terms')">Terms of Service</button>
                     <button class="legal-tab-btn" id="tabBtnPrivacy" onclick="switchLegalTab('privacy')">Privacy Policy</button>
-                    <button class="legal-tab-btn" id="tabBtnSupport" onclick="switchLegalTab('support')">Support</button>
                 </div>
                 <button class="legal-modal-close-btn" onclick="closeLegalModal()" title="Close">✕</button>
             </div>
@@ -195,33 +187,7 @@
                     <p>We use essential local storage tokens to preserve your active license status on your device so that you can work offline. We do not sell your personal information or track you across third-party websites.</p>
 
                     <h3>5. User Rights & Data Deletion (GDPR / KVKK)</h3>
-                    <p>You have the right to access, rectify, or request complete deletion of your account and personal data at any time by contacting nex3dcore@gmail.com.</p>
-                </div>
-
-                <!-- SUPPORT PANE -->
-                <div id="paneSupport" class="legal-pane">
-                    <h3>NexDesign Customer Support</h3>
-                    <p>Have questions about your account, licenses, or technical features? Our team is here to assist you directly.</p>
-                    
-                    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 18px; margin: 16px 0; display: flex; flex-direction: column; gap: 12px;">
-                        <div>
-                            <div style="font-size: 10px; text-transform: uppercase; color: var(--text-secondary); font-weight: 600; letter-spacing: 0.05em;">Official Support Email</div>
-                            <div style="font-size: 15px; font-weight: 700; color: #ffffff; font-family: monospace; margin-top: 2px;">nex3dcore@gmail.com</div>
-                        </div>
-
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px;">
-                            <button class="btn-primary" style="flex: 1; min-width: 140px; padding: 10px 16px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;" onclick="copySupportEmail(this)">
-                                <span>📋</span>
-                                <span id="copyBtnText">Copy Email Address</span>
-                            </button>
-                            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=nex3dcore@gmail.com" target="_blank" rel="noopener noreferrer" class="btn-primary btn-secondary" style="flex: 1; min-width: 140px; padding: 10px 16px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; text-align: center;">
-                                <span>🌐</span>
-                                <span>Open in Web Gmail</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <p style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 0;">We typically respond to inquiries and technical support requests within 24 hours.</p>
+                    <p>You have the right to access, rectify, or request complete deletion of your account and personal data at any time by contacting our system administrative channels.</p>
                 </div>
             </div>
         </div>
@@ -234,8 +200,6 @@
         <a href="javascript:void(0)" onclick="openLegalModal('terms')">Terms of Service</a>
         <span>•</span>
         <a href="javascript:void(0)" onclick="openLegalModal('privacy')">Privacy Policy</a>
-        <span>•</span>
-        <a href="javascript:void(0)" onclick="openLegalModal('support')">Support</a>
     </footer>
 
     <script src="main.js"></script>
