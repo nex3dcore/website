@@ -242,7 +242,17 @@ app.post('/api/register', (req, res) => {
     const EARLY_STAGE_PHASE = process.env.EARLY_STAGE_PHASE || 'alpha';
     
     try {
-        const existingUser = db.getCustomerByEmail(email);
+        const existingUser = db.getCustomerByEmail(email.trim());
+
+        // If user already exists and is verified or Google user, guide them to login
+        if (existingUser && (existingUser.email_verified === 1 || existingUser.auth_provider === 'google')) {
+            return res.status(409).json({ 
+                success: false, 
+                code: "USER_EXISTS", 
+                error: "Bu e-posta adresine ait doğrulanmış bir hesap zaten mevcut. Giriş yap sekmesine yönlendiriliyorsunuz." 
+            });
+        }
+
         let tierTag = existingUser ? existingUser.tier_tag : null;
 
         if (!existingUser) {
@@ -263,13 +273,14 @@ app.post('/api/register', (req, res) => {
             tierTag = EARLY_STAGE_PHASE;
         }
 
-        const user = db.upsertCustomer(email, password, null, tierTag, 'v1.0');
-        const otpCode = db.createOTP(email);
+        const user = db.upsertCustomer(email.trim(), password, null, tierTag, 'v1.0');
+        const otpCode = db.createOTP(email.trim());
 
         res.json({ 
             success: true, 
             requiresOTP: true, 
             email: user.email, 
+            devCode: otpCode,
             message: "Kayıt işlemi başlatıldı. 6 haneli doğrulama kodunuz oluşturuldu." 
         });
     } catch (err) {
@@ -315,7 +326,11 @@ app.post('/api/resend-otp', (req, res) => {
         }
 
         const newCode = db.createOTP(email);
-        res.json({ success: true, message: "Yeni 6 haneli doğrulama kodunuz oluşturuldu." });
+        res.json({ 
+            success: true, 
+            devCode: newCode,
+            message: "Yeni 6 haneli doğrulama kodunuz oluşturuldu." 
+        });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
     }
@@ -333,7 +348,7 @@ app.post('/api/login', (req, res) => {
         if (!user) {
             return res.status(404).json({ 
                 success: false, 
-                error: "Bu e-posta adresine ait kayıtlı bir hesap bulunamadı. Lütfen 'Yeni Hesap Aç' sekmesinden ücretsiz üye olun." 
+                error: "Bu e-posta adresine ait kayıtlı bir hesap bulunamadı. Lütfen 'Create Account' sekmesinden ücretsiz üye olun." 
             });
         }
 
@@ -352,11 +367,12 @@ app.post('/api/login', (req, res) => {
 
         // Unverified State Handling: Route to OTP Verification if email_verified === 0
         if (user.email_verified === 0) {
-            db.createOTP(user.email);
+            const otpCode = db.createOTP(user.email);
             return res.json({ 
                 success: true, 
                 requiresOTP: true, 
                 email: user.email, 
+                devCode: otpCode,
                 message: "E-posta adresiniz henüz doğrulanmamıştır. 6 haneli yeni doğrulama kodunuz e-postanıza gönderildi." 
             });
         }

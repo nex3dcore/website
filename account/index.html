@@ -2753,7 +2753,103 @@
         // STEP 2 – Registration & Login Handlers
         // ==========================================
 
+        function showAuthNotice(msg, type = 'info') {
+            let noticeBox = document.getElementById('authNoticeBox');
+            if (!noticeBox) {
+                noticeBox = document.createElement('div');
+                noticeBox.id = 'authNoticeBox';
+                noticeBox.style.cssText = 'padding: 10px 14px; border-radius: 8px; font-size: 12px; margin-bottom: 12px; transition: all 0.3s ease; text-align: center; line-height: 1.4;';
+                const step2El = document.getElementById('step2');
+                const tabsEl = document.querySelector('.auth-tabs-switcher');
+                if (tabsEl && tabsEl.parentNode) {
+                    tabsEl.parentNode.insertBefore(noticeBox, tabsEl.nextSibling);
+                } else if (step2El) {
+                    step2El.prepend(noticeBox);
+                }
+            }
+            if (type === 'error') {
+                noticeBox.style.background = 'rgba(239, 68, 68, 0.15)';
+                noticeBox.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+                noticeBox.style.color = '#fca5a5';
+            } else if (type === 'success') {
+                noticeBox.style.background = 'rgba(52, 211, 153, 0.15)';
+                noticeBox.style.border = '1px solid rgba(52, 211, 153, 0.3)';
+                noticeBox.style.color = '#6ee7b7';
+            } else {
+                noticeBox.style.background = 'rgba(59, 130, 246, 0.15)';
+                noticeBox.style.border = '1px solid rgba(59, 130, 246, 0.3)';
+                noticeBox.style.color = '#93c5fd';
+            }
+            noticeBox.innerText = msg;
+            noticeBox.style.display = 'block';
+        }
+
+        function clearAuthNotice() {
+            const noticeBox = document.getElementById('authNoticeBox');
+            if (noticeBox) noticeBox.style.display = 'none';
+        }
+
+        function setBtnLoading(btn, isLoading, loadingText = "Please wait...") {
+            if (!btn) return;
+            if (isLoading) {
+                if (!btn.dataset.originalHtml) {
+                    btn.dataset.originalHtml = btn.innerHTML;
+                }
+                btn.disabled = true;
+                btn.style.opacity = '0.75';
+                btn.style.pointerEvents = 'none';
+                btn.innerHTML = `<span style="display:inline-block; width:12px; height:12px; border:2px solid #ffffff; border-top-color:transparent; border-radius:50%; animation:spin 0.6s linear infinite; margin-right:8px; vertical-align:middle;"></span>${loadingText}`;
+            } else {
+                if (btn.dataset.originalHtml) {
+                    btn.innerHTML = btn.dataset.originalHtml;
+                }
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+            }
+        }
+
         window.handleGoogleSignIn = function() {
+            clearAuthNotice();
+            const googleBtn = document.getElementById('googleSignInBtn');
+            setBtnLoading(googleBtn, true, "Connecting Google...");
+
+            // Method 1: Google Identity Services OAuth2 Token Client (Popup)
+            if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
+                try {
+                    const tokenClient = google.accounts.oauth2.initTokenClient({
+                        client_id: "204998796519-hoqdv40kgt99mts0vijs15p0d78sc46s.apps.googleusercontent.com",
+                        scope: "email profile openid",
+                        callback: async (tokenResponse) => {
+                            if (tokenResponse && tokenResponse.access_token) {
+                                try {
+                                    const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                                        headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+                                    });
+                                    const userInfo = await userInfoRes.json();
+                                    if (userInfo && userInfo.email) {
+                                        await submitGoogleAuth(null, userInfo.email);
+                                        setBtnLoading(googleBtn, false);
+                                        return;
+                                    }
+                                } catch (fetchErr) {
+                                    console.warn("Userinfo fetch error:", fetchErr);
+                                }
+                            }
+                            setBtnLoading(googleBtn, false);
+                        },
+                        error_callback: () => {
+                            setBtnLoading(googleBtn, false);
+                        }
+                    });
+                    tokenClient.requestAccessToken({ prompt: 'select_account' });
+                    return;
+                } catch (err) {
+                    console.warn("Google OAuth2 token client note:", err.message);
+                }
+            }
+
+            // Method 2: Google One Tap / Credential prompt fallback
             if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
                 try {
                     google.accounts.id.initialize({
@@ -2762,20 +2858,31 @@
                             if (response.credential) {
                                 await submitGoogleAuth(response.credential);
                             }
+                            setBtnLoading(googleBtn, false);
                         }
                     });
-                    google.accounts.id.prompt();
+                    google.accounts.id.prompt((notification) => {
+                        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                            setBtnLoading(googleBtn, false);
+                            fallbackGoogleEmailPrompt();
+                        }
+                    });
                     return;
                 } catch (err) {
-                    console.warn("Google prompt warning, fallback to prompt:", err.message);
+                    console.warn("Google One Tap note:", err.message);
                 }
             }
 
-            const promptEmail = prompt("Enter your Google Account email address:", "architect@gmail.com");
+            setBtnLoading(googleBtn, false);
+            fallbackGoogleEmailPrompt();
+        };
+
+        function fallbackGoogleEmailPrompt() {
+            const promptEmail = prompt("Enter your Google Account email address:", userEmail || "architect@gmail.com");
             if (promptEmail && promptEmail.includes('@')) {
                 submitGoogleAuth(null, promptEmail.trim());
             }
-        };
+        }
 
         async function submitGoogleAuth(credential = null, email = null) {
             let extractedEmail = email;
@@ -2826,19 +2933,31 @@
         }
 
         window.handleRegistrationSubmit = async function() {
+            clearAuthNotice();
             const emailInput = document.getElementById('reg-email').value.trim();
             const passInput  = document.getElementById('reg-password').value;
             const confirmPass = document.getElementById('reg-password-confirm').value;
             const legalConsent = document.getElementById('legalConsentCheckbox').checked;
+            const regBtn = document.querySelector('#registerFormContainer button.btn-primary:not(.btn-secondary)');
 
-            if (!emailInput || !emailInput.includes('@')) { alert('Please enter a valid email address.'); return; }
+            if (!emailInput || !emailInput.includes('@')) { 
+                showAuthNotice('Please enter a valid email address.', 'error'); 
+                return; 
+            }
             if (passInput.length < 8 || !/[A-Z]/.test(passInput) || !/[0-9]/.test(passInput)) {
-                alert('Password must be at least 8 characters long with at least 1 uppercase letter and 1 number.');
+                showAuthNotice('Password must be at least 8 characters with 1 uppercase letter and 1 number.', 'error');
                 return;
             }
-            if (passInput !== confirmPass) { alert('Passwords do not match.'); return; }
-            if (!legalConsent) { alert('You must agree to the Terms of Service and Privacy Policy to continue.'); return; }
+            if (passInput !== confirmPass) { 
+                showAuthNotice('Passwords do not match. Please re-enter your password.', 'error'); 
+                return; 
+            }
+            if (!legalConsent) { 
+                showAuthNotice('You must agree to the Terms of Service and Privacy Policy to continue.', 'error'); 
+                return; 
+            }
 
+            setBtnLoading(regBtn, true, "Creating Account...");
             userEmail = emailInput;
             userPassword = passInput;
 
@@ -2849,6 +2968,19 @@
                     body: JSON.stringify({ email: userEmail, password: userPassword, termsAccepted: legalConsent })
                 });
                 const data = await res.json();
+                setBtnLoading(regBtn, false);
+
+                // Existing account redirection
+                if (res.status === 409 || data.code === 'USER_EXISTS') {
+                    showAuthNotice(data.error || "An account already exists with this email. Redirected to Log In.", 'info');
+                    setAuthMode('login');
+                    const loginEmailInput = document.getElementById('login-email');
+                    const loginPassInput = document.getElementById('login-password');
+                    if (loginEmailInput) loginEmailInput.value = userEmail;
+                    if (loginPassInput) loginPassInput.focus();
+                    return;
+                }
+
                 if (res.ok && data.requiresOTP) {
                     sessionStorage.setItem('pending_otp_email', userEmail);
                     openOTPVerificationStep(userEmail, data.devCode);
@@ -2858,9 +2990,13 @@
                     sessionStorage.removeItem('pending_otp_email');
                     await proceedToNextStepAfterAuth();
                     return;
+                } else {
+                    showAuthNotice(data.error || "Registration could not be completed.", 'error');
+                    return;
                 }
             } catch (err) {
-                console.warn("Server unavailable, falling back to local demo mode:", err.message);
+                console.warn("Server connection notice, falling back to local verification:", err.message);
+                setBtnLoading(regBtn, false);
             }
 
             saveLocalUser(userEmail, userPassword, selectedPlan);
@@ -2885,11 +3021,21 @@
         }
 
         window.handleLoginSubmit = async function() {
+            clearAuthNotice();
             const emailInput = document.getElementById('login-email').value.trim();
             const passInput  = document.getElementById('login-password').value;
+            const loginBtn = document.querySelector('#loginFormContainer button.btn-primary:not(.btn-secondary)');
 
-            if (!emailInput || !emailInput.includes('@')) { alert('Please enter a valid email address.'); return; }
-            if (!passInput) { alert('Please enter your password.'); return; }
+            if (!emailInput || !emailInput.includes('@')) { 
+                showAuthNotice('Please enter a valid email address.', 'error'); 
+                return; 
+            }
+            if (!passInput) { 
+                showAuthNotice('Please enter your password.', 'error'); 
+                return; 
+            }
+
+            setBtnLoading(loginBtn, true, "Logging in...");
 
             try {
                 const res = await fetch(`${SERVER_URL}/api/login`, {
@@ -2898,6 +3044,8 @@
                     body: JSON.stringify({ email: emailInput, password: passInput })
                 });
                 const data = await res.json();
+                setBtnLoading(loginBtn, false);
+
                 if (data.success && !data.requiresOTP) {
                     userEmail = data.customer.email;
                     localStorage.setItem('nexdesign_active_email', userEmail);
@@ -2909,11 +3057,12 @@
                     openOTPVerificationStep(emailInput, data.devCode);
                     return;
                 } else {
-                    alert(data.error || "Login failed.");
+                    showAuthNotice(data.error || "Incorrect email or password. Please check your credentials.", 'error');
                     return;
                 }
             } catch (err) {
-                console.warn("Server unavailable, logging in locally:", err.message);
+                console.warn("Server connection notice, logging in locally:", err.message);
+                setBtnLoading(loginBtn, false);
             }
 
             userEmail = emailInput;
@@ -3016,6 +3165,9 @@
             const email = sessionStorage.getItem('pending_otp_email') || userEmail;
             if (!email) { alert('No pending email to verify.'); return; }
 
+            const verifyBtn = document.querySelector('#step2B button.btn-primary:not(.btn-secondary)');
+            setBtnLoading(verifyBtn, true, "Verifying...");
+
             try {
                 const res = await fetch(`${SERVER_URL}/api/verify-otp`, {
                     method: 'POST',
@@ -3023,15 +3175,18 @@
                     body: JSON.stringify({ email, code })
                 });
                 const data = await res.json();
+                setBtnLoading(verifyBtn, false);
+
                 if (res.ok && data.success) {
                     userEmail = email;
                     localStorage.setItem('nexdesign_active_email', userEmail);
                     sessionStorage.removeItem('pending_otp_email');
                     await proceedToNextStepAfterAuth();
                 } else {
-                    alert(data.error || "Invalid verification code.");
+                    alert(data.error || "Invalid verification code. Please check and try again.");
                 }
             } catch (err) {
+                setBtnLoading(verifyBtn, false);
                 if (code === "123456" || code.length === 6) {
                     userEmail = email;
                     localStorage.setItem('nexdesign_active_email', userEmail);
