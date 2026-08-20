@@ -146,14 +146,13 @@
         </div>
     </div>
 
-    <!-- Interactive Legal Documents Modal (Terms, Privacy, Refund) -->
+    <!-- Interactive Legal Documents Modal (Terms of Service, Privacy Policy) -->
     <div id="legalModalBackdrop" class="legal-modal-backdrop" onclick="handleLegalBackdropClick(event)">
         <div class="legal-modal-content">
             <div class="legal-modal-header">
                 <div class="legal-modal-tabs">
                     <button class="legal-tab-btn active" id="tabBtnTerms" onclick="switchLegalTab('terms')">Terms of Service</button>
                     <button class="legal-tab-btn" id="tabBtnPrivacy" onclick="switchLegalTab('privacy')">Privacy Policy</button>
-                    <button class="legal-tab-btn" id="tabBtnRefund" onclick="switchLegalTab('refund')">Refund & Cancellation</button>
                 </div>
                 <button class="legal-modal-close-btn" onclick="closeLegalModal()" title="Close">✕</button>
             </div>
@@ -170,8 +169,8 @@
                     <h3>3. Early Adopter Lifetime Badges (Alpha & Beta)</h3>
                     <p>Users who register and activate during the Alpha phase receive a permanent 70% lifetime discount; users during Beta receive a permanent 40% discount (for life). These discounts remain attached to the user account in perpetuity as long as the subscription remains active or is renewed under the badge entitlement.</p>
 
-                    <h3>4. Subscription Billing & Merchant of Record</h3>
-                    <p>Payment processing, currency conversion, and global tax/VAT remittance are handled securely by Paddle (our authorized Merchant of Record). Subscriptions renew on a monthly recurring basis unless cancelled before the renewal date.</p>
+                    <h3>4. Subscription Billing & Cancellation</h3>
+                    <p>Payment processing, currency conversion, and global tax/VAT remittance are handled securely by Paddle (our authorized Merchant of Record). Subscriptions renew on a monthly recurring basis. You can cancel your recurring renewal at any time with a single click from your account dashboard or via the Paddle Customer Portal, with zero cancellation fees.</p>
 
                     <h3>5. Intellectual Property</h3>
                     <p>All architectural 3D models, geometry, BIM layouts, and project files created using NexDesign belong 100% exclusively to the user. NexDesign claims no intellectual property ownership over your work.</p>
@@ -197,21 +196,6 @@
                     <h3>5. User Rights & Data Deletion (GDPR / KVKK)</h3>
                     <p>You have the right to access, rectify, or request complete deletion of your account and personal data at any time by contacting nex3dcore@gmail.com.</p>
                 </div>
-
-                <!-- REFUND & CANCELLATION PANE -->
-                <div id="paneRefund" class="legal-pane">
-                    <h3>1. Free Tier Verification & Final Sales</h3>
-                    <p>NexDesign provides an Indie Free edition so that every designer can test application performance and verify hardware/system compatibility on their device prior to subscribing. Because digital software access and Pro license credentials are delivered immediately upon checkout, subscription payments are final and non-refundable once activated.</p>
-
-                    <h3>2. Monthly Subscription Cancellation (1-Click)</h3>
-                    <p>You can cancel the recurring renewal of your monthly subscription at any time with a single click from your account dashboard or via the Paddle Customer Portal. There are zero cancellation fees. When you cancel, you retain full Pro access until the end of your prepaid monthly billing cycle, and no further charges will be made.</p>
-
-                    <h3>3. Software Update Regression Exception</h3>
-                    <p>As a single legal exception: If a new software update released by NexDesign introduces a verified system incompatibility or technical regression that prevents an active Pro subscriber from running the software on a previously working machine, and our engineering team is unable to provide a functional fix or rollback within reasonable time, a discretionary refund for the affected billing period will be issued upon contacting <strong>nex3dcore@gmail.com</strong>.</p>
-
-                    <h3>4. Contact & Support</h3>
-                    <p>For technical support, billing inquiries, or update diagnostics, please contact our engineering team directly at <strong>nex3dcore@gmail.com</strong> with your account email, OS details, and crash logs.</p>
-                </div>
             </div>
         </div>
     </div>
@@ -223,8 +207,6 @@
         <a href="javascript:void(0)" onclick="openLegalModal('terms')">Terms of Service</a>
         <span>•</span>
         <a href="javascript:void(0)" onclick="openLegalModal('privacy')">Privacy Policy</a>
-        <span>•</span>
-        <a href="javascript:void(0)" onclick="openLegalModal('refund')">Refund & Cancellation</a>
         <span>•</span>
         <a href="mailto:nex3dcore@gmail.com">Support</a>
     </footer>
